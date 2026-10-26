@@ -43,15 +43,15 @@
 
 ## Phase 4 — Planner UI
 
-- [ ] Implement the planner page using `design-reference/planner.html`.
+- [x] Implement the planner page using `design-reference/planner.html`.
 - [ ] Collect origin and destination.
 - [ ] Collect trip type and dates.
 - [ ] Collect passenger count.
 - [ ] Collect cabin preference.
 - [ ] Collect rewards program and balance information.
 - [ ] Add Zod validation.
-- [ ] Add loading and validation states.
-- [ ] Preserve valid form data during the search flow.
+- [x] Add loading and validation states.
+- [x] Preserve valid form data during the search flow.
 
 ## Phase 5 — Duffel Flight Search
 
