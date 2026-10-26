@@ -1,0 +1,90 @@
+---
+description: Mandatory Supabase API key and Prisma client conventions
+alwaysApply: true
+---
+
+# Supabase and Prisma Rules
+
+## Supabase API Keys
+
+The project uses Supabase's current API key format.
+
+Required variables:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- `SUPABASE_SECRET_KEY`
+
+Do not use:
+
+- The legacy Supabase `anon` API key.
+- The legacy Supabase `service_role` API key.
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+- `SUPABASE_SERVICE_ROLE_KEY`.
+
+Do not introduce legacy key names in new code, documentation, or configuration.
+
+### Publishable Key
+
+Use the Publishable key for normal application access.
+
+The key is public and may be used in the browser.
+
+User data access must rely on the authenticated user's session and appropriate authorization policies.
+
+### Secret Key
+
+The Secret key is elevated and server-only.
+
+Never:
+
+- Expose it in client-side code.
+- Prefix it with `NEXT_PUBLIC_`.
+- Commit it to source control.
+- Use it as the default key for normal user operations.
+- Assume that possession of the key removes the need for application authorization.
+
+Operations using the Secret key must be restricted to trusted server-side code.
+
+## Prisma Client Singleton
+
+Use the existing shared Prisma Client singleton.
+
+In development, cache the Prisma Client instance using `globalThis` to prevent multiple instances during Next.js hot reloads.
+
+Do not instantiate Prisma Client inside:
+
+- Route handlers.
+- Server Actions.
+- React components.
+- Individual service functions.
+- Request-processing callbacks.
+
+Import the shared Prisma Client instance from the project's established Prisma module.
+
+Preserve the existing Prisma adapter, generated client location, and Prisma version.
+
+Do not create a second Prisma Client singleton or replace the existing database configuration without explicit approval.
+
+## Next.js Proxy
+
+Use `proxy.ts` instead of `middleware.ts`.
+
+Proxy may perform lightweight request-level authentication checks and redirects.
+
+Proxy must not be the only authorization mechanism.
+
+Protected data access must independently verify the current user and resource ownership on the server.
+
+## Before Changing Configuration
+
+Inspect the existing:
+
+- Supabase client modules.
+- Prisma client module.
+- Prisma schema.
+- Prisma adapter configuration.
+- Environment variable usage.
+- Proxy or middleware implementation.
+
+Reuse existing correct implementations instead of creating duplicates.

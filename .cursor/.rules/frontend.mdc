@@ -1,0 +1,25 @@
+---
+description: Frontend rules for Next.js pages, React components, forms, and UI
+globs:
+  - "/app/**/*.tsx"
+  - "/components/**/*.tsx"
+  - "/hooks/**/*.ts"
+  - "/hooks/**/*.tsx"
+alwaysApply: false
+---
+
+# Frontend Rules
+
+- Use React and TypeScript.
+- Follow Next.js App Router conventions.
+- Prefer Server Components when client-side interactivity is unnecessary.
+- Add `"use client"` only when required.
+- Use shadcn/ui components where appropriate.
+- Use Tailwind CSS and existing design tokens.
+- Keep components focused and reusable.
+- Use Zod schemas for form validation.
+- Display loading, empty, validation, and error states.
+- Do not call external flight providers directly from browser components.
+- Do not expose server-side API keys.
+- Do not calculate authoritative flight savings in the UI.
+- Keep UI display logic separate from business logic.

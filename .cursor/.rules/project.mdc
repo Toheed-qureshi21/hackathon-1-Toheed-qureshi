@@ -1,0 +1,21 @@
+---
+description: Global project rules for RedeemTrip
+alwaysApply: true
+---
+
+# RedeemTrip Project Rules
+
+- Read `AGENTS.md` before making changes.
+- Read `docs/prd.md`, `docs/trd.md`, and `docs/tasks.md` when implementing product features.
+- Use TypeScript and follow the existing project conventions.
+- Use the existing Next.js App Router structure.
+- Do not introduce unrelated refactoring.
+- Validate external input with Zod.
+- Keep secrets server-side.
+- Enforce authentication and resource ownership.
+- Do not invent provider API capabilities, prices, availability, or credentials.
+- Use deterministic code for financial calculations and recommendation ranking.
+- AI output must be validated before use.
+- Update `docs/tasks.md` when completing implementation tasks.
+- Run relevant linting, type checking, and tests.
+- If requirements are unclear, identify the ambiguity before making a significant architectural decision.

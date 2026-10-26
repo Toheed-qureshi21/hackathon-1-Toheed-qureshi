@@ -1,0 +1,190 @@
+---
+description: RedeemTrip Next.js, TypeScript, and application engineering rules
+alwaysApply: true
+---
+
+# RedeemTrip Next.js Engineering Rules
+
+## Framework
+
+Use the existing Next.js App Router setup.
+
+- Prefer Server Components by default.
+- Use Client Components only when browser interaction or client-side state is required.
+- Keep client component boundaries as small as practical.
+- Do not add `"use client"` to an entire page unnecessarily.
+- Follow existing routing and project conventions.
+- Preserve the installed Next.js version unless an upgrade is explicitly approved.
+
+## Mandatory Next.js Proxy Convention
+
+This project uses the Next.js `proxy.ts` convention instead of `middleware.ts`.
+
+- Do not create a `middleware.ts` file.
+- Do not use the legacy Middleware convention.
+- Use `proxy.ts` for lightweight request-level authentication checks and redirects.
+- Follow the conventions supported by the installed Next.js version.
+- Inspect the existing Proxy implementation before modifying it.
+- Do not create duplicate Proxy files.
+
+Proxy is not the sole authorization boundary.
+
+Protected Server Components, Route Handlers, Server Actions, and service functions must independently verify authentication and resource ownership before accessing protected data.
+
+Do not rely exclusively on Proxy to secure database operations or API endpoints.
+
+## TypeScript
+
+- Use strict typing.
+- Avoid `any`.
+- Use `unknown` for untrusted data.
+- Define explicit types for provider data and application domain models.
+- Validate external responses where required.
+- Do not suppress TypeScript errors without a documented reason.
+
+## Validation
+
+Use Zod for untrusted input.
+
+Validate:
+
+- Form input.
+- API request bodies.
+- Query parameters.
+- Provider response data where appropriate.
+- AI-generated structured output.
+
+Client validation improves UX but does not replace server validation.
+
+## Server and Client Boundaries
+
+Server-only code includes:
+
+- Supabase privileged operations.
+- Prisma database access.
+- Groq API calls.
+- Duffel API calls.
+- Booking operations.
+- Secret configuration.
+
+Never import server-only modules into Client Components.
+
+Never expose secret API keys through public environment variables.
+
+Use the existing Supabase client configuration and authenticated session approach.
+
+## Supabase API Keys
+
+Use the current Supabase API key format:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- `SUPABASE_SECRET_KEY`
+
+Do not use the legacy Supabase `anon` or `service_role` keys or their environment variable names in new code.
+
+### Publishable Key
+
+The Publishable key is intended for normal application access.
+
+It may be used in browser-side Supabase clients.
+
+User data access must rely on the authenticated user's session and appropriate authorization policies.
+
+### Secret Key
+
+The Secret key is elevated and server-only.
+
+Never:
+
+- Expose it in client-side code.
+- Prefix it with `NEXT_PUBLIC_`.
+- Commit it to source control.
+- Use it as the default key for normal user operations.
+- Assume that possession of the key removes the need for application authorization.
+
+Operations using the Secret key must be restricted to trusted server-side code.
+
+Perform server-side authentication and authorization checks before accessing or modifying protected user data.
+
+## Authentication and Authorization
+
+- Verify the user on the server for protected operations.
+- Do not trust a client-provided user ID.
+- Check resource ownership before reading or modifying user data.
+- Use the project's established Supabase session approach.
+- Keep authorization logic out of purely presentational components.
+- Do not treat Proxy as the only authorization mechanism.
+
+## Database
+
+Use the existing Prisma setup.
+
+- Inspect the current schema before adding models.
+- Use appropriate foreign keys and indexes.
+- Use transactions for related database changes.
+- Avoid storing unnecessary sensitive data.
+- Do not modify production data as part of development setup.
+- Preserve the existing Prisma version, adapter, and generated client configuration.
+
+### Prisma Client Singleton
+
+Use the existing shared Prisma Client singleton.
+
+In development, cache the Prisma Client instance using `globalThis` to prevent multiple instances during Next.js hot reloads.
+
+Do not instantiate Prisma Client repeatedly in:
+
+- Route Handlers.
+- Server Actions.
+- React components.
+- Individual service functions.
+- Request-processing callbacks.
+
+Import the shared Prisma Client instance from the project's established Prisma module.
+
+Do not create a second Prisma Client singleton or replace the existing database configuration without explicit approval.
+
+Do not create a new Prisma Client for every request.
+
+## API and Service Design
+
+- Keep Route Handlers focused on request validation and response handling.
+- Put provider-specific operations in service modules.
+- Normalize provider responses before passing them to UI components.
+- Return consistent error structures.
+- Avoid exposing raw internal exceptions to users.
+- Do not mix UI rendering with provider API calls.
+- Reuse the shared Prisma Client singleton.
+
+## External Providers
+
+Duffel and Groq must be called server-side.
+
+- Use current provider documentation.
+- Do not guess request or response fields.
+- Handle timeouts, rate limits, and provider failures.
+- Do not assume an offer remains valid indefinitely.
+- Do not treat AI-generated text as provider confirmation.
+- Do not treat flight search as booking confirmation.
+
+## Booking
+
+- Require explicit user action.
+- Validate the selected offer and passenger details.
+- Recheck offer validity or price when required by the provider.
+- Protect against duplicate booking requests.
+- Persist provider identifiers and status.
+- Only display confirmation after a confirmed provider response.
+
+## Quality
+
+For each completed task:
+
+- Run the relevant TypeScript check.
+- Run linting.
+- Run relevant tests.
+- Fix introduced errors.
+- Update `docs/tasks.md`.
+
+Do not claim a check passed unless it was actually run.

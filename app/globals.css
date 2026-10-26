@@ -1,26 +1,90 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --midnight: #080b14;
+  --navy: #101625;
+  --surface: #171f31;
+  --border: #273149;
+  --topbar-border: #202a3d;
+  --input-bg: #0b1120;
+  --panel-border: #394762;
+
+  --background: var(--midnight);
+  --foreground: #f4f7fc;
+  --card: var(--navy);
+  --card-foreground: var(--foreground);
+  --muted-foreground: #9aa7bd;
+  --primary: #c7f36b;
+  --primary-foreground: #101625;
+  --secondary: var(--surface);
+  --secondary-foreground: var(--foreground);
+  --accent: #72e6c1;
+  --destructive: #ff7c86;
+  --ring: #c7f36b;
+  --input: var(--border);
+  --label: #dce4f2;
+
+  --radius-input: 0.75rem;
+  --radius-button: 0.8125rem;
+  --radius-card: 1.375rem;
+  --radius-auth-visual: 1.75rem;
+  --radius-panel: 1.25rem;
+
+  --shadow-auth-panel: 0 24px 70px rgb(0 0 0 / 0.44);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-label: var(--label);
+  --color-topbar-border: var(--topbar-border);
+  --color-input-background: var(--input-bg);
+  --color-panel-border: var(--panel-border);
+  --color-lime: #c7f36b;
+  --color-mint: #72e6c1;
+  --color-ai-blue: #7ea7ff;
+  --color-violet: #a78bfa;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-input: var(--radius-input);
+  --radius-button: var(--radius-button);
+  --radius-card: var(--radius-card);
+  --radius-auth-visual: var(--radius-auth-visual);
+  --radius-panel: var(--radius-panel);
+
+  --shadow-auth-panel: var(--shadow-auth-panel);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@utility font-heading {
+  font-family: var(--font-heading);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+  line-height: 1.15;
 }

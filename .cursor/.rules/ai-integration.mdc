@@ -1,0 +1,23 @@
+---
+description: Rules for Groq, LLM prompts, structured extraction, and AI-generated explanations
+globs:
+  - "/lib/groq/**/*.ts"
+  - "/services/ai/**/*.ts"
+  - "/app/api/chat/**/*.ts"
+alwaysApply: false
+---
+
+# AI Integration Rules
+
+- Call Groq only from server-side code.
+- Keep API credentials in environment variables.
+- Use structured output where supported.
+- Validate model output with Zod.
+- Treat model output as untrusted input.
+- Ask follow-up questions when required trip information is missing.
+- Do not allow AI to invent flight offers, availability, prices, taxes, or point balances.
+- Do not use AI as the source of truth for numerical savings.
+- Use deterministic application code for optimization and ranking.
+- Use AI to explain recommendations based only on verified provider data.
+- Handle malformed output, timeouts, and model errors.
+- Keep prompts focused and avoid sending unnecessary personal data.

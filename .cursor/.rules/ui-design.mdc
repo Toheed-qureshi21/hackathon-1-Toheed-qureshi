@@ -1,0 +1,158 @@
+---
+description: RedeemTrip visual design and UI implementation rules
+alwaysApply: true
+---
+
+# RedeemTrip UI Design Rules
+
+## Design Source of Truth
+
+The `design-reference/` directory is the visual source of truth for the application.
+
+Before implementing or modifying a page:
+
+1. Inspect its corresponding HTML reference.
+2. Inspect `styles.css`.
+3. Inspect relevant assets and icons.
+4. Reuse the established visual patterns.
+5. Keep the implementation consistent with the existing design.
+
+Do not redesign pages without an explicit request.
+
+## Brand Identity
+
+Product: RedeemTrip
+
+Tagline: Travel smarter. Redeem better.
+
+Brand promise: Make your points and miles go further.
+
+### Colors
+
+- Midnight: `#080B14`
+- Deep Navy: `#101625`
+- Elevated Surface: `#171F31`
+- Border: `#273149`
+- Primary Text: `#F4F7FC`
+- Secondary Text: `#9AA7BD`
+- Lime: `#C7F36B`
+- Mint: `#72E6C1`
+- AI Blue: `#7EA7FF`
+- Violet: `#A78BFA`
+
+### Typography
+
+- Headings: Space Grotesk
+- Body: Inter
+
+## Design Tokens — Mandatory
+
+- **Single source of truth:** Define and maintain design tokens in `app/globals.css` using the existing Tailwind CSS v4 CSS-first theme architecture.
+- **Centralize values:** Tokens must cover brand and semantic colors, typography, spacing, border radius, borders, shadows, and focus states as needed.
+- **Reuse before creating:** Inspect existing tokens before introducing new ones. Avoid duplicate or competing token definitions.
+- **Use semantic tokens:** Components should use semantic utilities such as `bg-background`, `text-foreground`, `bg-card`, `text-muted-foreground`, `border-border`, `bg-primary`, and `ring-ring`.
+- **Avoid hardcoded values:** Do not hardcode colors, fonts, spacing, radii, or shadows in components when an existing token or utility can be used. Avoid arbitrary Tailwind values unless genuinely necessary.
+- **Tailwind v4:** Follow the project's existing CSS-first setup. Do not introduce Tailwind v3 configuration patterns or unnecessary configuration files.
+- **Extend centrally:** When a new design value is required, define it in the token system first and then use it in components.
+- **Keep components consistent:** Shared components and page layouts must consume the same tokens and preserve accessible contrast and focus states.
+- **Verify:** Before completing a UI task, check for duplicated tokens and unnecessary hardcoded design values.
+
+The design-token system is mandatory. Do not bypass it for speed or convenience.
+
+## Visual Direction
+
+RedeemTrip should feel like a premium travel-fintech product with an intelligent AI travel assistant.
+
+Prioritize:
+
+- Clear hierarchy.
+- Readable typography.
+- Consistent spacing.
+- Restrained use of accent colors.
+- Polished cards and form controls.
+- Clear distinction between cash and rewards values.
+- Trustworthy presentation of flight information.
+- Consistent desktop and mobile layouts.
+
+Avoid:
+
+- Generic travel website layouts.
+- Unrelated gradients or colors.
+- Excessive decoration.
+- Inconsistent border radii.
+- Unnecessary animation.
+- Fake flight information presented as real.
+- Unsupported claims about savings or redemption availability.
+
+## Components
+
+Prefer shared components for:
+
+- Buttons.
+- Inputs.
+- Select controls.
+- Date pickers.
+- Cards.
+- Dialogs.
+- Navigation.
+- Flight result cards.
+- Loading states.
+- Empty states.
+- Error messages.
+
+Use existing shadcn/ui components where appropriate.
+
+Do not create a new component if an existing component already satisfies the requirement.
+
+## Assets
+
+- Reuse the supplied RedeemTrip logo.
+- Reuse supplied SVG icons.
+- Do not replace brand assets with emoji.
+- Do not redraw the logo.
+- Do not create external image dependencies unless required.
+- Keep production assets in the appropriate public or source asset directory.
+
+## Accessibility
+
+- Use semantic HTML.
+- Provide labels for form fields.
+- Use buttons for actions and links for navigation.
+- Support keyboard interaction.
+- Maintain sufficient contrast.
+- Provide visible focus states.
+- Do not rely on color alone to communicate status.
+
+## Responsive Design
+
+Support:
+
+- Desktop.
+- Tablet.
+- Mobile.
+
+Avoid fixed-width layouts that overflow smaller screens.
+
+Test planner forms, flight results, dialogs, navigation, and booking review layouts at narrow widths.
+
+## UI States
+
+Interactive components must account for:
+
+- Default.
+- Hover.
+- Focus.
+- Disabled.
+- Loading.
+- Validation error.
+- Empty state.
+- Success state.
+
+Do not leave buttons visually interactive if they have no implemented action.
+
+## Implementation
+
+- Use React components and the existing application architecture.
+- Do not use static HTML files as production routes.
+- Do not copy entire HTML documents into React components.
+- Keep UI code separate from provider API logic and server-only functionality.

@@ -1,0 +1,25 @@
+---
+description: Backend rules for API routes, Prisma, authentication, and provider services
+globs:
+  - "/app/api/**/*.ts"
+  - "/lib/**/*.ts"
+  - "/services/**/*.ts"
+  - "prisma/**/*.prisma"
+alwaysApply: false
+---
+
+# Backend Rules
+
+- Use TypeScript.
+- Validate request bodies, query parameters, and external responses with Zod.
+- Authenticate protected requests on the server.
+- Enforce ownership checks for user-owned records.
+- Never trust a client-submitted user ID.
+- Keep Prisma access in server-side code.
+- Use provider adapter interfaces.
+- Normalize provider data before returning it to the UI.
+- Handle timeouts, provider errors, and empty results.
+- Do not expose secrets or internal stack traces.
+- Use deterministic code for calculations and ranking.
+- Add tests for business logic.
+- Avoid unnecessary database queries.
