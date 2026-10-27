@@ -1,3 +1,4 @@
+import { getSupabasePublicEnv } from "@/lib/supabase/env";
 import { createBrowserClient } from "@supabase/ssr";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -8,18 +9,17 @@ export function getSupabaseBrowserClient(): SupabaseClient | null {
     return browserClient;
   }
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim();
+  const { url, publishableKey, isConfigured } = getSupabasePublicEnv();
 
-  if (!url || !key) {
+  if (!isConfigured || !url || !publishableKey) {
     browserClient = null;
     return null;
   }
 
-  browserClient = createBrowserClient(url, key);
+  browserClient = createBrowserClient(url, publishableKey);
   return browserClient;
 }
 
 export function isSupabaseAuthConfigured(): boolean {
-  return getSupabaseBrowserClient() !== null;
+  return getSupabasePublicEnv().isConfigured;
 }

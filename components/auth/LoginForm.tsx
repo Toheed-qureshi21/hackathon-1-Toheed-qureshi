@@ -11,6 +11,7 @@ import {
   authSecondaryButtonClassName,
   authHeadingClassName,
 } from "@/lib/authFieldStyles";
+import { postAuthJson } from "@/lib/auth/client-api";
 import {
   fieldErrorsFromZod,
   loginSchema,
@@ -18,9 +19,11 @@ import {
 } from "@/schemas/authSchema";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function LoginForm() {
+  const router = useRouter();
   const [fieldErrors, setFieldErrors] = useState<
     Record<string, string | undefined>
   >({});
@@ -50,12 +53,36 @@ export function LoginForm() {
     }
 
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    setIsLoading(false);
-    setFormMessageVariant("info");
-    setFormMessage(
-      "Sign-in is not connected yet. Your entries passed validation — authentication will be enabled in a later phase.",
-    );
+    try {
+      const { data } = await postAuthJson("/api/auth/login", {
+        email: parsed.data.email,
+        password: parsed.data.password,
+        rememberMe: parsed.data.rememberMe,
+      });
+
+      if (!data.ok) {
+        setFormMessageVariant("error");
+        if (data.fieldErrors) {
+          setFieldErrors(data.fieldErrors);
+        }
+        setFormMessage(data.error);
+        return;
+      }
+
+      if (data.redirectTo) {
+        router.push(data.redirectTo);
+        router.refresh();
+        return;
+      }
+
+      router.push("/planner");
+      router.refresh();
+    } catch {
+      setFormMessageVariant("error");
+      setFormMessage("Network error. Check your connection and try again.");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   function handleUnavailableAction(message: string) {

@@ -15,6 +15,7 @@ import {
   authSecondaryButtonClassName,
   authHeadingClassName,
 } from "@/lib/authFieldStyles";
+import { postAuthJson } from "@/lib/auth/client-api";
 import {
   fieldErrorsFromZod,
   signupSchema,
@@ -22,9 +23,11 @@ import {
 } from "@/schemas/authSchema";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function SignupForm() {
+  const router = useRouter();
   const [fieldErrors, setFieldErrors] = useState<
     Record<string, string | undefined>
   >({});
@@ -58,12 +61,46 @@ export function SignupForm() {
     }
 
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    setIsLoading(false);
-    setFormMessageVariant("info");
-    setFormMessage(
-      "Account creation is not connected yet. Your entries passed validation — registration will be enabled in a later phase.",
-    );
+    try {
+      const { data } = await postAuthJson("/api/auth/signup", {
+        fullName: parsed.data.fullName,
+        email: parsed.data.email,
+        password: parsed.data.password,
+        acceptTerms: parsed.data.acceptTerms,
+      });
+
+      if (!data.ok) {
+        setFormMessageVariant("error");
+        if (data.fieldErrors) {
+          setFieldErrors(data.fieldErrors);
+        }
+        setFormMessage(data.error);
+        return;
+      }
+
+      if (data.status === "verification_pending") {
+        setFormMessageVariant("info");
+        setFormMessage(
+          data.message ??
+            "Check your email to confirm your account before signing in.",
+        );
+        return;
+      }
+
+      if (data.redirectTo) {
+        router.push(data.redirectTo);
+        router.refresh();
+        return;
+      }
+
+      router.push("/planner");
+      router.refresh();
+    } catch {
+      setFormMessageVariant("error");
+      setFormMessage("Network error. Check your connection and try again.");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   function handleUnavailableAction(message: string) {

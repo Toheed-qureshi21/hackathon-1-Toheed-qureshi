@@ -6,7 +6,8 @@ import { useAuthSession } from "@/hooks/useAuthSession";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { postAuthJson } from "@/lib/auth/client-api";
+import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useId, useState, type ReactNode } from "react";
 
 type SiteNavbarProps = {
@@ -38,8 +39,25 @@ export function SiteNavbar({
 }: SiteNavbarProps) {
   const { status } = useAuthSession();
   const pathname = usePathname();
+  const router = useRouter();
   const menuId = useId();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
+
+  const closeMobile = useCallback(() => setMobileOpen(false), []);
+
+  const handleSignOut = useCallback(async () => {
+    if (isSigningOut) return;
+    setIsSigningOut(true);
+    try {
+      const { data } = await postAuthJson("/api/auth/logout", {});
+      closeMobile();
+      router.push(data.ok && data.redirectTo ? data.redirectTo : "/login");
+      router.refresh();
+    } catch {
+      setIsSigningOut(false);
+    }
+  }, [closeMobile, isSigningOut, router]);
 
   const isAuthenticated = status === "authenticated";
   const authReady = status !== "loading";
@@ -54,8 +72,6 @@ export function SiteNavbar({
         { href: "/login", label: "Sign in" },
         { href: "/signup", label: "Sign up" },
       ];
-
-  const closeMobile = useCallback(() => setMobileOpen(false), []);
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -126,12 +142,22 @@ export function SiteNavbar({
                   aria-label="Loading account"
                 />
               ) : isAuthenticated ? (
-                <Link
-                  href="/planner"
-                  className="inline-flex h-10 items-center justify-center rounded-button border border-border bg-secondary px-[18px] text-sm font-semibold text-secondary-foreground transition-[filter,background-color] hover:bg-secondary/90 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/25"
-                >
-                  Open planner
-                </Link>
+                <>
+                  <Link
+                    href="/planner"
+                    className="inline-flex h-10 items-center justify-center rounded-button border border-border bg-secondary px-[18px] text-sm font-semibold text-secondary-foreground transition-[filter,background-color] hover:bg-secondary/90 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/25"
+                  >
+                    Open planner
+                  </Link>
+                  <button
+                    type="button"
+                    disabled={isSigningOut}
+                    onClick={() => void handleSignOut()}
+                    className="inline-flex h-10 items-center justify-center rounded-button px-[18px] text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary/50 hover:text-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/25 disabled:opacity-50"
+                  >
+                    {isSigningOut ? "Signing out…" : "Sign out"}
+                  </button>
+                </>
               ) : (
                 <>
                   <Link
@@ -214,7 +240,7 @@ export function SiteNavbar({
               </div>
             ) : null}
             {authReady && isAuthenticated ? (
-              <div className="mt-3 border-t border-border pt-3">
+              <div className="mt-3 flex flex-col gap-2 border-t border-border pt-3">
                 <Link
                   href="/planner"
                   onClick={closeMobile}
@@ -222,6 +248,14 @@ export function SiteNavbar({
                 >
                   Open planner
                 </Link>
+                <button
+                  type="button"
+                  disabled={isSigningOut}
+                  onClick={() => void handleSignOut()}
+                  className="inline-flex h-11 w-full items-center justify-center rounded-button border border-border bg-secondary text-sm font-semibold text-secondary-foreground disabled:opacity-50"
+                >
+                  {isSigningOut ? "Signing out…" : "Sign out"}
+                </button>
               </div>
             ) : null}
           </Container>
