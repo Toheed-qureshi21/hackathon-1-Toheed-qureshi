@@ -23,47 +23,51 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 
-function ModeledPriceCompare({
+function CashVsPointsPrice({
   cashAmount,
   cashCurrency,
-  outOfPocketAmount,
-  outOfPocketCurrency,
-  pointsCoversScenario,
+  pointsAmount,
+  pointsCurrency,
 }: {
   cashAmount: string;
   cashCurrency: string;
-  outOfPocketAmount: string;
-  outOfPocketCurrency: string;
-  pointsCoversScenario: boolean;
+  pointsAmount: string;
+  pointsCurrency: string;
 }) {
   const cashLabel = formatOfferMoney(cashAmount, cashCurrency);
-  const oopLabel = formatOfferMoney(outOfPocketAmount, outOfPocketCurrency);
+  const pointsLabel = formatOfferMoney(pointsAmount, pointsCurrency);
+  const cashValue = Number.parseFloat(cashAmount);
+  const pointsValue = Number.parseFloat(pointsAmount);
+  const cheaperWithPoints =
+    Number.isFinite(cashValue) &&
+    Number.isFinite(pointsValue) &&
+    pointsValue < cashValue;
 
   return (
-    <div className="mt-4 rounded-planner-lg border border-border bg-background/50 px-4 py-4">
-      <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-        Modeled fare comparison
-      </p>
-      <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
-        <span
-          className="font-heading text-2xl font-bold text-red-400 line-through decoration-red-400 decoration-2"
-          aria-label={`Cash fare ${cashLabel}`}
+    <div className="mt-4 grid gap-3 sm:grid-cols-2">
+      <div className="rounded-planner-md border border-border bg-background/40 px-4 py-3">
+        <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+          Cash price
+        </p>
+        <p
+          className={cn(
+            "mt-1 font-heading text-2xl font-bold",
+            cheaperWithPoints
+              ? "text-red-400 line-through decoration-red-400 decoration-2"
+              : "text-foreground",
+          )}
         >
           {cashLabel}
-        </span>
-        <span className="text-lg text-muted-foreground" aria-hidden>
-          →
-        </span>
-        <span className="font-heading text-2xl font-bold text-primary">
-          {oopLabel}
-        </span>
-        <span className="text-sm font-medium text-muted-foreground">+ points</span>
+        </p>
       </div>
-      <p className="mt-2 text-xs text-muted-foreground">
-        {pointsCoversScenario
-          ? "Strikethrough is lowest Duffel cash. Highlighted amount is taxes/fees only for your scenario (hypothetical award)."
-          : "Strikethrough is cash fare. Highlighted amount is taxes/fees if you had enough points for this scenario."}
-      </p>
+      <div className="rounded-planner-md border border-primary/30 bg-primary/5 px-4 py-3">
+        <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+          Price with points
+        </p>
+        <p className="mt-1 font-heading text-2xl font-bold text-primary">
+          {pointsLabel}
+        </p>
+      </div>
     </div>
   );
 }
@@ -98,7 +102,7 @@ export function RewardsEvaluationPanel({
   className,
 }: RewardsEvaluationPanelProps) {
   const [assumptions, setAssumptions] = useState<UserRedemptionAssumption[]>([]);
-  const [showScenarioForm, setShowScenarioForm] = useState(true);
+  const [showScenarioForm, setShowScenarioForm] = useState(false);
 
   const defaultProgramId = tripInput?.rewards[0]?.programId ?? "";
   const defaultTaxCurrency =
@@ -178,33 +182,26 @@ export function RewardsEvaluationPanel({
   }, [assumptions, draft, onEvaluate]);
 
   const canEvaluate = Boolean(tripInput);
-  const showInlineScenario = hasCashSearch && !redemptionRow;
   const primaryAccount = savedAccounts[0] ?? null;
 
-  const modeledPriceCompare = useMemo(() => {
-    if (!redemptionRow) return null;
-    const cashAmount =
-      redemptionRow.comparedCashFareAmount ?? primary?.lowestCashAmount ?? null;
-    const cashCurrency =
-      redemptionRow.comparedCashFareCurrency ?? primary?.lowestCashCurrency ?? null;
-    if (!cashAmount || !cashCurrency) return null;
-    return {
-      cashAmount,
-      cashCurrency,
-      outOfPocketAmount: redemptionRow.taxesAndFeesAmount,
-      outOfPocketCurrency: redemptionRow.taxesAndFeesCurrency,
-      pointsCoversScenario: redemptionRow.shortfallStatus === "sufficient",
-    };
+  const priceCompare = useMemo(() => {
+    const cashAmount = primary?.lowestCashAmount ?? null;
+    const cashCurrency = primary?.lowestCashCurrency ?? null;
+    const pointsAmount =
+      primary?.pointsOutOfPocketAmount ??
+      redemptionRow?.taxesAndFeesAmount ??
+      null;
+    const pointsCurrency =
+      primary?.pointsOutOfPocketCurrency ??
+      redemptionRow?.taxesAndFeesCurrency ??
+      null;
+    if (!cashAmount || !cashCurrency || !pointsAmount || !pointsCurrency) {
+      return null;
+    }
+    return { cashAmount, cashCurrency, pointsAmount, pointsCurrency };
   }, [primary, redemptionRow]);
 
-  const glanceWithPoints = modeledPriceCompare
-    ? `${modeledPriceCompare.outOfPocketAmount} ${modeledPriceCompare.outOfPocketCurrency} + points`
-    : showInlineScenario
-      ? "Enter award cost below"
-      : primary?.lowestCashAmount && primary.lowestCashCurrency
-        ? `${primary.lowestCashAmount} ${primary.lowestCashCurrency} cash only`
-        : "—";
-
+  const showInlineScenario = hasCashSearch && !redemptionRow && !priceCompare;
   const draftProgramId =
     draft.programId || (defaultProgramId as AssumptionDraft["programId"]);
   const draftCurrency = draft.taxesAndFeesCurrency || defaultTaxCurrency;
@@ -226,8 +223,8 @@ export function RewardsEvaluationPanel({
             Rewards comparison
           </h2>
           <p className="mt-1 text-xs text-muted-foreground">
-            Balances and monthly earning come from your saved trip form. Cash fares
-            are shown separately in cash flight search.
+            When you have confirmed points, we show the cash price and the price
+            after those points are applied.
           </p>
         </div>
         <Button
@@ -324,51 +321,26 @@ export function RewardsEvaluationPanel({
           <p className={cn(plannerSectionLabelClassName, "text-muted-foreground")}>
             Comparison result
           </p>
-          <p className="mt-2 font-heading text-base font-semibold text-foreground">
-            {primary.headline}
-          </p>
-          <p className="mt-1 text-sm text-muted-foreground">{primary.subline}</p>
-
-          {primary.lowestCashAmount && primary.lowestCashCurrency ? (
-            <div className="mt-4 grid gap-2 sm:grid-cols-3">
-              <div className="rounded-planner-md border border-border bg-background/40 px-3 py-2.5">
-                <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-                  Cash (Duffel)
-                </p>
-                <p className="mt-1 font-heading text-sm font-semibold text-foreground">
-                  {primary.lowestCashAmount} {primary.lowestCashCurrency}
-                </p>
-              </div>
-              <div className="rounded-planner-md border border-primary/30 bg-primary/5 px-3 py-2.5">
-                <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-                  Your points (trip form)
-                </p>
-                <p className="mt-1 font-heading text-sm font-semibold text-foreground">
-                  {primaryAccount?.balanceDisplay ??
-                    (primary.balancePoints !== null
-                      ? `${primary.balancePoints!.toLocaleString()} ${primary.pointsUnitLabel ?? "pts"}`
-                      : "Balance not provided")}
-                </p>
-              </div>
-              <div className="rounded-planner-md border border-border bg-background/40 px-3 py-2.5">
-                <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-                  Modeled pay with points
-                </p>
-                <p className="mt-1 font-heading text-sm font-semibold text-foreground">
-                  {glanceWithPoints}
-                </p>
-              </div>
-            </div>
-          ) : null}
-
-          {modeledPriceCompare ? (
-            <ModeledPriceCompare
-              cashAmount={modeledPriceCompare.cashAmount}
-              cashCurrency={modeledPriceCompare.cashCurrency}
-              outOfPocketAmount={modeledPriceCompare.outOfPocketAmount}
-              outOfPocketCurrency={modeledPriceCompare.outOfPocketCurrency}
-              pointsCoversScenario={modeledPriceCompare.pointsCoversScenario}
+          {priceCompare ? (
+            <CashVsPointsPrice
+              cashAmount={priceCompare.cashAmount}
+              cashCurrency={priceCompare.cashCurrency}
+              pointsAmount={priceCompare.pointsAmount}
+              pointsCurrency={priceCompare.pointsCurrency}
             />
+          ) : (
+            <>
+              <p className="mt-2 font-heading text-base font-semibold text-foreground">
+                {primary.headline}
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">{primary.subline}</p>
+            </>
+          )}
+          {priceCompare && primaryAccount ? (
+            <p className="mt-2 text-sm text-muted-foreground">
+              Using {primaryAccount.balanceDisplay}
+              {primary.subline ? ` · ${primary.subline}` : ""}
+            </p>
           ) : null}
 
           {redemptionRow ? (
@@ -410,9 +382,8 @@ export function RewardsEvaluationPanel({
           primary.notionalCashSavingsAmount &&
           primary.notionalCashSavingsCurrency ? (
             <p className="mt-3 text-xs text-muted-foreground">
-              Modeled difference vs lowest comparable cash: up to{" "}
-              {primary.notionalCashSavingsAmount} {primary.notionalCashSavingsCurrency}.
-              Hypothetical only — not verified award availability.
+              Points save {primary.notionalCashSavingsAmount}{" "}
+              {primary.notionalCashSavingsCurrency} versus paying cash.
             </p>
           ) : null}
         </div>
@@ -426,16 +397,24 @@ export function RewardsEvaluationPanel({
         </ul>
       ) : null}
 
-      {tripInput && showInlineScenario && showScenarioForm ? (
+      {tripInput && !showScenarioForm ? (
+        <Button
+          type="button"
+          variant="secondary"
+          className="mt-3"
+          onClick={openScenarioForm}
+        >
+          {redemptionRow ? "Change award quote" : "Use a specific award quote"}
+        </Button>
+      ) : null}
+
+      {tripInput && showScenarioForm ? (
         <div className="mt-4 rounded-planner-lg border border-dashed border-border p-4">
           <p className="text-xs font-medium text-foreground">
-            Award cost for this trip (you enter — not your saved balance)
+            Optional award quote
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Example: if the airline would charge 45,000 points + {defaultTaxCurrency} 120 in
-            taxes for this route, enter those numbers. We compare that to your{" "}
-            {primaryAccount?.balanceDisplay ?? "saved balance"} and{" "}
-            {primary?.lowestCashAmount ?? "…"} {primary?.lowestCashCurrency ?? ""} cash.
+            Replace the automatic points discount with a specific award cost.
           </p>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             <div>
@@ -459,7 +438,7 @@ export function RewardsEvaluationPanel({
               </select>
             </div>
             <div>
-              <Label htmlFor="re-scenario-pts">Points required for this award</Label>
+              <Label htmlFor="re-scenario-pts">Points required</Label>
               <Input
                 id="re-scenario-pts"
                 inputMode="numeric"
@@ -474,7 +453,7 @@ export function RewardsEvaluationPanel({
               />
             </div>
             <div>
-              <Label htmlFor="re-scenario-tax">Taxes &amp; fees (cash)</Label>
+              <Label htmlFor="re-scenario-tax">Taxes &amp; fees</Label>
               <Input
                 id="re-scenario-tax"
                 placeholder="e.g. 120.00"
@@ -505,24 +484,9 @@ export function RewardsEvaluationPanel({
             </div>
           </div>
           <Button type="button" className="mt-3" variant="secondary" onClick={addScenarioAndRefresh}>
-            Compare my {primaryAccount?.balancePoints?.toLocaleString() ?? "saved"}{" "}
-            points to cash
+            Apply award quote
           </Button>
         </div>
-      ) : null}
-
-      {tripInput && redemptionRow && !showInlineScenario ? (
-        <Button
-          type="button"
-          variant="secondary"
-          className="mt-3"
-          onClick={() => {
-            openScenarioForm();
-            setShowScenarioForm(true);
-          }}
-        >
-          Change award cost assumption
-        </Button>
       ) : null}
 
       {evaluation ? (

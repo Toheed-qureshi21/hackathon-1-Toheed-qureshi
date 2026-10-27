@@ -3,6 +3,7 @@
 import { FlightOfferCard } from "@/components/planner/FlightOfferCard";
 import { Button } from "@/components/ui/Button";
 import { FormMessage } from "@/components/ui/FormMessage";
+import type { ConfirmedPointsContext } from "@/lib/rewards/points-credit";
 import type { FlightSearchSuccessResponse } from "@/schemas/flightSearchSchema";
 import { cn } from "@/lib/utils";
 
@@ -12,6 +13,7 @@ type CashFlightResultsProps = {
   error: string | null;
   canSearch: boolean;
   onSearch: () => void;
+  pointsContext?: ConfirmedPointsContext | null;
   className?: string;
 };
 
@@ -21,6 +23,7 @@ export function CashFlightResults({
   error,
   canSearch,
   onSearch,
+  pointsContext = null,
   className,
 }: CashFlightResultsProps) {
   const showTestModeBanner =
@@ -41,7 +44,9 @@ export function CashFlightResults({
             Cash flight search
           </h2>
           <p className="mt-1 text-xs text-muted-foreground">
-            Cash fares from Duffel only — not award or points pricing.
+            {pointsContext
+              ? `Cash price vs price with your ${pointsContext.balancePoints.toLocaleString()} ${pointsContext.pointsUnitLabel}.`
+              : "Cash fares from Duffel. Add confirmed points on the trip form to see the discounted price."}
           </p>
         </div>
         <Button
@@ -89,7 +94,11 @@ export function CashFlightResults({
       {result && result.offers.length > 0 ? (
         <div className="scrollbar-thin mt-4 max-h-[520px] space-y-3 overflow-y-auto pr-1">
           {result.offers.slice(0, 12).map((offer) => (
-            <FlightOfferCard key={offer.offerId} offer={offer} />
+            <FlightOfferCard
+              key={offer.offerId}
+              offer={offer}
+              pointsContext={pointsContext}
+            />
           ))}
           {result.offers.length > 12 ? (
             <p className="text-center text-xs text-muted-foreground">

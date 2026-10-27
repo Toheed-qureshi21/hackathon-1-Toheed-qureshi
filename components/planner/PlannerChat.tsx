@@ -42,6 +42,7 @@ import {
   type TripPlannerFormValues,
   type TripPlannerInput,
 } from "@/schemas/tripPlannerSchema";
+import { firstConfirmedPointsContext } from "@/lib/rewards/points-credit";
 import { cn } from "@/lib/utils";
 import { useCallback, useMemo, useRef, useState } from "react";
 
@@ -101,6 +102,11 @@ export function PlannerChat() {
       iataCodeSchema.safeParse(form.destinationIataCode).success
     );
   }, [activeConversation.tripForm, activeConversation.validatedTripInput]);
+
+  const pointsContext = useMemo(
+    () => firstConfirmedPointsContext(activeConversation.validatedTripInput),
+    [activeConversation.validatedTripInput],
+  );
 
   const scrollToBottom = useCallback(() => {
     requestAnimationFrame(() => {
@@ -688,6 +694,7 @@ export function PlannerChat() {
                         <ChatMessageBubble
                           key={message.id}
                           message={message}
+                          pointsContext={pointsContext}
                           onRetry={
                             message.status === "failed" ? handleRetry : undefined
                           }
@@ -769,6 +776,7 @@ export function PlannerChat() {
                   error={flightSearchError}
                   canSearch={canSearchFlights}
                   onSearch={() => void handleFlightSearch()}
+                  pointsContext={pointsContext}
                 />
                 <RewardsEvaluationPanel
                   tripInput={activeConversation.validatedTripInput}
@@ -799,6 +807,7 @@ export function PlannerChat() {
                   error={flightSearchError}
                   canSearch={canSearchFlights}
                   onSearch={() => void handleFlightSearch()}
+                  pointsContext={pointsContext}
                 />
                 <RewardsEvaluationPanel
                   tripInput={activeConversation.validatedTripInput}

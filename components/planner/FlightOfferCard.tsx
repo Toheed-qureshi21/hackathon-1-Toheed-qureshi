@@ -1,4 +1,9 @@
 import { plannerSectionLabelClassName } from "@/lib/plannerFieldStyles";
+import {
+  applyPointsCredit,
+  formatCreditMoney,
+  type ConfirmedPointsContext,
+} from "@/lib/rewards/points-credit";
 import type { NormalizedCashFlightOffer } from "@/schemas/flightSearchSchema";
 import { cn } from "@/lib/utils";
 
@@ -27,10 +32,22 @@ export function formatOfferDateTime(value: string) {
 type FlightOfferCardProps = {
   offer: NormalizedCashFlightOffer;
   compact?: boolean;
+  pointsContext?: ConfirmedPointsContext | null;
 };
 
-export function FlightOfferCard({ offer, compact = false }: FlightOfferCardProps) {
+export function FlightOfferCard({
+  offer,
+  compact = false,
+  pointsContext = null,
+}: FlightOfferCardProps) {
   const primarySegment = offer.slices[0]?.segments[0];
+  const cashValue = Number.parseFloat(offer.totalAmount);
+  const discount =
+    pointsContext && Number.isFinite(cashValue)
+      ? applyPointsCredit(cashValue, pointsContext.balancePoints)
+      : null;
+  const hasDiscount = Boolean(discount && discount.pointsCredit > 0);
+
   return (
     <article
       className={cn(
@@ -40,15 +57,54 @@ export function FlightOfferCard({ offer, compact = false }: FlightOfferCardProps
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p
-            className={cn(
-              "font-heading font-semibold text-foreground",
-              compact ? "text-base" : "text-lg",
-            )}
-          >
-            {formatOfferMoney(offer.totalAmount, offer.totalCurrency)}
-          </p>
-          <p className="text-xs text-muted-foreground">Cash fare · not points</p>
+          {hasDiscount && discount ? (
+            <div className="space-y-1">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  Cash price
+                </p>
+                <p
+                  className={cn(
+                    "font-heading font-semibold text-red-400 line-through decoration-red-400 decoration-2",
+                    compact ? "text-base" : "text-lg",
+                  )}
+                >
+                  {formatOfferMoney(offer.totalAmount, offer.totalCurrency)}
+                </p>
+              </div>
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  Price with points
+                </p>
+                <p
+                  className={cn(
+                    "font-heading font-bold text-primary",
+                    compact ? "text-base" : "text-xl",
+                  )}
+                >
+                  {formatOfferMoney(
+                    formatCreditMoney(discount.priceWithPoints),
+                    offer.totalCurrency,
+                  )}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <>
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                Cash price
+              </p>
+              <p
+                className={cn(
+                  "font-heading font-semibold text-foreground",
+                  compact ? "text-base" : "text-lg",
+                )}
+              >
+                {formatOfferMoney(offer.totalAmount, offer.totalCurrency)}
+              </p>
+              <p className="text-xs text-muted-foreground">No points applied</p>
+            </>
+          )}
         </div>
         <span
           className={cn(

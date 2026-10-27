@@ -13,6 +13,11 @@ import type {
 } from "@/schemas/rewardsEvaluationSchema";
 import type { NormalizedCashFlightOffer } from "@/schemas/flightSearchSchema";
 import {
+  applyPointsCredit,
+  firstConfirmedPointsContext,
+  formatCreditMoney,
+} from "@/lib/rewards/points-credit";
+import {
   REWARD_PROGRAM_OPTIONS,
   type RewardEntryInput,
   type TripPlannerInput,
@@ -22,7 +27,7 @@ export const CASH_RANKING_CRITERIA =
   "Cash offers are ranked lowest total price first within each currency. Only Duffel-returned cash fares are ranked; award redemptions are never mixed into this list.";
 
 export const AWARD_AVAILABILITY_NOTE =
-  "No award-flight search provider is integrated. RedeemTrip cannot verify live award availability or official points prices. Any redemption comparison uses only numbers you supply or that were independently verified elsewhere—not confirmed award seats.";
+  "Cash price is the Duffel fare. Price with points applies your confirmed balance at 0.01 of the fare currency per point. This is not live award inventory.";
 
 export const RESPONSIBLE_USE_NOTE =
   "Earn points through spending you already planned. Do not overspend, carry debt, or pay interest to accumulate points. Do not transfer points unless eligibility, transfer terms, and a suitable redemption are verified with the program.";
@@ -369,9 +374,14 @@ function buildMissingForFullComparison(
     );
   }
 
-  if (assumptions.length === 0 && trip.rewards.length > 0 && offers.length > 0) {
+  if (
+    assumptions.length === 0 &&
+    trip.rewards.length > 0 &&
+    offers.length > 0 &&
+    !firstConfirmedPointsContext(trip)
+  ) {
     missing.push(
-      "Enter award points required and taxes/fees below to compare your saved balance to the cash fare (not your balance again).",
+      "Confirm a points balance on the trip form to show cash price vs price with points.",
     );
   }
 
@@ -492,6 +502,26 @@ function buildPrimaryComparison(
     redemptionEvaluations[0];
 
   if (!assumption || !redemption) {
+    const pointsContext = firstConfirmedPointsContext(trip);
+    const cashAmount = parseMoneyAmount(lowest.totalAmount);
+    if (pointsContext && cashAmount !== null) {
+      const credit = applyPointsCredit(cashAmount, pointsContext.balancePoints);
+      base.programLabel = pointsContext.programLabel;
+      base.pointsUnitLabel = pointsContext.pointsUnitLabel;
+      base.balancePoints = pointsContext.balancePoints;
+      base.pointsOutOfPocketAmount = formatCreditMoney(credit.priceWithPoints);
+      base.pointsOutOfPocketCurrency = lowest.totalCurrency;
+      base.notionalCashSavingsAmount = formatCreditMoney(credit.pointsCredit);
+      base.notionalCashSavingsCurrency = lowest.totalCurrency;
+      base.pointsCoversScenario = credit.priceWithPoints === 0;
+      return {
+        ...base,
+        status: "points_out_of_pocket",
+        headline: `Cash price ${lowest.totalAmount} ${lowest.totalCurrency} · Price with points ${formatCreditMoney(credit.priceWithPoints)} ${lowest.totalCurrency}`,
+        subline: `Uses ${credit.pointsUsed.toLocaleString()} of ${pointsContext.balancePoints.toLocaleString()} ${pointsContext.pointsUnitLabel}.`,
+      };
+    }
+
     const balancePart =
       primaryReward?.balanceStatus === "confirmed" &&
       primaryReward.balancePoints !== null
@@ -504,10 +534,7 @@ function buildPrimaryComparison(
       status: "needs_redemption_scenario",
       headline: `${lowest.totalAmount} ${lowest.totalCurrency} cash vs ${balancePart}`,
       subline:
-        primaryReward?.balanceStatus === "confirmed" &&
-        primaryReward.balancePoints !== null
-          ? `Your ${primaryReward.balancePoints.toLocaleString()} ${base.pointsUnitLabel ?? "points"} are included in this comparison. Enter the award points required and taxes/fees for this trip to see modeled pay-with-points out-of-pocket vs ${lowest.totalAmount} ${lowest.totalCurrency} cash.`
-          : `Enter award points required and taxes/fees below to compare to ${lowest.totalAmount} ${lowest.totalCurrency} cash.`,
+        "Confirm a points balance on the trip form to show cash price vs price with points.",
     };
   }
 
@@ -536,8 +563,8 @@ function buildPrimaryComparison(
     return {
       ...base,
       status: "insufficient_points",
-      headline: `Cash fare ${lowest.totalAmount} ${lowest.totalCurrency} — or ${assumption.taxesAndFeesAmount} ${assumption.taxesAndFeesCurrency} + points if you had enough`,
-      subline: `You have ${redemption.balancePoints?.toLocaleString() ?? "—"} ${base.pointsUnitLabel}; need ${redemption.shortfallPoints?.toLocaleString()} more for this scenario (${assumption.pointsRequired.toLocaleString()} required).${timeline} Hypothetical — not confirmed award.`,
+      headline: `Cash price ${lowest.totalAmount} ${lowest.totalCurrency} · Price with points ${assumption.taxesAndFeesAmount} ${assumption.taxesAndFeesCurrency}`,
+      subline: `You have ${redemption.balancePoints?.toLocaleString() ?? "—"} ${base.pointsUnitLabel}; need ${redemption.shortfallPoints?.toLocaleString()} more for this award quote.${timeline}`,
       pointsCoversScenario: false,
       pointsOutOfPocketAmount: assumption.taxesAndFeesAmount,
       pointsOutOfPocketCurrency: assumption.taxesAndFeesCurrency,
@@ -558,8 +585,8 @@ function buildPrimaryComparison(
     return {
       ...base,
       status: "points_out_of_pocket",
-      headline: `Out-of-pocket with points: ${assumption.taxesAndFeesAmount} ${assumption.taxesAndFeesCurrency} (hypothetical)`,
-      subline: `vs ${redemption.comparedCashFareAmount} ${redemption.comparedCashFareCurrency} lowest cash. You have ${redemption.balancePoints?.toLocaleString()} ${base.pointsUnitLabel} — enough for ${assumption.pointsRequired.toLocaleString()} points in this scenario. Not a confirmed award seat.`,
+      headline: `Cash price ${redemption.comparedCashFareAmount} ${redemption.comparedCashFareCurrency} · Price with points ${assumption.taxesAndFeesAmount} ${assumption.taxesAndFeesCurrency}`,
+      subline: `You have ${redemption.balancePoints?.toLocaleString()} ${base.pointsUnitLabel} — enough for this award quote.`,
       pointsCoversScenario: true,
       pointsOutOfPocketAmount: assumption.taxesAndFeesAmount,
       pointsOutOfPocketCurrency: assumption.taxesAndFeesCurrency,

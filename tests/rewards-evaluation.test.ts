@@ -10,6 +10,7 @@ import {
   offersShareCurrency,
   parseMoneyAmount,
 } from "../lib/rewards/evaluate-rewards.ts";
+import { applyPointsCredit } from "../lib/rewards/points-credit.ts";
 import { handleRewardsEvaluationPost } from "../lib/rewards/rewards-evaluation-handler.ts";
 import type { NormalizedCashFlightOffer } from "../schemas/flightSearchSchema.ts";
 import { rewardsEvaluationRequestSchema } from "../schemas/rewardsEvaluationSchema.ts";
@@ -171,6 +172,20 @@ test("confirmed zero balance shortfall uses full points required", () => {
   });
   assert.equal(result.rewardsAccounts[0].balancePoints, 0);
   assert.equal(result.redemptionEvaluations[0].shortfallPoints, 25_000);
+});
+
+test("applyPointsCredit covers the fare when points are enough", () => {
+  const credit = applyPointsCredit(289.97, 40_000);
+  assert.equal(credit.priceWithPoints, 0);
+  assert.equal(credit.pointsCredit, 289.97);
+  assert.equal(credit.pointsUsed, 28_997);
+});
+
+test("applyPointsCredit leaves remaining cash when points are short", () => {
+  const credit = applyPointsCredit(400, 10_000);
+  assert.equal(credit.priceWithPoints, 300);
+  assert.equal(credit.pointsCredit, 100);
+  assert.equal(credit.pointsUsed, 10_000);
 });
 
 test("parseMoneyAmount accepts valid decimals", () => {
@@ -493,7 +508,8 @@ test("user supplied assumptions labeled in uncertainty notes", () => {
       n.includes("user-supplied"),
     ),
   );
-  assert.ok(result.awardAvailabilityNote.includes("No award-flight"));
+  assert.ok(result.awardAvailabilityNote.includes("Cash price"));
+  assert.ok(result.awardAvailabilityNote.includes("Price with points"));
 });
 
 test("evaluateRewards is deterministic", () => {
@@ -598,7 +614,7 @@ test("monthlyPointsSummary uses trip form estimate without duplicate input", () 
   assert.equal(result.monthlyPointsSummary.monthlyPointsEarned, 5_000);
 });
 
-test("needs_redemption_scenario headline includes cash and saved balance", () => {
+test("confirmed points apply a cash vs price-with-points discount", () => {
   const result = evaluateRewards({
     trip: baseTrip,
     originIataCode: "BOM",
@@ -608,9 +624,39 @@ test("needs_redemption_scenario headline includes cash and saved balance", () =>
     ],
     redemptionAssumptions: [],
   });
-  assert.equal(result.primaryComparison.status, "needs_redemption_scenario");
-  assert.match(result.primaryComparison.headline, /289.97 EUR/);
-  assert.match(result.primaryComparison.headline, /40,000/);
+  assert.equal(result.primaryComparison.status, "points_out_of_pocket");
+  assert.equal(result.primaryComparison.lowestCashAmount, "289.97");
+  assert.equal(result.primaryComparison.lowestCashCurrency, "EUR");
+  assert.equal(result.primaryComparison.pointsOutOfPocketAmount, "0.00");
+  assert.equal(result.primaryComparison.pointsOutOfPocketCurrency, "EUR");
+  assert.equal(result.primaryComparison.notionalCashSavingsAmount, "289.97");
+  assert.match(result.primaryComparison.headline, /Cash price/);
+  assert.match(result.primaryComparison.headline, /Price with points/);
+});
+
+test("partial points leave a remaining cash price", () => {
+  const trip = tripPlannerInputSchema.parse({
+    ...baseTrip,
+    rewards: [
+      {
+        programId: "british_airways",
+        balanceStatus: "confirmed",
+        balancePoints: 10_000,
+      },
+    ],
+  });
+  const result = evaluateRewards({
+    trip,
+    originIataCode: "BOM",
+    destinationIataCode: "LHR",
+    offers: [
+      makeOffer({ offerId: "cash", totalAmount: "400.00", totalCurrency: "GBP" }),
+    ],
+    redemptionAssumptions: [],
+  });
+  assert.equal(result.primaryComparison.status, "points_out_of_pocket");
+  assert.equal(result.primaryComparison.pointsOutOfPocketAmount, "300.00");
+  assert.equal(result.primaryComparison.notionalCashSavingsAmount, "100.00");
 });
 
 test("primaryComparison shows out-of-pocket when balance covers scenario", () => {
@@ -649,7 +695,7 @@ test("missing list does not ask user to re-enter balance when rewards exist", ()
   });
   const joined = result.missingForFullComparison.join(" ");
   assert.ok(!joined.toLowerCase().includes("confirmed balances on the trip form"));
-  assert.ok(joined.includes("points required"));
+  assert.ok(!joined.includes("points required"));
 });
 
 test("no fabricated discount in engine output", () => {

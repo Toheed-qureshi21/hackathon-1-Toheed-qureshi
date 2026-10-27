@@ -4,12 +4,14 @@ import {
   plannerMetricTimeClassName,
   plannerSectionLabelClassName,
 } from "@/lib/plannerFieldStyles";
+import type { ConfirmedPointsContext } from "@/lib/rewards/points-credit";
 import type { ChatMessage } from "@/schemas/plannerChat";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
 type ChatMessageBubbleProps = {
   message: ChatMessage;
+  pointsContext?: ConfirmedPointsContext | null;
   onRetry?: (messageId: string) => void;
 };
 
@@ -20,7 +22,11 @@ function formatTime(timestamp: number): string {
   }).format(new Date(timestamp));
 }
 
-export function ChatMessageBubble({ message, onRetry }: ChatMessageBubbleProps) {
+export function ChatMessageBubble({
+  message,
+  pointsContext = null,
+  onRetry,
+}: ChatMessageBubbleProps) {
   const isUser = message.role === "user";
   const isSystem = message.role === "system";
 
@@ -102,7 +108,10 @@ export function ChatMessageBubble({ message, onRetry }: ChatMessageBubbleProps) 
               Thinking…
             </p>
           ) : message.kind === "flight_search" && message.flightSearch ? (
-            <ChatFlightSearchBubble result={message.flightSearch} />
+            <ChatFlightSearchBubble
+              result={message.flightSearch}
+              pointsContext={pointsContext}
+            />
           ) : (
             <p className="whitespace-pre-wrap">{message.content}</p>
           )}
