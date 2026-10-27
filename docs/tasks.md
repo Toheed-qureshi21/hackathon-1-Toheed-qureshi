@@ -88,22 +88,22 @@ Do not mark tasks complete merely because code has been generated. Confirm imple
 
 - [x] Implement the trip-planner page.
 - [x] Implement the planner's basic loading states.
-- [ ] Implement the conversational trip input interface.
-- [ ] Implement structured trip requirements collection.
-- [ ] Collect origin and destination.
-- [ ] Collect departure and return dates where applicable.
-- [ ] Collect one-way or return-trip preference.
-- [ ] Collect passenger count.
-- [ ] Collect cabin class.
-- [ ] Collect date flexibility.
-- [ ] Allow users to correct previously supplied trip details.
-- [ ] Implement rewards-program selection using the initial supported-program list.
-- [ ] Collect the user's card or financial product details where relevant.
-- [ ] Collect user-confirmed points balances by program.
-- [ ] Collect an optional user-confirmed monthly points-earning estimate.
-- [ ] Validate all trip and rewards inputs.
-- [ ] Implement empty, validation, loading, and recoverable-error states.
-- [ ] Preserve the approved planner design and existing component conventions.
+- [x] Implement the conversational trip input interface.
+- [x] Implement structured trip requirements collection.
+- [x] Collect origin and destination.
+- [x] Collect departure and return dates where applicable.
+- [x] Collect one-way or return-trip preference.
+- [x] Collect passenger count.
+- [x] Collect cabin class.
+- [x] Collect date flexibility.
+- [x] Allow users to correct previously supplied trip details.
+- [x] Implement rewards-program selection using the initial supported-program list.
+- [x] Collect the user's card or financial product details where relevant.
+- [x] Collect user-confirmed points balances by program.
+- [x] Collect an optional user-confirmed monthly points-earning estimate.
+- [x] Validate all trip and rewards inputs.
+- [x] Implement empty, validation, loading, and recoverable-error states.
+- [x] Preserve the approved planner design and existing component conventions.
 
 ## Phase 5 — AI Chat and Conversation Orchestration
 

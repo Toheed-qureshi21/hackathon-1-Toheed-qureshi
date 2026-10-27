@@ -39,15 +39,4 @@ export const signupSchema = z
 
 export type SignupFormValues = z.infer<typeof signupSchema>;
 
-export function fieldErrorsFromZod(
-  error: z.ZodError,
-): Record<string, string | undefined> {
-  const out: Record<string, string | undefined> = {};
-  for (const issue of error.issues) {
-    const key = issue.path[0];
-    if (typeof key === "string" && out[key] === undefined) {
-      out[key] = issue.message;
-    }
-  }
-  return out;
-}
+export { fieldErrorsFromZod } from "@/lib/zodFieldErrors";

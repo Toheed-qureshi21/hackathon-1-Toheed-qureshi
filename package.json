@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:auth-schema": "node --experimental-strip-types --test tests/auth-api-schema.test.ts"
+    "test:auth-schema": "node --experimental-strip-types --test tests/auth-api-schema.test.ts",
+    "test:trip-planner-schema": "node --experimental-strip-types --test tests/trip-planner-schema.test.ts",
+    "test": "npm run test:auth-schema && npm run test:trip-planner-schema"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.1",
