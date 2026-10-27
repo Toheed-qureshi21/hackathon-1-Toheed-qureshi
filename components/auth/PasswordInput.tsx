@@ -1,17 +1,22 @@
 "use client";
 
 import { Input } from "@/components/ui/Input";
+import {
+  authInputClassName,
+  authInputWithToggleClassName,
+} from "@/lib/authFieldStyles";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
+import type { InputHTMLAttributes } from "react";
 import { useId, useState } from "react";
 
-type PasswordInputProps = {
-  id?: string;
+type PasswordInputProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "type"
+> & {
   name: string;
-  placeholder?: string;
   hasError?: boolean;
-  autoComplete?: string;
-  disabled?: boolean;
-  "aria-describedby"?: string;
+  auth?: boolean;
 };
 
 export function PasswordInput({
@@ -21,7 +26,11 @@ export function PasswordInput({
   hasError,
   autoComplete,
   disabled,
+  auth = false,
   "aria-describedby": ariaDescribedBy,
+  onChange,
+  className,
+  ...rest
 }: PasswordInputProps) {
   const generatedId = useId();
   const id = idProp ?? generatedId;
@@ -29,6 +38,16 @@ export function PasswordInput({
 
   return (
     <div className="relative">
+      {auth ? (
+        <Image
+          src="/icons/wallet.svg"
+          alt=""
+          width={18}
+          height={18}
+          aria-hidden
+          className="pointer-events-none absolute top-1/2 left-3.5 z-10 -translate-y-1/2 opacity-80"
+        />
+      ) : null}
       <Input
         id={id}
         name={name}
@@ -38,12 +57,23 @@ export function PasswordInput({
         autoComplete={autoComplete}
         disabled={disabled}
         aria-describedby={ariaDescribedBy}
-        className="pr-16"
+        onChange={onChange}
+        className={cn(
+          auth && authInputClassName,
+          auth && authInputWithToggleClassName,
+          !auth && "pr-16",
+          auth && "pr-16",
+          className,
+        )}
+        {...rest}
       />
       <button
         type="button"
         className={cn(
-          "absolute top-1/2 right-3 -translate-y-1/2 text-xs font-semibold text-muted-foreground hover:text-primary focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/25",
+          "absolute top-1/2 right-3 z-10 -translate-y-1/2 text-xs font-semibold text-muted-foreground hover:text-primary focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-[3px]",
+          auth
+            ? "focus-visible:ring-ring-auth/30"
+            : "focus-visible:ring-ring/25",
         )}
         onClick={() => setVisible((v) => !v)}
         aria-pressed={visible}

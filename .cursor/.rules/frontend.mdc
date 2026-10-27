@@ -1,25 +1,200 @@
 ---
-description: Frontend rules for Next.js pages, React components, forms, and UI
-globs:
-  - "/app/**/*.tsx"
-  - "/components/**/*.tsx"
-  - "/hooks/**/*.ts"
-  - "/hooks/**/*.tsx"
-alwaysApply: false
+description: RedeemTrip frontend engineering, design tokens, accessibility, and responsive UI rules
+alwaysApply: true
 ---
 
-# Frontend Rules
+# RedeemTrip Frontend Rules
 
-- Use React and TypeScript.
-- Follow Next.js App Router conventions.
-- Prefer Server Components when client-side interactivity is unnecessary.
-- Add `"use client"` only when required.
-- Use shadcn/ui components where appropriate.
-- Use Tailwind CSS and existing design tokens.
-- Keep components focused and reusable.
-- Use Zod schemas for form validation.
-- Display loading, empty, validation, and error states.
-- Do not call external flight providers directly from browser components.
-- Do not expose server-side API keys.
-- Do not calculate authoritative flight savings in the UI.
-- Keep UI display logic separate from business logic.
+## 1. Application Architecture
+
+- Use the existing Next.js App Router, TypeScript, React, Tailwind CSS v4, and shadcn/ui architecture.
+- Inspect the existing implementation before modifying a page or component.
+- Preserve existing routing, authentication, API integrations, validation, server actions, and business logic unless explicitly asked to change them.
+- Do not replace working pages with static HTML or introduce a second implementation of an existing feature.
+- Keep UI components separate from provider integrations and server-only functionality.
+
+## 2. Design Source of Truth
+
+The authoritative design reference directory is:
+
+`docs/design-reference/brand-design-system/`
+
+Before creating or significantly modifying UI:
+
+1. Inspect the relevant files and nested directories in the reference directory.
+2. Read available design guidelines, including `DESIGN.md` when present.
+3. Inspect relevant `screen.png` screenshots and other visual references.
+4. Inspect available images, SVGs, logos, icons, and other assets.
+5. Compare the reference with the existing application implementation.
+6. Reuse established patterns and assets wherever appropriate.
+
+The HTML exports previously used as references have been removed. Do not depend on them or assume they exist.
+
+Use the RedeemTrip design skill at `.cursor/skills/redeemtrip-design/SKILL.md` for detailed design-reference inspection and implementation workflows when relevant.
+
+Do not redesign existing pages without an explicit request. When implementing a new page, follow the established brand system and relevant visual references.
+
+If the references do not specify a required detail, use the existing application patterns and make the smallest consistent design decision. Do not claim that an unsupported design decision came from Stitch.
+
+## 3. Brand Identity
+
+Product: RedeemTrip
+
+Tagline: Travel smarter. Redeem better.
+
+Brand promise: Make your points and miles go further.
+
+### Brand colors
+
+- Midnight: `#080B14`
+- Deep Navy: `#101625`
+- Elevated Surface: `#171F31`
+- Border: `#273149`
+- Primary Text: `#F4F7FC`
+- Secondary Text: `#9AA7BD`
+- Lime: `#C7F36B`
+- Mint: `#72E6C1`
+- AI Blue: `#7EA7FF`
+- Violet: `#A78BFA`
+- Danger: `#FF7C86`
+
+### Typography
+
+- Headings: Space Grotesk
+- Body: Inter
+
+Use the existing font-loading implementation where available. Do not load duplicate fonts or introduce competing font definitions.
+
+## 4. Design Tokens — Mandatory
+
+The single source of truth for design tokens is `app/globals.css`, following the project's existing Tailwind CSS v4 CSS-first theme architecture.
+
+- Inspect the current token definitions before changing them.
+- Centralize brand colors, semantic colors, typography, spacing, border radii, borders, shadows, and focus styles where appropriate.
+- Reuse existing tokens instead of introducing duplicate or competing definitions.
+- Map brand values to semantic tokens where appropriate.
+- Prefer semantic utilities such as `bg-background`, `text-foreground`, `bg-card`, `text-muted-foreground`, `border-border`, `bg-primary`, and `ring-ring`.
+- Avoid hardcoded colors, font families, spacing, radii, and shadows inside components when existing tokens or utilities can express them.
+- Avoid arbitrary Tailwind values unless genuinely necessary.
+- When a new reusable design value is needed, define it centrally first and then consume it in components.
+- Do not introduce Tailwind v3 configuration patterns into the existing Tailwind v4 project.
+- Preserve readable contrast, visible focus states, and consistent interaction styling.
+- Do not perform unrelated token refactors during a page-specific task.
+
+Changing a shared token should update all components that consume it.
+
+## 5. Visual Direction
+
+RedeemTrip is a premium travel-fintech product with an intelligent AI travel assistant.
+
+Prioritize:
+
+- Clear information hierarchy.
+- Readable typography.
+- Consistent spacing and alignment.
+- Restrained, purposeful accent colors.
+- Polished cards, forms, and navigation.
+- Clear distinction between cash prices, points, miles, and redemption values.
+- Trustworthy flight and itinerary information.
+- Consistent desktop and mobile experiences.
+
+Avoid:
+
+- Generic travel-template designs that conflict with the references.
+- Unrelated gradients, colors, and decorative effects.
+- Excessive animation or visual clutter.
+- Inconsistent border radii and spacing.
+- Fake flight data presented as real.
+- Unsupported savings claims or guaranteed redemption availability.
+
+## 6. Shared Components
+
+Prefer existing reusable components for:
+
+- Buttons and links.
+- Inputs, selects, and date pickers.
+- Cards and information panels.
+- Dialogs and dropdowns.
+- Navigation and page headers.
+- Flight results and redemption comparisons.
+- Loading, empty, error, and success states.
+
+Use existing shadcn/ui components when appropriate.
+
+Inspect the existing component library before creating a new component. Extend or reuse an existing component when it satisfies the requirement. Avoid duplicate components with overlapping responsibilities.
+
+## 7. Assets
+
+- Preserve and reuse the official RedeemTrip logo.
+- Treat supplied brand assets as authoritative.
+- Inspect nested reference directories when searching for assets.
+- Prefer existing supplied SVG icons and image assets over replacements.
+- Never replace the logo with generated artwork, emoji, or a text approximation.
+- Do not invent asset filenames or reference files that do not exist.
+- Avoid external image dependencies unless needed.
+- Place production assets in the project's established public or source asset directory.
+- Use descriptive filenames and consistent naming conventions.
+- Keep design-reference files separate from production application assets.
+- Do not import screenshots or complete exported HTML documents as production UI components.
+
+If an essential asset is missing, identify the gap and use a consistent, deliberate fallback only when necessary.
+
+## 8. Accessibility
+
+- Use semantic HTML.
+- Provide accessible labels for form controls.
+- Use buttons for actions and links for navigation.
+- Support keyboard interaction.
+- Maintain sufficient text and interface contrast.
+- Provide visible keyboard focus states.
+- Communicate statuses using text or accessible labels, not color alone.
+- Respect reduced-motion preferences when adding animation.
+- Preserve accessible names and states in interactive components.
+
+## 9. Responsive Design
+
+Support desktop, tablet, and mobile layouts.
+
+- Use responsive layout primitives and existing breakpoints.
+- Avoid fixed-width layouts that overflow narrow screens.
+- Check navigation, planner forms, flight results, cards, dialogs, and booking review layouts at narrow widths.
+- Ensure important actions remain visible and usable on mobile.
+- Prevent clipped content, horizontal overflow, and unreadable text.
+- Maintain the established visual hierarchy across viewport sizes.
+
+## 10. Interaction States
+
+Implement relevant states for interactive components:
+
+- Default.
+- Hover.
+- Focus.
+- Disabled.
+- Loading.
+- Validation error.
+- Empty.
+- Success.
+
+Do not make a control appear functional when it has no implemented action. Avoid introducing placeholder actions that imply completed functionality.
+
+## 11. Existing Pages
+
+Login, signup, and planner pages have already been implemented.
+
+- Preserve their existing behavior and routing when performing unrelated work.
+- Do not recreate them from scratch merely because the original HTML exports have been deleted.
+- If a requested change affects these pages, inspect their current React components and shared styles before editing.
+- Apply the shared design tokens consistently without unnecessary visual or structural rewrites.
+
+## 12. Verification
+
+Before completing a frontend task:
+
+- Check for duplicated design tokens and unnecessary hardcoded styling values.
+- Check console errors and relevant interaction behavior where practical.
+- Run the project's available lint, type-check, and build commands when appropriate.
+- Check responsive layouts and accessibility for affected screens.
+- Confirm existing functionality remains intact.
+- Report missing references or assets rather than pretending they exist.
+
+Do not commit or push changes unless explicitly instructed.

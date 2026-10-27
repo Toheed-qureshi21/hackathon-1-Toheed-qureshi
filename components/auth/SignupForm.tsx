@@ -1,13 +1,20 @@
 "use client";
 
+import { AuthIconInput } from "@/components/auth/AuthIconInput";
+import { ConfirmPasswordMatchIndicator } from "@/components/auth/ConfirmPasswordMatchIndicator";
 import { PasswordInput } from "@/components/auth/PasswordInput";
+import { PasswordStrengthIndicator } from "@/components/auth/PasswordStrengthIndicator";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { DividerWithText } from "@/components/ui/DividerWithText";
 import { FormField, formFieldDescribedBy } from "@/components/ui/FormField";
 import { FormMessage } from "@/components/ui/FormMessage";
-import { Input } from "@/components/ui/Input";
 import { Pill } from "@/components/ui/Pill";
+import {
+  authPrimaryButtonClassName,
+  authSecondaryButtonClassName,
+  authHeadingClassName,
+} from "@/lib/authFieldStyles";
 import {
   fieldErrorsFromZod,
   signupSchema,
@@ -27,6 +34,8 @@ export function SignupForm() {
   );
   const [isLoading, setIsLoading] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -65,11 +74,11 @@ export function SignupForm() {
 
   return (
     <>
-      <Pill>REWARDS, REIMAGINED</Pill>
-      <h1 className="mt-5 font-heading text-[38px] tracking-tight text-foreground">
-        Start traveling smarter
-      </h1>
-      <p className="text-muted-foreground">
+      <div className="mb-6 flex flex-wrap items-center gap-3">
+        <Pill>REWARDS, REIMAGINED</Pill>
+      </div>
+      <h1 className={authHeadingClassName}>Start traveling smarter</h1>
+      <p className="mt-2 text-sm text-muted-foreground">
         Create your account and make every point count.
       </p>
 
@@ -79,15 +88,17 @@ export function SignupForm() {
         </FormMessage>
       ) : null}
 
-      <form onSubmit={handleSubmit} noValidate className="mt-2">
+      <form onSubmit={handleSubmit} noValidate className="mt-6">
         <FormField
           id="signup-full-name"
           label="Full name"
           error={fieldErrors.fullName}
+          auth
         >
-          <Input
+          <AuthIconInput
             id="signup-full-name"
             name="fullName"
+            iconSrc="/icons/users.svg"
             placeholder="Your name"
             autoComplete="name"
             hasError={Boolean(fieldErrors.fullName)}
@@ -103,11 +114,13 @@ export function SignupForm() {
           id="signup-email"
           label="Email address"
           error={fieldErrors.email}
+          auth
         >
-          <Input
+          <AuthIconInput
             id="signup-email"
             name="email"
             type="email"
+            iconSrc="/icons/message-circle.svg"
             placeholder="you@example.com"
             autoComplete="email"
             hasError={Boolean(fieldErrors.email)}
@@ -123,6 +136,7 @@ export function SignupForm() {
           id="signup-password"
           label="Password"
           error={fieldErrors.password}
+          auth
         >
           <PasswordInput
             id="signup-password"
@@ -131,30 +145,44 @@ export function SignupForm() {
             autoComplete="new-password"
             hasError={Boolean(fieldErrors.password)}
             disabled={isLoading}
+            auth
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             aria-describedby={formFieldDescribedBy(
               fieldErrors.password,
               "signup-password",
             )}
           />
+          <PasswordStrengthIndicator password={password} />
         </FormField>
 
         <FormField
           id="signup-confirm-password"
           label="Confirm password"
           error={fieldErrors.confirmPassword}
+          auth
         >
-          <PasswordInput
-            id="signup-confirm-password"
-            name="confirmPassword"
-            placeholder="Confirm password"
-            autoComplete="new-password"
-            hasError={Boolean(fieldErrors.confirmPassword)}
-            disabled={isLoading}
-            aria-describedby={formFieldDescribedBy(
-              fieldErrors.confirmPassword,
-              "signup-confirm-password",
-            )}
-          />
+          <>
+            <PasswordInput
+              id="signup-confirm-password"
+              name="confirmPassword"
+              placeholder="Confirm password"
+              autoComplete="new-password"
+              hasError={Boolean(fieldErrors.confirmPassword)}
+              disabled={isLoading}
+              auth
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              aria-describedby={formFieldDescribedBy(
+                fieldErrors.confirmPassword,
+                "signup-confirm-password",
+              )}
+            />
+            <ConfirmPasswordMatchIndicator
+              password={password}
+              confirmPassword={confirmPassword}
+            />
+          </>
         </FormField>
 
         <Checkbox
@@ -163,11 +191,11 @@ export function SignupForm() {
           label={
             <>
               I agree to the{" "}
-              <Link href="#" className="text-primary hover:underline">
+              <Link href="#" className="text-ai-blue hover:underline">
                 Terms
               </Link>{" "}
               and{" "}
-              <Link href="#" className="text-primary hover:underline">
+              <Link href="#" className="text-ai-blue hover:underline">
                 Privacy Policy
               </Link>
             </>
@@ -183,7 +211,7 @@ export function SignupForm() {
           type="submit"
           variant="primary"
           fullWidth
-          className="mt-5"
+          className={`mt-5 ${authPrimaryButtonClassName}`}
           isLoading={isLoading}
         >
           Create account →
@@ -196,7 +224,7 @@ export function SignupForm() {
         type="button"
         fullWidth
         disabled={isLoading}
-        className="gap-3"
+        className={`gap-3 ${authSecondaryButtonClassName}`}
         onClick={() =>
           handleUnavailableAction(
             "Google sign-up is not connected yet. It will be available when authentication is enabled.",
@@ -216,7 +244,7 @@ export function SignupForm() {
         Social sign-in is not available in this preview.
       </p>
 
-      <p className="mt-[22px] text-center text-muted-foreground">
+      <p className="mt-6 text-center text-sm text-muted-foreground">
         Already have an account?{" "}
         <Link
           href="/login"

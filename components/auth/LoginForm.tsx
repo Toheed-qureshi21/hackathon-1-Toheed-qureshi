@@ -1,12 +1,16 @@
 "use client";
 
+import { AuthIconInput } from "@/components/auth/AuthIconInput";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 import { Button } from "@/components/ui/Button";
 import { DividerWithText } from "@/components/ui/DividerWithText";
 import { FormField, formFieldDescribedBy } from "@/components/ui/FormField";
 import { FormMessage } from "@/components/ui/FormMessage";
-import { Input } from "@/components/ui/Input";
-import { Pill } from "@/components/ui/Pill";
+import {
+  authPrimaryButtonClassName,
+  authSecondaryButtonClassName,
+  authHeadingClassName,
+} from "@/lib/authFieldStyles";
 import {
   fieldErrorsFromZod,
   loginSchema,
@@ -62,11 +66,8 @@ export function LoginForm() {
 
   return (
     <>
-      <Pill>REWARDS, REIMAGINED</Pill>
-      <h1 className="mt-5 font-heading text-[38px] tracking-tight text-foreground">
-        Welcome back
-      </h1>
-      <p className="text-muted-foreground">
+      <h1 className={authHeadingClassName}>Welcome back</h1>
+      <p className="mt-2 text-sm text-muted-foreground">
         Your next great redemption starts here.
       </p>
 
@@ -76,16 +77,18 @@ export function LoginForm() {
         </FormMessage>
       ) : null}
 
-      <form onSubmit={handleSubmit} noValidate className="mt-2">
+      <form onSubmit={handleSubmit} noValidate className="mt-6">
         <FormField
           id="login-email"
           label="Email address"
           error={fieldErrors.email}
+          auth
         >
-          <Input
+          <AuthIconInput
             id="login-email"
             name="email"
             type="email"
+            iconSrc="/icons/message-circle.svg"
             placeholder="you@example.com"
             autoComplete="email"
             hasError={Boolean(fieldErrors.email)}
@@ -101,6 +104,7 @@ export function LoginForm() {
           id="login-password"
           label="Password"
           error={fieldErrors.password}
+          auth
         >
           <PasswordInput
             id="login-password"
@@ -109,6 +113,7 @@ export function LoginForm() {
             autoComplete="current-password"
             hasError={Boolean(fieldErrors.password)}
             disabled={isLoading}
+            auth
             aria-describedby={formFieldDescribedBy(
               fieldErrors.password,
               "login-password",
@@ -116,7 +121,7 @@ export function LoginForm() {
           />
         </FormField>
 
-        <div className="flex items-center justify-between gap-3 text-[13px] text-muted-foreground">
+        <div className="flex items-center justify-between gap-3 text-sm text-muted-foreground">
           <label
             htmlFor="remember-me"
             className="flex cursor-pointer items-center gap-2"
@@ -125,7 +130,7 @@ export function LoginForm() {
               id="remember-me"
               name="rememberMe"
               type="checkbox"
-              className="size-4 shrink-0 rounded border-border accent-primary focus-visible:ring-[3px] focus-visible:ring-ring/25"
+              className="size-[18px] shrink-0 rounded-sm border-border accent-primary focus-visible:ring-[3px] focus-visible:ring-ring-auth/30"
               checked={rememberMe}
               onChange={(e) => setRememberMe(e.target.checked)}
               disabled={isLoading}
@@ -134,7 +139,7 @@ export function LoginForm() {
           </label>
           <button
             type="button"
-            className="shrink-0 text-primary hover:underline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/25"
+            className="shrink-0 text-primary hover:underline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring-auth/30"
             onClick={() =>
               handleUnavailableAction(
                 "Password recovery is not connected yet. It will be available when authentication is enabled.",
@@ -149,7 +154,7 @@ export function LoginForm() {
           type="submit"
           variant="primary"
           fullWidth
-          className="mt-5"
+          className={`mt-5 ${authPrimaryButtonClassName}`}
           isLoading={isLoading}
         >
           Sign in →
@@ -162,7 +167,7 @@ export function LoginForm() {
         type="button"
         fullWidth
         disabled={isLoading}
-        className="gap-3"
+        className={`gap-3 ${authSecondaryButtonClassName}`}
         onClick={() =>
           handleUnavailableAction(
             "Google sign-in is not connected yet. It will be available when authentication is enabled.",
@@ -182,7 +187,7 @@ export function LoginForm() {
         Social sign-in is not available in this preview.
       </p>
 
-      <p className="mt-[22px] text-center text-muted-foreground">
+      <p className="mt-6 text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{" "}
         <Link
           href="/signup"

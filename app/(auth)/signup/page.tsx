@@ -1,6 +1,6 @@
 import { SignupForm } from "@/components/auth/SignupForm";
 import { AuthPageLayout } from "@/components/layout/AuthPageLayout";
-import { AuthIllustration } from "@/components/marketing/AuthIllustration";
+import { SignupIllustration } from "@/components/marketing/SignupIllustration";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,6 +10,6 @@ export const metadata: Metadata = {
 
 export default function SignupPage() {
   return (
-    <AuthPageLayout form={<SignupForm />} visual={<AuthIllustration />} />
+    <AuthPageLayout form={<SignupForm />} visual={<SignupIllustration />} />
   );
 }

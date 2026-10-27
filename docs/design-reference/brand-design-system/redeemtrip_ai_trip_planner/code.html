@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"error":"#ffb4ab","error-container":"#93000a","secondary-container":"#0c4598","surface-variant":"#293547","on-secondary":"#002d6c","primary-container":"#c6f26a","tertiary-container":"#e8ddff","tertiary":"#ffffff","on-primary-container":"#506e00","surface-container-highest":"#293547","primary-fixed-dim":"#abd551","on-surface":"#d6e3fb","on-tertiary":"#381385","surface-container-low":"#0f1c2d","on-primary-fixed":"#141f00","surface-container":"#132031","on-background":"#d6e3fb","surface-tint":"#abd551","tertiary-fixed":"#e8ddff","on-tertiary-fixed":"#21005e","inverse-surface":"#d6e3fb","secondary":"#afc6ff","on-secondary-fixed-variant":"#064395","inverse-on-surface":"#243143","on-error-container":"#ffdad6","on-primary-fixed-variant":"#374e00","surface":"#061424","surface-dim":"#061424","secondary-fixed":"#d9e2ff","secondary-fixed-dim":"#afc6ff","on-tertiary-container":"#6d51bc","on-secondary-fixed":"#001a43","inverse-primary":"#4b6700","surface-bright":"#2d3a4c","on-tertiary-fixed-variant":"#4f319c","outline":"#8e937f","background":"#061424","tertiary-fixed-dim":"#cebdff","surface-container-lowest":"#020f1f","on-surface-variant":"#c4c9b3","surface-container-high":"#1e2b3c","primary-fixed":"#c6f26a","on-secondary-container":"#98b8ff","primary":"#ffffff","on-error":"#690005","on-primary":"#253600","outline-variant":"#444938"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"gutter":"1.5rem","margin-mobile":"1rem","margin":"2rem","space-md":"1rem","space-xs":"0.25rem","space-lg":"1.5rem","space-xl":"2rem","space-sm":"0.5rem","gutter-mobile":"0.75rem","space-3xl":"4rem","space-2xl":"3rem"},"fontFamily":{"label-lg":["Space Grotesk"],"headline-sm":["Space Grotesk"],"body-md":["Inter"],"body-lg":["Inter"],"label-md":["Space Grotesk"],"display-hero-mobile":["Space Grotesk"],"headline-md":["Space Grotesk"],"label-sm":["Space Grotesk"],"code-metric":["Space Grotesk"],"display-hero":["Space Grotesk"],"headline-xl":["Space Grotesk"],"headline-xl-mobile":["Space Grotesk"],"headline-lg":["Space Grotesk"],"body-sm":["Inter"],"body-xl":["Inter"]},"fontSize":{"label-lg":["14px",{"lineHeight":"20px","letterSpacing":"0.02em","fontWeight":"600"}],"headline-sm":["18px",{"lineHeight":"26px","letterSpacing":"-0.005em","fontWeight":"500"}],"body-md":["14px",{"lineHeight":"20px","fontWeight":"400"}],"body-lg":["16px",{"lineHeight":"24px","fontWeight":"400"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.04em","fontWeight":"600"}],"display-hero-mobile":["36px",{"lineHeight":"44px","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"label-sm":["10px",{"lineHeight":"14px","letterSpacing":"0.08em","fontWeight":"700"}],"code-metric":["14px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"500"}],"display-hero":["56px",{"lineHeight":"64px","letterSpacing":"-0.03em","fontWeight":"700"}],"headline-xl":["40px",{"lineHeight":"48px","letterSpacing":"-0.02em","fontWeight":"600"}],"headline-xl-mobile":["28px",{"lineHeight":"36px","letterSpacing":"-0.02em","fontWeight":"600"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.015em","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"18px","fontWeight":"400"}],"body-xl":["18px",{"lineHeight":"28px","fontWeight":"400"}]}}}}</script></head><body class="bg-surface font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 left-0 right-0 h-16 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.4)]"><div class="w-full h-full px-gutter flex items-center justify-between"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-sm"><img alt="RedeemTrip official primary logo lockup with lime-mint geometric flight compass icon and wordmark" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XSsgVcXDBx-VjIvQXyWNAk_qTTWD2yHABJyFZQK3Heualy1_l6bCll72BzXwZDqoFVhId5dw6kBcb2e3nOdeClI9moVkdNkcWJfzgIM5pjxxcRA75XnzNiSf7micmOHmOrb1iHbWRJYKRcdWrLw7TTacti3W5XQx9GpPuyah-JPPyTLM1EZhEgZGeGJBmAODW9Hv4LTU3XiN8mHNdTgdgyJpMNKBDuQLksVNgFfgj8M4yqtJPpxEeomVc"/><span class="font-headline-sm text-headline-sm text-primary tracking-tight">RedeemTrip</span></div><div class="h-5 w-px bg-surface-variant hidden md:block"></div><div class="hidden lg:flex items-center gap-space-xs px-space-sm py-space-xs rounded bg-surface-container text-on-surface-variant font-code-metric text-code-metric"><span class="material-symbols-outlined text-[16px] text-primary-fixed">bolt</span><span>YIELD INDEX:</span><span class="text-primary-container font-headline-sm text-label-md">2.84¢/pt</span></div></div><nav class="hidden xl:flex items-center gap-space-sm" data-active-classes="bg-surface-container-high text-primary font-label-md"><a class="px-space-md py-space-xs rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md text-label-md" data-path="explore-flights" href="#">Explore Flights</a><a aria-current="page" class="px-space-md py-space-xs rounded transition-colors bg-surface-container-high text-primary font-label-md" data-path="ai-copilot" href="#">AI Copilot</a><a class="px-space-md py-space-xs rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md text-label-md" data-path="rewards-portfolio" href="#">Rewards Portfolio</a><a class="px-space-md py-space-xs rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md text-label-md" data-path="saved-trips" href="#">Saved Trips</a><a class="px-space-md py-space-xs rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md text-label-md" data-path="components" href="#">Components</a></nav><div class="flex items-center gap-space-md"><button class="flex items-center gap-space-xs px-space-md py-space-sm rounded bg-primary-container text-on-primary-container font-label-md text-label-md hover:opacity-95 transition-opacity shadow-[0_0_20px_rgba(199,243,107,0.25)]" type="button"><span class="material-symbols-outlined text-[18px]">flight_takeoff</span><span class="hidden sm:inline">Active Trip</span></button><div class="flex items-center gap-space-sm pl-space-sm"><button aria-label="Notifications" class="p-space-xs rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><aside class="fixed left-0 top-16 bottom-0 w-64 bg-surface-container-low z-40 flex flex-col justify-between p-space-md shadow-[0_1px_8px_rgba(0,0,0,0.3)]"><div class="flex flex-col gap-space-lg"><div><div class="px-space-sm mb-space-xs font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Workspace Engine</div><nav class="flex flex-col gap-space-xs" data-active-classes="bg-surface-container-high text-primary"><a class="flex items-center gap-space-md px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-label-md text-label-md" data-path="explore-flights" href="#"><span class="material-symbols-outlined text-[20px] text-secondary">flight</span><span>Flight Optimizer</span></a><a aria-current="page" class="flex items-center gap-space-md px-space-md py-space-sm rounded transition-colors font-label-md bg-surface-container-high text-primary" data-path="ai-copilot" href="#"><span class="material-symbols-outlined text-[20px] text-tertiary-fixed-dim">neurology</span><span>AI Copilot</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-label-md text-label-md" data-path="rewards-portfolio" href="#"><span class="material-symbols-outlined text-[20px] text-primary-fixed">account_balance_wallet</span><span>Loyalty Equities</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-label-md text-label-md" data-path="saved-trips" href="#"><span class="material-symbols-outlined text-[20px] text-secondary-fixed">bookmark</span><span>Saved Itineraries</span></a></nav></div><div><div class="px-space-sm mb-space-xs font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">System &amp; Audits</div><nav class="flex flex-col gap-space-xs" data-active-classes="bg-surface-container-high text-primary"><a class="flex items-center gap-space-md px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-label-md text-label-md" data-path="transfer-partners" href="#"><span class="material-symbols-outlined text-[20px]">swap_horiz</span><span>Transfer Ratios</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-label-md text-label-md" data-path="components" href="#"><span class="material-symbols-outlined text-[20px]">widgets</span><span>Design System</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-label-md text-label-md" data-path="account-settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span>Preferences</span></a></nav></div></div><div class="p-space-md rounded bg-surface-container flex flex-col gap-space-xs"><div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm"><span class="uppercase tracking-wider">Avios Multiplier</span><span class="text-primary-container font-code-metric text-code-metric">+30% ACTIVE</span></div><div class="w-full bg-surface-container-highest h-1 rounded"><div class="bg-primary-fixed-dim h-1 rounded" style="width: 68%"></div></div><div class="text-on-surface font-body-sm text-body-sm pt-space-xs">Amex → BA Avios bonus expires in 6d</div></div></aside><div class="pl-64"><main class="w-full pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Dynamic Top Ambient Accent -->
+<div class="relative w-full overflow-hidden">
+<div class="absolute -top-24 left-1/3 w-96 h-96 bg-primary-container/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="absolute top-10 right-1/4 w-80 h-80 bg-tertiary-container/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="px-gutter py-space-lg flex flex-col gap-space-xl max-w-7xl mx-auto w-full">
+<!-- Workspace Sub-Header & Telemetry Strip -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest">
+<span class="inline-block w-2 h-2 rounded-full bg-primary-fixed shadow-[0_0_8px_#c6f26a]"></span>
+<span>Neural Optimization Core v4.2</span>
+<span>•</span>
+<span class="text-secondary font-code-metric text-code-metric">ROUTE_SOLVER_ACTIVE</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">AI Award Copilot &amp; Flight Planner</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl">
+            Real-time multi-currency arbitrage engine syncing live airline alliances, seat release trackers, and bank reward transfers.
+          </p>
+</div>
+<!-- Global Points Portfolio Live Ticker -->
+<div class="flex items-center gap-space-md p-space-md rounded-xl bg-surface-container shadow-md">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Global Point Equity</span>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-md text-headline-md text-primary font-bold">92,500</span>
+<span class="font-label-sm text-label-sm text-primary-container">PTS LIQUID</span>
+</div>
+</div>
+<div class="h-8 w-px bg-surface-variant"></div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Optimal Target Yield</span>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-md text-headline-md text-primary-container font-bold">₹1.84</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">/ PT</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Asymmetric Workspace Layout -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg items-start pb-space-3xl">
+<!-- Left Panel: Chat Engine & Conversational Decision Flow (7 cols) -->
+<div class="xl:col-span-7 flex flex-col gap-space-lg">
+<!-- Chat History Stream -->
+<div class="flex flex-col gap-space-lg">
+<!-- Copilot Message 1 -->
+<div class="flex gap-space-md items-start">
+<div class="w-9 h-9 rounded-xl bg-surface-container-high flex items-center justify-center text-tertiary-fixed shadow-md flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">neurology</span>
+</div>
+<div class="flex flex-col gap-space-xs max-w-2xl">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-md text-label-md text-primary">RedeemTrip Copilot</span>
+<span class="px-space-xs py-[2px] rounded bg-surface-container-highest text-tertiary-fixed-dim font-label-sm text-label-sm">AUTONOMOUS AUDIT</span>
+<span class="text-on-surface-variant font-code-metric text-code-metric">10:41 AM</span>
+</div>
+<div class="p-space-lg rounded-xl bg-surface-container text-on-surface font-body-md text-body-md shadow-md">
+                  Welcome back! I've analyzed your travel rewards portfolio across linked card accounts and airline programs. What destination are you targeting for maximum redemption yield?
+                </div>
+</div>
+</div>
+<!-- User Query Bubble -->
+<div class="flex gap-space-md items-start justify-end">
+<div class="flex flex-col items-end gap-space-xs max-w-xl">
+<div class="flex items-center gap-space-sm">
+<span class="text-on-surface-variant font-code-metric text-code-metric">10:42 AM</span>
+<span class="font-label-md text-label-md text-secondary">You</span>
+</div>
+<div class="p-space-lg rounded-xl bg-surface-container-high text-primary font-body-md text-body-md shadow-md">
+                  I want to fly from Mumbai (BOM) to London (LHR) in December with my Avios and credit card points. Flexible by 3 days.
+                </div>
+</div>
+<div class="w-9 h-9 rounded-xl bg-secondary-container flex items-center justify-center text-on-secondary shadow-md flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">person</span>
+</div>
+</div>
+<!-- Copilot Intelligence Response Card -->
+<div class="flex gap-space-md items-start">
+<div class="w-9 h-9 rounded-xl bg-surface-container-high flex items-center justify-center text-primary-fixed shadow-md flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">bolt</span>
+</div>
+<div class="flex flex-col gap-space-md w-full">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-md text-label-md text-primary">RedeemTrip Copilot</span>
+<span class="px-space-xs py-[2px] rounded bg-primary-container text-on-primary-container font-label-sm text-label-sm font-bold">ROUTE RESOLVED</span>
+<span class="text-on-surface-variant font-code-metric text-code-metric">10:43 AM</span>
+</div>
+<!-- Structured Deep Dive Card -->
+<div class="p-space-lg rounded-xl bg-surface-container flex flex-col gap-space-lg shadow-xl relative overflow-hidden">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-primary-fixed uppercase tracking-wider">Arbitrage Analysis • BOM → LHR</span>
+<span class="font-code-metric text-code-metric text-on-surface-variant">Live GDS Sync</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">
+                      I evaluated 14 redemption matrices for BOM → LHR across Star Alliance and oneworld. British Airways Executive Club presents an exceptional direct redemption channel when transferring from your HDFC Infinia / Amex balance with the current 30% Avios boost.
+                    </p>
+</div>
+<!-- Cabin Comparison Split Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<!-- Option A: Club World (Business) -->
+<div class="p-space-md rounded-lg bg-surface-container-low flex flex-col justify-between gap-space-md hover:bg-surface-container-high transition-colors">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="px-space-xs py-[2px] rounded bg-surface-container-highest text-secondary font-label-sm text-label-sm">BUSINESS CLASS</span>
+<span class="font-code-metric text-code-metric text-primary-container font-bold">₹2.12 / pt</span>
+</div>
+<div class="font-headline-sm text-headline-sm text-primary pt-space-xs">Club World Suite</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Direct non-stop Boeing 777-300ER with sliding privacy doors.</p>
+</div>
+<div class="flex flex-col gap-space-xs pt-space-sm">
+<div class="flex items-baseline justify-between">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Redemption Cost:</span>
+<span class="font-headline-sm text-headline-sm text-primary">80,000 pts</span>
+</div>
+<div class="flex items-baseline justify-between text-on-surface-variant font-body-sm text-body-sm">
+<span>Carrier Taxes &amp; Fees:</span>
+<span class="font-code-metric text-code-metric text-on-surface">₹24,800</span>
+</div>
+<div class="flex items-baseline justify-between text-on-surface-variant font-body-sm text-body-sm">
+<span>Equivalent Cash:</span>
+<span class="line-through text-on-surface-variant">₹194,500</span>
+</div>
+</div>
+</div>
+<!-- Option B: Economy / World Traveller (Recommended Value) -->
+<div class="p-space-md rounded-lg bg-surface-container-high relative flex flex-col justify-between gap-space-md shadow-md">
+<div class="absolute top-2 right-2 px-space-xs py-[2px] rounded bg-primary-container text-on-primary-container font-label-sm text-label-sm font-bold">
+                        MAX EFFICIENCY
+                      </div>
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center">
+<span class="px-space-xs py-[2px] rounded bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">ECONOMY PEAK</span>
+</div>
+<div class="font-headline-sm text-headline-sm text-primary pt-space-xs">World Traveller Direct</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Optimized for point preservation. Leaves 50,500 pts in your pool.</p>
+</div>
+<div class="flex flex-col gap-space-xs pt-space-sm">
+<div class="flex items-baseline justify-between">
+<span class="text-on-surface-variant font-body-sm text-body-sm">Redemption Cost:</span>
+<span class="font-headline-sm text-headline-sm text-primary-fixed">42,000 pts</span>
+</div>
+<div class="flex items-baseline justify-between text-on-surface-variant font-body-sm text-body-sm">
+<span>Carrier Taxes &amp; Fees:</span>
+<span class="font-code-metric text-code-metric text-on-surface">₹8,200</span>
+</div>
+<div class="flex items-baseline justify-between text-on-surface-variant font-body-sm text-body-sm">
+<span>Effective Yield:</span>
+<span class="font-code-metric text-code-metric text-primary-container font-bold">₹1.84 / pt</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Inline Synthetic Chart: Seat Availability Probability Dec 12-18 -->
+<div class="p-space-md rounded-lg bg-surface-container-low flex flex-col gap-space-sm">
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<span>Award Seat Release Probability (BOM → LHR December Window)</span>
+<span class="text-primary-fixed">Peak Availability: Dec 15</span>
+</div>
+<div class="w-full h-16 flex items-end gap-2 pt-2">
+<div class="flex-1 flex flex-col items-center gap-1">
+<div class="w-full bg-surface-container-highest rounded-t h-8"></div>
+<span class="font-code-metric text-label-sm text-on-surface-variant">Dec 12</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-1">
+<div class="w-full bg-surface-container-highest rounded-t h-10"></div>
+<span class="font-code-metric text-label-sm text-on-surface-variant">Dec 13</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-1">
+<div class="w-full bg-secondary rounded-t h-12"></div>
+<span class="font-code-metric text-label-sm text-secondary">Dec 14</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-1">
+<div class="w-full bg-primary-container rounded-t h-16 shadow-[0_0_12px_rgba(198,242,106,0.4)]"></div>
+<span class="font-code-metric text-label-sm text-primary-fixed font-bold">Dec 15</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-1">
+<div class="w-full bg-secondary rounded-t h-11"></div>
+<span class="font-code-metric text-label-sm text-secondary">Dec 16</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-1">
+<div class="w-full bg-surface-container-highest rounded-t h-7"></div>
+<span class="font-code-metric text-label-sm text-on-surface-variant">Dec 17</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-1">
+<div class="w-full bg-surface-container-highest rounded-t h-5"></div>
+<span class="font-code-metric text-label-sm text-on-surface-variant">Dec 18</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Best Value Recommendation Card (Prominent Callout) -->
+<div class="p-space-lg rounded-xl bg-surface-container-high shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-space-lg relative overflow-hidden">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="px-space-xs py-[2px] rounded bg-primary-container text-on-primary-container font-label-sm text-label-sm font-bold">
+                    RECOMMENDED EXECUTION
+                  </span>
+<span class="text-on-surface-variant font-code-metric text-code-metric">British Airways BA198</span>
+</div>
+<div class="font-headline-md text-headline-md text-primary">Direct BOM → LHR (Dec 15 - 28)</div>
+<div class="flex items-center gap-space-md text-on-surface-variant font-body-sm text-body-sm">
+<span>9h 45m Direct</span>
+<span>•</span>
+<span>Chhatrapati Shivaji (T2) → Heathrow (T5)</span>
+</div>
+</div>
+<div class="flex flex-col md:items-end gap-space-sm w-full md:w-auto">
+<div class="flex flex-col md:items-end">
+<div class="font-headline-md text-headline-md text-primary-container font-bold">42,000 pts + ₹8,200</div>
+<span class="text-on-surface-variant font-body-sm text-body-sm">Cents/Point: ₹1.84 (Industry Avg: ₹0.85)</span>
+</div>
+<button class="w-full md:w-auto flex items-center justify-center gap-space-xs px-space-lg py-space-sm rounded bg-primary-container text-on-primary-container font-label-md text-label-md hover:opacity-95 shadow-[0_0_20px_rgba(199,243,107,0.3)] transition-all" type="button">
+<span>Continue to booking</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Bottom Dynamic Conversation Composer -->
+<div class="p-space-md rounded-xl bg-surface-container shadow-xl flex flex-col gap-space-md sticky bottom-4 z-20 backdrop-blur-xl">
+<!-- Quick Chips -->
+<div class="flex items-center gap-space-xs overflow-x-auto pb-1 text-nowrap">
+<span class="font-label-sm text-label-sm text-on-surface-variant mr-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">auto_awesome</span> Quick prompts:
+              </span>
+<button class="px-space-sm py-space-xs rounded-full bg-surface-container-high text-on-surface hover:text-primary hover:bg-surface-variant transition-colors font-label-sm text-label-sm" onclick="insertPrompt('Compare cash vs points for Dec 15')" type="button">
+                Compare cash vs points
+              </button>
+<button class="px-space-sm py-space-xs rounded-full bg-surface-container-high text-on-surface hover:text-primary hover:bg-surface-variant transition-colors font-label-sm text-label-sm" onclick="insertPrompt('Find Business Class award space via Doha (QR)')" type="button">
+                Find Business Class award space
+              </button>
+<button class="px-space-sm py-space-xs rounded-full bg-surface-container-high text-on-surface hover:text-primary hover:bg-surface-variant transition-colors font-label-sm text-label-sm" onclick="insertPrompt('Check Amex transfer bonus and ratios')" type="button">
+                Check Amex transfer bonus
+              </button>
+</div>
+<!-- Composer Input Bar -->
+<div class="flex items-center gap-space-sm bg-surface-container-low p-space-xs rounded-lg">
+<input class="flex-1 bg-transparent px-space-sm py-space-xs text-on-surface placeholder:text-on-surface-variant focus:outline-none font-body-md text-body-md" id="copilotInput" placeholder="Ask RedeemTrip AI to optimize routing, alert seats, or recalculate transfer ratios..." type="text"/>
+<button aria-label="Upload loyalty balance screenshot" class="p-space-xs rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">attach_file</span>
+</button>
+<button class="px-space-md py-space-xs rounded bg-primary-container text-on-primary-container font-label-md text-label-md flex items-center gap-1 hover:opacity-90 transition-opacity" id="submitBtn" type="button">
+<span>Send</span>
+<span class="material-symbols-outlined text-[16px]">send</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Right Panel: Structured Flight Planner & Loyalty Equity Vault (5 cols) -->
+<div class="xl:col-span-5 flex flex-col gap-space-lg">
+<!-- Trip Overview & Parameter Panel -->
+<div class="p-space-lg rounded-xl bg-surface-container flex flex-col gap-space-lg shadow-lg">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs font-label-md text-label-md text-primary">
+<span class="material-symbols-outlined text-secondary text-[20px]">tune</span>
+<span>Active Planner Parameters</span>
+</div>
+<span class="px-space-xs py-[2px] rounded bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">
+                ROUND TRIP
+              </span>
+</div>
+<!-- Origin & Destination Cards -->
+<div class="grid grid-cols-2 gap-space-sm relative">
+<div class="p-space-md rounded bg-surface-container-low flex flex-col gap-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Origin</span>
+<span class="font-headline-md text-headline-md text-primary font-bold">BOM</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Mumbai, India</span>
+</div>
+<!-- Route Swap Arrow Indicator -->
+<div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-primary-container shadow-md">
+<span class="material-symbols-outlined text-[18px]">flight</span>
+</div>
+<div class="p-space-md rounded bg-surface-container-low flex flex-col gap-space-xs items-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Destination</span>
+<span class="font-headline-md text-headline-md text-primary font-bold">LHR</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">London, Heathrow</span>
+</div>
+</div>
+<!-- Metadata Specs Bento -->
+<div class="grid grid-cols-3 gap-space-sm text-on-surface">
+<div class="p-space-sm rounded bg-surface-container-low flex flex-col">
+<span class="text-on-surface-variant font-label-sm text-label-sm">Outbound</span>
+<span class="font-label-md text-label-md text-primary">Dec 14, 2025</span>
+<span class="font-body-sm text-label-sm text-primary-fixed">±3 Days Flex</span>
+</div>
+<div class="p-space-sm rounded bg-surface-container-low flex flex-col">
+<span class="text-on-surface-variant font-label-sm text-label-sm">Inbound</span>
+<span class="font-label-md text-label-md text-primary">Dec 28, 2025</span>
+<span class="font-body-sm text-label-sm text-on-surface-variant">Fixed return</span>
+</div>
+<div class="p-space-sm rounded bg-surface-container-low flex flex-col">
+<span class="text-on-surface-variant font-label-sm text-label-sm">Travelers</span>
+<span class="font-label-md text-label-md text-primary">1 Adult</span>
+<span class="font-body-sm text-label-sm text-secondary">Premium / Eco</span>
+</div>
+</div>
+<!-- Global Route Visualizer Image Placeholder -->
+<div class="relative w-full h-44 rounded-lg overflow-hidden bg-surface-container-lowest">
+<img class="w-full h-full object-cover opacity-80" data-alt="Digital futuristic world map glowing with interconnected neon flight trajectories connecting Mumbai India and London United Kingdom. High frequency fintech flight telemetry visual with dark cyan and electric lime orbital routes, dark minimalist background, glassmorphism UI reflections." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXqKxRXcGzojM2rbTVMw8xBSbhec5Eq2FRI73Y6OSnzZusv0RHh7Rw6g4OR8RQVQVPcDmkh-bOnjnrxrD2H97KmkV-hZzDAAJPaNgytgAgQUNWd-pyuRBFrJkc67bWGMpEPMtLkSTvVJ8NZv1wc402PIWN4wYWrEs5rgMMpa7-9utzsIn-7BQIP_T30mXLXQg8tqTiovIp3wC_KQZds1MhJTB9N3cyTANbUTFPtFHLd8cJQ2w5f4no"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container via-transparent to-transparent"></div>
+<div class="absolute bottom-2 left-3 right-3 flex items-center justify-between text-label-sm font-label-sm text-on-surface">
+<span class="flex items-center gap-1 text-primary-fixed">
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-primary-fixed"></span>
+                  Optimal Arc: Great Circle BOM-LHR
+                </span>
+<span class="font-code-metric text-code-metric text-on-surface-variant">4,487 mi</span>
+</div>
+</div>
+</div>
+<!-- Live Rewards Snapshot & Transfer Arbitrage Widget -->
+<div class="p-space-lg rounded-xl bg-surface-container flex flex-col gap-space-md shadow-lg">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs font-label-md text-label-md text-primary">
+<span class="material-symbols-outlined text-primary-fixed text-[20px]">account_balance_wallet</span>
+<span>Linked Reward Assets</span>
+</div>
+<span class="font-code-metric text-code-metric text-primary-container">Synced 2m ago</span>
+</div>
+<!-- Points Breakdown Rows -->
+<div class="flex flex-col gap-space-sm">
+<!-- Source 1: Credit Cards -->
+<div class="p-space-md rounded bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded bg-surface-container-high flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">credit_card</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-primary">Bank Points (HDFC + Amex)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Convertible to 14 Airlines</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-headline-sm text-headline-sm text-primary font-bold">68,500</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">PTS</span>
+</div>
+</div>
+<!-- Source 2: Airline Program -->
+<div class="p-space-md rounded bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded bg-surface-container-high flex items-center justify-center text-primary-fixed">
+<span class="material-symbols-outlined text-[18px]">airlines</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-primary">British Airways Avios</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Executive Club Gold</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-headline-sm text-headline-sm text-primary font-bold">24,000</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">AVIOS</span>
+</div>
+</div>
+</div>
+<!-- Transfer Simulator Card -->
+<div class="p-space-md rounded bg-surface-container-high flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Instant Transfer Bridge</span>
+<span class="text-primary-container font-label-sm text-label-sm font-bold">+30% BONUS ACTIVE</span>
+</div>
+<div class="flex items-center justify-between font-body-sm text-body-sm">
+<span class="text-on-surface">Transfer 18,000 Bank Pts</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">arrow_right_alt</span>
+<span class="text-primary-fixed font-bold">Receive 23,400 Avios</span>
+</div>
+<div class="w-full bg-surface-container-lowest h-1.5 rounded overflow-hidden">
+<div class="bg-primary-container h-full rounded" style="width: 78%"></div>
+</div>
+<span class="text-on-surface-variant font-body-sm text-body-sm">
+                Completing this transfer satisfies the 42,000 Avios quota for BOM → LHR instantly.
+              </span>
+</div>
+<button class="w-full py-space-sm rounded bg-surface-variant text-primary font-label-md text-label-md hover:bg-surface-bright transition-colors flex items-center justify-center gap-space-xs" type="button">
+<span class="material-symbols-outlined text-[18px]">swap_horizontal_circle</span>
+<span>Execute 1-Click Point Transfer</span>
+</button>
+</div>
+<!-- Destination Intelligence Preview -->
+<div class="p-space-lg rounded-xl bg-surface-container flex flex-col gap-space-md shadow-lg">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-primary">Destination Insight • London</span>
+<span class="px-space-xs py-[2px] rounded bg-surface-container-highest text-secondary font-label-sm text-label-sm">AIRPORT CODE: LHR</span>
+</div>
+<div class="flex items-center gap-space-md">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="Modern architectural view of the London Heathrow Terminal 5 luxury British Airways Concorde First Class lounge and private runway gate at twilight with subtle amber interior glows and moody violet navy skies." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjUuh66uEE6h_9nHnk10M4O5FdF51VFkdisTutkgao0q31ReLFIvRNkCiyIsJO8AwtDn1QsHpowLQfpPN6EMgFtWdO44HlJcPNicVJ8lCED0RFNtA98BFJaTUzOz6fQSiIlM1GQqnmKNmGISBMi1P_4OwYrAFd2_lIszY4yKLejHYs6ZbZHSmnofgIFYOKyuAZs4Ld2vomi_sAz6__u3KpZrJooIvxlAbo-CvsNtzjYGcCcMHsDRKI"/>
+</div>
+<div class="flex flex-col gap-space-xs">
+<div class="font-headline-sm text-headline-sm text-primary">Heathrow Terminal 5 Direct</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                  Access Galleries Club Lounge with oneworld Sapphire status. Fast track immigration included on premium award bookings.
+                </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  function insertPrompt(text) {
+    const input = document.getElementById('copilotInput');
+    if (input) {
+      input.value = text;
+      input.focus();
+    }
+  }
+
+  const submitBtn = document.getElementById('submitBtn');
+  const inputField = document.getElementById('copilotInput');
+
+  if (submitBtn && inputField) {
+    submitBtn.addEventListener('click', () => {
+      if (inputField.value.trim().length > 0) {
+        inputField.value = '';
+        inputField.placeholder = 'AI is recalculating redemption yield matrices...';
+        setTimeout(() => {
+          inputField.placeholder = 'Ask RedeemTrip AI to optimize routing, alert seats, or recalculate transfer ratios...';
+        }, 2500);
+      }
+    });
+
+    inputField.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        submitBtn.click();
+      }
+    });
+  }
+</script></main></div></body></html>

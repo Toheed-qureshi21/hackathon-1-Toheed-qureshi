@@ -31,6 +31,13 @@
   --radius-panel: 1.25rem;
 
   --shadow-auth-panel: 0 24px 70px rgb(0 0 0 / 0.44);
+
+  --surface-auth-panel: #0f1c2d;
+  --surface-auth-input: #020f1f;
+  --ring-auth: #7ea7ff;
+  --radius-auth-input: 0.5rem;
+  --radius-auth-button: 0.5rem;
+  --radius-auth-panel: 0.75rem;
 }
 
 @theme inline {
@@ -67,6 +74,20 @@
   --radius-panel: var(--radius-panel);
 
   --shadow-auth-panel: var(--shadow-auth-panel);
+
+  --color-surface-auth-panel: var(--surface-auth-panel);
+  --color-surface-auth-input: var(--surface-auth-input);
+  --color-ring-auth: var(--ring-auth);
+
+  --radius-auth-input: var(--radius-auth-input);
+  --radius-auth-button: var(--radius-auth-button);
+  --radius-auth-panel: var(--radius-auth-panel);
+}
+
+@utility auth-heading {
+  font-size: 2rem;
+  line-height: 2.5rem;
+  letter-spacing: -0.015em;
 }
 
 @utility font-heading {

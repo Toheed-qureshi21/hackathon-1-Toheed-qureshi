@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"error":"#ffb4ab","error-container":"#93000a","secondary-container":"#0c4598","surface-variant":"#293547","on-secondary":"#002d6c","primary-container":"#c6f26a","tertiary-container":"#e8ddff","tertiary":"#ffffff","on-primary-container":"#506e00","surface-container-highest":"#293547","primary-fixed-dim":"#abd551","on-surface":"#d6e3fb","on-tertiary":"#381385","surface-container-low":"#0f1c2d","on-primary-fixed":"#141f00","surface-container":"#132031","on-background":"#d6e3fb","surface-tint":"#abd551","tertiary-fixed":"#e8ddff","on-tertiary-fixed":"#21005e","inverse-surface":"#d6e3fb","secondary":"#afc6ff","on-secondary-fixed-variant":"#064395","inverse-on-surface":"#243143","on-error-container":"#ffdad6","on-primary-fixed-variant":"#374e00","surface":"#061424","surface-dim":"#061424","secondary-fixed":"#d9e2ff","secondary-fixed-dim":"#afc6ff","on-tertiary-container":"#6d51bc","on-secondary-fixed":"#001a43","inverse-primary":"#4b6700","surface-bright":"#2d3a4c","on-tertiary-fixed-variant":"#4f319c","outline":"#8e937f","background":"#061424","tertiary-fixed-dim":"#cebdff","surface-container-lowest":"#020f1f","on-surface-variant":"#c4c9b3","surface-container-high":"#1e2b3c","primary-fixed":"#c6f26a","on-secondary-container":"#98b8ff","primary":"#ffffff","on-error":"#690005","on-primary":"#253600","outline-variant":"#444938"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"gutter":"1.5rem","margin-mobile":"1rem","margin":"2rem","space-md":"1rem","space-xs":"0.25rem","space-lg":"1.5rem","space-xl":"2rem","space-sm":"0.5rem","gutter-mobile":"0.75rem","space-3xl":"4rem","space-2xl":"3rem"},"fontFamily":{"label-lg":["Space Grotesk"],"headline-sm":["Space Grotesk"],"body-md":["Inter"],"body-lg":["Inter"],"label-md":["Space Grotesk"],"display-hero-mobile":["Space Grotesk"],"headline-md":["Space Grotesk"],"label-sm":["Space Grotesk"],"code-metric":["Space Grotesk"],"display-hero":["Space Grotesk"],"headline-xl":["Space Grotesk"],"headline-xl-mobile":["Space Grotesk"],"headline-lg":["Space Grotesk"],"body-sm":["Inter"],"body-xl":["Inter"]},"fontSize":{"label-lg":["14px",{"lineHeight":"20px","letterSpacing":"0.02em","fontWeight":"600"}],"headline-sm":["18px",{"lineHeight":"26px","letterSpacing":"-0.005em","fontWeight":"500"}],"body-md":["14px",{"lineHeight":"20px","fontWeight":"400"}],"body-lg":["16px",{"lineHeight":"24px","fontWeight":"400"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.04em","fontWeight":"600"}],"display-hero-mobile":["36px",{"lineHeight":"44px","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"label-sm":["10px",{"lineHeight":"14px","letterSpacing":"0.08em","fontWeight":"700"}],"code-metric":["14px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"500"}],"display-hero":["56px",{"lineHeight":"64px","letterSpacing":"-0.03em","fontWeight":"700"}],"headline-xl":["40px",{"lineHeight":"48px","letterSpacing":"-0.02em","fontWeight":"600"}],"headline-xl-mobile":["28px",{"lineHeight":"36px","letterSpacing":"-0.02em","fontWeight":"600"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.015em","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"18px","fontWeight":"400"}],"body-xl":["18px",{"lineHeight":"28px","fontWeight":"400"}]}}}}</script></head><body class="bg-surface font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 left-0 right-0 h-16 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.4)]"><div class="w-full h-full px-gutter flex items-center justify-between"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-sm"><img alt="RedeemTrip official primary logo lockup with lime-mint geometric flight compass icon and wordmark" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XSsgVcXDBx-VjIvQXyWNAk_qTTWD2yHABJyFZQK3Heualy1_l6bCll72BzXwZDqoFVhId5dw6kBcb2e3nOdeClI9moVkdNkcWJfzgIM5pjxxcRA75XnzNiSf7micmOHmOrb1iHbWRJYKRcdWrLw7TTacti3W5XQx9GpPuyah-JPPyTLM1EZhEgZGeGJBmAODW9Hv4LTU3XiN8mHNdTgdgyJpMNKBDuQLksVNgFfgj8M4yqtJPpxEeomVc"/><span class="font-headline-sm text-headline-sm text-primary tracking-tight">RedeemTrip</span></div></div><nav class="hidden md:flex items-center gap-space-sm" data-active-classes="bg-surface-container-high text-primary font-label-md"><a class="px-space-md py-space-xs rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md text-label-md" data-path="explore-flights" href="#">Explore Flights</a><a class="px-space-md py-space-xs rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md text-label-md" data-path="ai-copilot" href="#">AI Copilot</a><a class="px-space-md py-space-xs rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md text-label-md" data-path="rewards-portfolio" href="#">Rewards Portfolio</a><a class="px-space-md py-space-xs rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-label-md text-label-md" data-path="saved-trips" href="#">Saved Trips</a><a aria-current="page" class="px-space-md py-space-xs rounded transition-colors bg-surface-container-high text-primary font-label-md" data-path="components" href="#">Components</a></nav><div class="flex items-center gap-space-md"><button class="flex items-center gap-space-xs px-space-md py-space-sm rounded bg-primary-container text-on-primary-container font-label-md text-label-md hover:opacity-95 transition-opacity shadow-[0_0_20px_rgba(199,243,107,0.25)]" type="button"><span class="material-symbols-outlined text-[18px]">flight_takeoff</span><span class="hidden sm:inline">Active Trip</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-surface min-h-[calc(100vh-140px)]"><div class="flex flex-col w-full">
+<!-- HERO SECTION -->
+<section class="relative w-full overflow-hidden bg-surface py-space-2xl md:py-space-3xl px-gutter">
+<!-- Ambient Atmospheric Glows -->
+<div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[720px] h-[360px] bg-primary-container/10 blur-[130px] pointer-events-none rounded-full"></div>
+<div class="absolute top-1/4 right-0 w-[420px] h-[420px] bg-secondary-container/20 blur-[140px] pointer-events-none rounded-full"></div>
+<div class="relative max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-space-2xl lg:gap-space-3xl">
+<!-- Left Copy Column -->
+<div class="flex flex-col items-start max-w-2xl lg:w-1/2 space-y-space-lg">
+<!-- Route / Status Tag -->
+<div class="inline-flex items-center gap-space-sm px-space-md py-space-xs rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm uppercase tracking-wider shadow-sm">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+<span>Next-Gen Aviation Yield Engine</span>
+<span class="text-outline">/</span>
+<span class="text-secondary font-code-metric">v4.8 Core</span>
+</div>
+<!-- Headline -->
+<h1 class="font-display-hero text-headline-xl md:text-display-hero text-primary tracking-tight leading-none font-bold">
+          Make Every Point Take You Further.
+        </h1>
+<!-- Supporting Copy -->
+<p class="font-body-xl text-body-xl text-on-surface-variant max-w-xl">
+          RedeemTrip compares cash fares, credit card points, airline miles, loyalty programs, and taxes to pinpoint high-yield flight redemptions in seconds.
+        </p>
+<!-- CTA Cluster -->
+<div class="flex flex-wrap items-center gap-space-md pt-space-sm">
+<a class="flex items-center gap-space-sm px-space-xl py-space-md rounded bg-primary-container text-on-primary-container font-headline-sm text-headline-sm hover:opacity-95 transition-all shadow-[0_0_24px_rgba(198,242,106,0.35)] hover:shadow-[0_0_32px_rgba(198,242,106,0.5)] cursor-pointer" href="#flight-search">
+<span>Plan My Trip</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-lg py-space-md rounded bg-surface-container text-on-surface hover:text-primary hover:bg-surface-container-high transition-colors font-headline-sm text-headline-sm shadow-sm cursor-pointer" href="#how-it-works">
+<span class="material-symbols-outlined text-[20px] text-secondary">play_circle</span>
+<span>See How It Works</span>
+</a>
+</div>
+<!-- Live Micro Metrics Bar -->
+<div class="grid grid-cols-3 gap-space-md pt-space-lg w-full">
+<div class="p-space-md rounded bg-surface-container-low shadow-sm">
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase">Tracked Programs</div>
+<div class="font-headline-md text-headline-md text-primary mt-space-xs">140+</div>
+<div class="font-body-sm text-body-sm text-secondary">Alliances &amp; Banks</div>
+</div>
+<div class="p-space-md rounded bg-surface-container-low shadow-sm">
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase">Average Yield</div>
+<div class="font-headline-md text-headline-md text-primary-container mt-space-xs">2.84 CPP</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">vs 1.1¢ standard</div>
+</div>
+<div class="p-space-md rounded bg-surface-container-low shadow-sm">
+<div class="font-label-sm text-label-sm text-on-surface-variant uppercase">Surcharge Engine</div>
+<div class="font-headline-md text-headline-md text-primary mt-space-xs">100% Net</div>
+<div class="font-body-sm text-body-sm text-secondary">Zero hidden fees</div>
+</div>
+</div>
+</div>
+<!-- Right Visual Column (Cinematic European flight window + live card HUD) -->
+<div class="relative w-full lg:w-1/2 flex items-center justify-center">
+<!-- Primary Window Frame Container -->
+<div class="relative w-full max-w-[560px] aspect-[4/3] rounded-full overflow-hidden shadow-2xl bg-surface-container-lowest p-2">
+<!-- Window Bezel -->
+<div class="relative w-full h-full rounded-full overflow-hidden">
+<img alt="Twilight view of aircraft wing soaring over London and European city lights through an executive aircraft cabin window" class="w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-700 ease-out" src="https://lh3.googleusercontent.com/aida/AEtjO1V-l9ntoc54xVjLznBwPhpMjJpaHzg8WiKsfwN5EQEdyWWMLA4qdtgB73KDVAbwjiLLv6caUdXMkgfleGHzhsqki-UQlzPHDpbaPBctlqrBeIKMQ-3qJILIHWjIMwbR2Uee2Lv66_u15sVyf4KdcL-zOS2qSG9tJXEzEnq18yBk_atbXbQpM2xpBf7OMLlPLQ3x9x2ePtyDTMvzKCQUQoIwQvZf3IVq9TNNJDOCbnIkl8q8zkApPEOhE4A"/>
+<!-- Ambient Vignette -->
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/80 via-transparent to-surface-container-lowest/30 pointer-events-none"></div>
+<!-- Top Left Floating Status -->
+<div class="absolute top-6 left-8 px-space-md py-space-xs rounded-full bg-surface-container-lowest/90 backdrop-blur-md flex items-center gap-space-xs shadow-md">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="font-code-metric text-label-sm text-primary tracking-widest uppercase">FLIGHT RADAR • BOM &gt; LHR</span>
+</div>
+<!-- Top Right Cabin Tag -->
+<div class="absolute top-6 right-8 px-space-md py-space-xs rounded-full bg-surface-container-lowest/90 backdrop-blur-md text-secondary font-label-sm text-label-sm">
+<span>Club World / J-Class</span>
+</div>
+</div>
+</div>
+<!-- Floating Live Valuation HUD Card (Overlapping bottom left/center) -->
+<div class="absolute -bottom-8 lg:-bottom-6 left-4 right-4 sm:left-auto sm:right-6 max-w-md p-space-lg rounded-xl bg-surface-container-high/95 backdrop-blur-xl shadow-2xl space-y-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="px-space-sm py-space-xs rounded bg-surface-container-lowest font-headline-sm text-label-sm text-primary">BOM</span>
+<span class="material-symbols-outlined text-[16px] text-primary-container">flight_takeoff</span>
+<span class="px-space-sm py-space-xs rounded bg-surface-container-lowest font-headline-sm text-label-sm text-primary">LHR</span>
+</div>
+<span class="px-space-sm py-space-xs rounded bg-primary-container text-on-primary-container font-label-sm text-label-sm font-bold uppercase tracking-wider">
+              -42% Net Cost
+            </span>
+</div>
+<div class="grid grid-cols-2 gap-space-md pt-space-xs">
+<div class="p-space-sm rounded bg-surface-container-lowest">
+<div class="font-label-sm text-label-sm text-on-surface-variant">Retail Cash Fare</div>
+<div class="font-headline-md text-headline-md text-primary tracking-tight">₹58,400</div>
+<div class="font-body-sm text-body-sm text-error">Standard Airline Checkout</div>
+</div>
+<div class="p-space-sm rounded bg-surface-container-lowest">
+<div class="font-label-sm text-label-sm text-primary-container font-bold">Optimized Points Deal</div>
+<div class="font-headline-md text-headline-md text-primary-container tracking-tight">42k pts</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">+ ₹8,200 taxes &amp; fees</div>
+</div>
+</div>
+<div class="flex items-center justify-between text-body-sm text-on-surface-variant pt-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary-container text-[16px]">verified</span>
+<span>Yield: <strong class="text-primary font-code-metric">1.39 INR/pt</strong> (~1.67 CPP)</span>
+</div>
+<span class="text-secondary font-label-sm text-label-sm">Virgin Atlantic via Amex</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 1: LIVE INTERACTIVE CASH VS POINTS COMPARISON ENGINE -->
+<section class="w-full bg-surface-container-lowest py-space-2xl md:py-space-3xl px-gutter relative" id="flight-search">
+<div class="max-w-7xl mx-auto space-y-space-xl">
+<!-- Section Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md">
+<div class="space-y-space-xs max-w-xl">
+<div class="font-label-md text-label-md text-primary-container uppercase tracking-wider">Arbitrage Terminal</div>
+<h2 class="font-headline-xl text-headline-lg md:text-headline-xl text-primary font-bold">
+            Real-Time Valuation &amp; Route Matrix
+          </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+            Explore active high-spread routes where loyalty transfers outperform retail flight expenditure.
+          </p>
+</div>
+<div class="flex items-center gap-space-sm bg-surface-container p-1 rounded">
+<button class="tab-btn px-space-md py-space-xs rounded bg-surface-container-high text-primary font-label-md text-label-md" data-filter="all" type="button">All Cabin</button>
+<button class="tab-btn px-space-md py-space-xs rounded text-on-surface-variant hover:text-primary font-label-md text-label-md" data-filter="business" type="button">Business Class</button>
+<button class="tab-btn px-space-md py-space-xs rounded text-on-surface-variant hover:text-primary font-label-md text-label-md" data-filter="first" type="button">First Class</button>
+</div>
+</div>
+<!-- Quick Interactive Route Filter Bar -->
+<div class="p-space-lg rounded-xl bg-surface-container shadow-lg grid grid-cols-1 md:grid-cols-4 gap-space-md items-center">
+<!-- Origin -->
+<div class="flex flex-col space-y-space-xs">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase">Origin Hub</label>
+<div class="flex items-center gap-space-sm px-space-md py-space-sm rounded bg-surface-container-lowest">
+<span class="material-symbols-outlined text-secondary text-[20px]">flight_takeoff</span>
+<div>
+<div class="font-headline-sm text-headline-sm text-primary font-bold">BOM</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Mumbai, India</div>
+</div>
+</div>
+</div>
+<!-- Destination -->
+<div class="flex flex-col space-y-space-xs">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase">Destination</label>
+<div class="flex items-center gap-space-sm px-space-md py-space-sm rounded bg-surface-container-lowest">
+<span class="material-symbols-outlined text-secondary text-[20px]">flight_land</span>
+<div>
+<div class="font-headline-sm text-headline-sm text-primary font-bold">LHR</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">London Heathrow, UK</div>
+</div>
+</div>
+</div>
+<!-- Loyalty Balances Connected -->
+<div class="flex flex-col space-y-space-xs">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase">Connected Balances</label>
+<div class="flex items-center gap-space-sm px-space-md py-space-sm rounded bg-surface-container-lowest">
+<span class="material-symbols-outlined text-primary-container text-[20px]">account_balance_wallet</span>
+<div>
+<div class="font-code-metric text-label-lg text-primary font-bold">128,400 pts</div>
+<div class="font-body-sm text-body-sm text-primary-container">Amex + Chase + HDFC</div>
+</div>
+</div>
+</div>
+<!-- Compute Action Button -->
+<div class="flex flex-col justify-end pt-space-xs md:pt-0">
+<label class="hidden md:block font-label-sm text-label-sm text-transparent">Action</label>
+<button class="w-full py-space-md rounded bg-primary-container text-on-primary-container font-headline-sm text-headline-sm font-bold flex items-center justify-center gap-space-sm hover:opacity-95 transition-transform active:scale-[0.99] shadow-[0_0_20px_rgba(198,242,106,0.3)]" type="button">
+<span class="material-symbols-outlined text-[18px]">query_stats</span>
+<span>Recalculate Yield</span>
+</button>
+</div>
+</div>
+<!-- Comparison Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-lg">
+<!-- Card 1: Featured BOM -> LHR (Virgin Atlantic) -->
+<div class="relative p-space-lg rounded-xl bg-surface-container shadow-xl flex flex-col justify-between group hover:bg-surface-container-high transition-all">
+<div class="space-y-space-md">
+<div class="flex items-center justify-between">
+<span class="px-space-sm py-space-xs rounded bg-surface-container-lowest text-secondary font-label-sm text-label-sm uppercase">Direct • Boeing 787-9</span>
+<span class="px-space-sm py-space-xs rounded bg-primary-container text-on-primary-container font-label-sm text-label-sm font-bold">Top Yield: 1.67 CPP</span>
+</div>
+<!-- Route Details -->
+<div class="flex items-center justify-between pt-space-xs">
+<div>
+<div class="font-headline-lg text-headline-lg text-primary font-bold">02:40</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">BOM (T2)</div>
+</div>
+<div class="flex flex-col items-center px-space-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant">9h 25m</span>
+<div class="w-24 h-[2px] bg-secondary-container relative my-space-xs">
+<div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-primary-container"></div>
+</div>
+<span class="font-body-sm text-body-sm text-secondary">Non-stop</span>
+</div>
+<div class="text-right">
+<div class="font-headline-lg text-headline-lg text-primary font-bold">07:35</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">LHR (T3)</div>
+</div>
+</div>
+<!-- Cash vs Points Breakdown -->
+<div class="p-space-md rounded bg-surface-container-lowest space-y-space-sm">
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant">Cash Retail Fare</span>
+<span class="text-on-surface font-code-metric line-through text-outline">₹58,400</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-primary-container">Points Required</span>
+<span class="font-headline-md text-headline-md text-primary font-bold">42,000 pts</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant">Taxes &amp; Surcharges</span>
+<span class="text-secondary font-code-metric">+ ₹8,200</span>
+</div>
+<div class="pt-space-xs flex items-center justify-between">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase">Net Savings</span>
+<span class="text-primary-container font-headline-sm text-headline-sm font-bold">₹24,520 (42%)</span>
+</div>
+</div>
+</div>
+<!-- Transfer Pathway Footnote -->
+<div class="pt-space-md flex items-center justify-between">
+<div class="flex items-center gap-space-xs text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-primary-container">swap_horiz</span>
+<span>Transfer from: <strong class="text-primary">Amex MR (1:1)</strong></span>
+</div>
+<button class="px-space-md py-space-xs rounded bg-surface-container-highest text-primary hover:bg-primary-container hover:text-on-primary-container transition-colors font-label-md text-label-md" type="button">
+              Lock In
+            </button>
+</div>
+</div>
+<!-- Card 2: BOM -> DXB -> LHR (Emirates Skywards) -->
+<div class="relative p-space-lg rounded-xl bg-surface-container shadow-xl flex flex-col justify-between group hover:bg-surface-container-high transition-all">
+<div class="space-y-space-md">
+<div class="flex items-center justify-between">
+<span class="px-space-sm py-space-xs rounded bg-surface-container-lowest text-secondary font-label-sm text-label-sm uppercase">1-Stop DXB • A380-800</span>
+<span class="px-space-sm py-space-xs rounded bg-surface-container-highest text-on-surface font-label-sm text-label-sm">Yield: 1.42 CPP</span>
+</div>
+<div class="flex items-center justify-between pt-space-xs">
+<div>
+<div class="font-headline-lg text-headline-lg text-primary font-bold">04:30</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">BOM (T2)</div>
+</div>
+<div class="flex flex-col items-center px-space-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant">11h 40m</span>
+<div class="w-24 h-[2px] bg-secondary-container relative my-space-xs">
+<div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-secondary"></div>
+</div>
+<span class="font-body-sm text-body-sm text-secondary">2h 10m DXB</span>
+</div>
+<div class="text-right">
+<div class="font-headline-lg text-headline-lg text-primary font-bold">14:10</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">LHR (T3)</div>
+</div>
+</div>
+<div class="p-space-md rounded bg-surface-container-lowest space-y-space-sm">
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant">Cash Retail Fare</span>
+<span class="text-on-surface font-code-metric line-through text-outline">₹64,200</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-primary-container">Points Required</span>
+<span class="font-headline-md text-headline-md text-primary font-bold">48,000 pts</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant">Taxes &amp; Surcharges</span>
+<span class="text-secondary font-code-metric">+ ₹14,900</span>
+</div>
+<div class="pt-space-xs flex items-center justify-between">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase">Net Savings</span>
+<span class="text-primary-container font-headline-sm text-headline-sm font-bold">₹21,300 (33%)</span>
+</div>
+</div>
+</div>
+<div class="pt-space-md flex items-center justify-between">
+<div class="flex items-center gap-space-xs text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-secondary">swap_horiz</span>
+<span>Transfer from: <strong class="text-primary">Citi / HDFC</strong></span>
+</div>
+<button class="px-space-md py-space-xs rounded bg-surface-container-highest text-primary hover:bg-primary-container hover:text-on-primary-container transition-colors font-label-md text-label-md" type="button">
+              Lock In
+            </button>
+</div>
+</div>
+<!-- Card 3: BOM -> DOH -> LHR (Qatar Qsuite) -->
+<div class="relative p-space-lg rounded-xl bg-surface-container shadow-xl flex flex-col justify-between group hover:bg-surface-container-high transition-all">
+<div class="space-y-space-md">
+<div class="flex items-center justify-between">
+<span class="px-space-sm py-space-xs rounded bg-surface-container-lowest text-secondary font-label-sm text-label-sm uppercase">Qsuite Available • A350-1000</span>
+<span class="px-space-sm py-space-xs rounded bg-primary-container text-on-primary-container font-label-sm text-label-sm font-bold">Yield: 2.15 CPP</span>
+</div>
+<div class="flex items-center justify-between pt-space-xs">
+<div>
+<div class="font-headline-lg text-headline-lg text-primary font-bold">04:10</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">BOM (T2)</div>
+</div>
+<div class="flex flex-col items-center px-space-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant">10h 50m</span>
+<div class="w-24 h-[2px] bg-secondary-container relative my-space-xs">
+<div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-primary-container"></div>
+</div>
+<span class="font-body-sm text-body-sm text-secondary">1h 45m DOH</span>
+</div>
+<div class="text-right">
+<div class="font-headline-lg text-headline-lg text-primary font-bold">13:00</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">LHR (T4)</div>
+</div>
+</div>
+<div class="p-space-md rounded bg-surface-container-lowest space-y-space-sm">
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant">Cash Retail Fare</span>
+<span class="text-on-surface font-code-metric line-through text-outline">₹142,000</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-primary-container">Qatar Avios</span>
+<span class="font-headline-md text-headline-md text-primary font-bold">65,000 pts</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant">Taxes &amp; Surcharges</span>
+<span class="text-secondary font-code-metric">+ ₹18,400</span>
+</div>
+<div class="pt-space-xs flex items-center justify-between">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase">Net Savings</span>
+<span class="text-primary-container font-headline-sm text-headline-sm font-bold">₹78,600 (55%)</span>
+</div>
+</div>
+</div>
+<div class="pt-space-md flex items-center justify-between">
+<div class="flex items-center gap-space-xs text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-primary-container">swap_horiz</span>
+<span>Transfer from: <strong class="text-primary">BA Avios Link</strong></span>
+</div>
+<button class="px-space-md py-space-xs rounded bg-surface-container-highest text-primary hover:bg-primary-container hover:text-on-primary-container transition-colors font-label-md text-label-md" type="button">
+              Lock In
+            </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 2: HOW IT WORKS IN 3 STEPS -->
+<section class="w-full bg-surface py-space-2xl md:py-space-3xl px-gutter relative" id="how-it-works">
+<div class="max-w-7xl mx-auto space-y-space-2xl">
+<!-- Section Title & Subheading -->
+<div class="text-center max-w-2xl mx-auto space-y-space-xs">
+<div class="font-label-md text-label-md text-primary-container uppercase tracking-wider">Methodology &amp; Workflow</div>
+<h2 class="font-headline-xl text-headline-lg md:text-headline-xl text-primary font-bold">
+          High-Yield Redemptions in 3 Decisive Steps
+        </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+          From multi-program wallet sync to direct airline partner booking without leaving value on the table.
+        </p>
+</div>
+<!-- 3 Steps Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-xl">
+<!-- Step 1 -->
+<div class="p-space-xl rounded-xl bg-surface-container relative flex flex-col justify-between shadow-lg">
+<div class="space-y-space-md">
+<div class="flex items-center justify-between">
+<span class="font-display-hero text-headline-xl text-primary-container/30 font-bold">01</span>
+<span class="p-space-sm rounded-full bg-surface-container-high text-primary-container material-symbols-outlined">account_balance</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary font-semibold">
+              Input Journey &amp; Rewards
+            </h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Specify your origin, destination, and flexible travel windows. Securely link or manually state your points balances across Amex, Chase, Citi, Capital One, and global airline programs.
+            </p>
+</div>
+<!-- Micro Visual Element -->
+<div class="mt-space-lg p-space-md rounded bg-surface-container-lowest space-y-space-xs font-code-metric text-body-sm text-secondary">
+<div class="flex justify-between">
+<span>Amex MR:</span>
+<span class="text-primary font-bold">142,500</span>
+</div>
+<div class="flex justify-between">
+<span>Chase UR:</span>
+<span class="text-primary font-bold">98,200</span>
+</div>
+<div class="flex justify-between">
+<span>Air India / Flying Blue:</span>
+<span class="text-primary font-bold">64,000</span>
+</div>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="p-space-xl rounded-xl bg-surface-container relative flex flex-col justify-between shadow-lg">
+<div class="space-y-space-md">
+<div class="flex items-center justify-between">
+<span class="font-display-hero text-headline-xl text-primary-container/30 font-bold">02</span>
+<span class="p-space-sm rounded-full bg-surface-container-high text-primary-container material-symbols-outlined">neurology</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary font-semibold">
+              AI Copilot Valuation
+            </h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Our valuation terminal cross-references live seat inventory across Star Alliance, SkyTeam, and oneworld. It accounts for bonus transfer windows, surcharges, and real net yields.
+            </p>
+</div>
+<!-- Micro Visual Element: Simulated Engine Processing -->
+<div class="mt-space-lg p-space-md rounded bg-surface-container-lowest space-y-space-sm">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Transfer Analysis</span>
+<span class="text-primary-container font-code-metric">+30% Amex &gt; Virgin Promo</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full w-[84%] rounded-full"></div>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary-container text-[14px]">bolt</span>
+<span>Arbitrage score: <strong>94/100 Optimal</strong></span>
+</div>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="p-space-xl rounded-xl bg-surface-container relative flex flex-col justify-between shadow-lg">
+<div class="space-y-space-md">
+<div class="flex items-center justify-between">
+<span class="font-display-hero text-headline-xl text-primary-container/30 font-bold">03</span>
+<span class="p-space-sm rounded-full bg-surface-container-high text-primary-container material-symbols-outlined">airplane_ticket</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary font-semibold">
+              One-Click Booking Handoff
+            </h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Execute precise point transfers with step-by-step guides or direct deep-links. Transition directly into the airline's award checkout page with zero guesswork.
+            </p>
+</div>
+<!-- Micro Visual Element -->
+<div class="mt-space-lg p-space-md rounded bg-surface-container-lowest flex items-center justify-between">
+<div class="space-y-1">
+<div class="font-label-sm text-label-sm text-primary">Direct Award Deep-Link</div>
+<div class="font-body-sm text-body-sm text-secondary">virginatlantic.com/booking</div>
+</div>
+<span class="material-symbols-outlined text-primary-container text-[24px]">open_in_new</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 3: FEATURE BENEFITS GRID -->
+<section class="w-full bg-surface-container-lowest py-space-2xl md:py-space-3xl px-gutter relative">
+<div class="max-w-7xl mx-auto space-y-space-xl">
+<div class="max-w-2xl space-y-space-xs">
+<div class="font-label-md text-label-md text-primary-container uppercase tracking-wider">Algorithmic Precision</div>
+<h2 class="font-headline-xl text-headline-lg md:text-headline-xl text-primary font-bold">
+          Engineered for Loyalty Power-Users
+        </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+          Every nuance of seat releases, award categories, phantom availability, and excise fees factored in real time.
+        </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-lg">
+<!-- Feature 1 -->
+<div class="p-space-lg rounded-xl bg-surface-container shadow-md space-y-space-md hover:bg-surface-container-high transition-colors">
+<div class="w-10 h-10 rounded bg-surface-container-lowest flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[24px]">calculate</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-primary font-semibold">Fintech Precision</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">
+            True net calculations evaluate currency conversion, program transfer rates, and opportunity cost against standard index funds.
+          </p>
+<div class="pt-space-xs font-code-metric text-body-sm text-secondary">
+            Yield formula: (Cash − Surcharges) / Points
+          </div>
+</div>
+<!-- Feature 2 -->
+<div class="p-space-lg rounded-xl bg-surface-container shadow-md space-y-space-md hover:bg-surface-container-high transition-colors">
+<div class="w-10 h-10 rounded bg-surface-container-lowest flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[24px]">hub</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-primary font-semibold">Transfer Optimization</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">
+            Monitors monthly bank transfer bonuses (e.g. +25% Amex to Flying Blue) to stretch existing balances even further.
+          </p>
+<div class="pt-space-xs font-code-metric text-body-sm text-secondary">
+            Over 24 live transfer bonuses mapped
+          </div>
+</div>
+<!-- Feature 3 -->
+<div class="p-space-lg rounded-xl bg-surface-container shadow-md space-y-space-md hover:bg-surface-container-high transition-colors">
+<div class="w-10 h-10 rounded bg-surface-container-lowest flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[24px]">receipt_long</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-primary font-semibold">Surcharge Transparency</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">
+            Never get blindsided by ₹35,000 carrier-imposed fuel fees. We clearly show cash outlays before transfer initiation.
+          </p>
+<div class="pt-space-xs font-code-metric text-body-sm text-secondary">
+            Carrier fuel surcharges audited hourly
+          </div>
+</div>
+<!-- Feature 4 -->
+<div class="p-space-lg rounded-xl bg-surface-container shadow-md space-y-space-md hover:bg-surface-container-high transition-colors">
+<div class="w-10 h-10 rounded bg-surface-container-lowest flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[24px]">radar</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-primary font-semibold">Alert Watcher</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">
+            Instant SMS and Telegram triggers the second premium award inventory opens for London, Tokyo, Zurich, or New York.
+          </p>
+<div class="pt-space-xs font-code-metric text-body-sm text-secondary">
+            Sub-second GDS webhook triggers
+          </div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 4: GLOBAL REWARDS HOLOGRAPHIC SHOWCASE -->
+<section class="relative w-full bg-surface py-space-2xl md:py-space-3xl px-gutter overflow-hidden">
+<!-- Ambient Radial Glow -->
+<div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(12,69,152,0.18)_0%,transparent_70%)] pointer-events-none"></div>
+<div class="relative max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-space-2xl">
+<!-- Visual Display Box -->
+<div class="w-full lg:w-1/2 flex justify-center">
+<div class="relative w-full max-w-[540px] rounded-xl overflow-hidden shadow-2xl bg-surface-container-lowest p-2">
+<div class="relative rounded-lg overflow-hidden aspect-[4/3]">
+<img alt="Global financial rewards holographic network connecting Mumbai, London, Dubai, Tokyo and New York with illuminated flight and point arbitrage nodes" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1XSISG0Y-XsIDGGiwhpqE3aQw4nV-aKIFS8P5DXU2QHt-PyX8R3a7W8WV1SiH4R7yaS8ldqMg4wATkJGIs_NhTW1XSI0Too6XcWNK-zyGUiKSujZs_PH1gBAVJd09VK3CuoA3rLrtoZvmmQHUtUvROOPB1rX80vnFRAWK-tFzcPQz3gvfUxeXlCfus5aY1T-OKuiuOq9j1TfToIo0MboiuVTUiEn-MtglnlnYqLHbdmxoxS1AMaf2CIdmU"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent opacity-60"></div>
+</div>
+</div>
+</div>
+<!-- Explanatory Narrative Column -->
+<div class="w-full lg:w-1/2 space-y-space-lg">
+<div class="inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-full bg-surface-container-high text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-primary-container">public</span>
+<span>GLOBAL REWARDS MATRIX • MUMBAI &amp; LONDON CORRIDOR</span>
+</div>
+<h2 class="font-headline-xl text-headline-lg md:text-headline-xl text-primary font-bold leading-tight">
+          Unlock International Flight Arbitrage Across Global Alliances
+        </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+          Indian travelers and global executives accumulate millions of loyalty points that expire or redeem at subpar 0.25 INR valuation. RedeemTrip bridges Indian card ecosystems (HDFC Infinia, Axis Magnus, Amex Platinum) with international frequent flyer programs to multiply purchasing power by 4x to 6x.
+        </p>
+<!-- Node Status Checklist -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md pt-space-xs">
+<div class="p-space-md rounded bg-surface-container space-y-1 shadow-sm">
+<div class="flex items-center gap-space-xs text-primary font-headline-sm text-label-lg">
+<span class="material-symbols-outlined text-primary-container text-[18px]">done_all</span>
+<span>Mumbai (BOM) → London (LHR)</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">
+              Virgin Atlantic, British Airways, Qatar Qsuite, Emirates Skywards
+            </div>
+</div>
+<div class="p-space-md rounded bg-surface-container space-y-1 shadow-sm">
+<div class="flex items-center gap-space-xs text-primary font-headline-sm text-label-lg">
+<span class="material-symbols-outlined text-primary-container text-[18px]">done_all</span>
+<span>Direct Bank Handshakes</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">
+              Instant 1:1 points transfers mapped with zero latency
+            </div>
+</div>
+</div>
+<div class="pt-space-sm">
+<a class="inline-flex items-center gap-space-sm px-space-xl py-space-md rounded bg-primary-container text-on-primary-container font-headline-sm text-headline-sm font-bold shadow-[0_0_20px_rgba(198,242,106,0.35)] hover:opacity-95 transition-opacity" href="#flight-search">
+<span>Explore Global Routes</span>
+<span class="material-symbols-outlined text-[18px]">travel_explore</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 5: TRUST, TRANSPARENCY & FREQUENTLY ASKED QUESTIONS -->
+<section class="w-full bg-surface-container-lowest py-space-2xl md:py-space-3xl px-gutter relative">
+<div class="max-w-4xl mx-auto space-y-space-2xl">
+<div class="text-center space-y-space-xs">
+<div class="font-label-md text-label-md text-primary-container uppercase tracking-wider">Clarity &amp; Assurance</div>
+<h2 class="font-headline-xl text-headline-lg md:text-headline-xl text-primary font-bold">
+          Frequently Answered Questions
+        </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+          Everything you need to know about points safety, airline booking handoffs, and yield metrics.
+        </p>
+</div>
+<!-- FAQ Accordion Block -->
+<div class="space-y-space-md">
+<!-- Q1 -->
+<details class="group p-space-lg rounded-xl bg-surface-container shadow-md open:bg-surface-container-high transition-colors">
+<summary class="flex items-center justify-between cursor-pointer list-none font-headline-sm text-headline-sm text-primary font-medium">
+<span>Does RedeemTrip hold or access my credit card and loyalty passwords?</span>
+<span class="material-symbols-outlined text-secondary transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<p class="pt-space-md font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            Never. RedeemTrip operates on read-only API handshakes or anonymous balance inputs. We do not initiate point transfers on your behalf or store banking login credentials. You are seamlessly handed off directly to official airline booking portals to finalize redemptions.
+          </p>
+</details>
+<!-- Q2 -->
+<details class="group p-space-lg rounded-xl bg-surface-container shadow-md open:bg-surface-container-high transition-colors">
+<summary class="flex items-center justify-between cursor-pointer list-none font-headline-sm text-headline-sm text-primary font-medium">
+<span>How is "Cents Per Point" (CPP) and INR yield calculated?</span>
+<span class="material-symbols-outlined text-secondary transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<p class="pt-space-md font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            We subtract mandatory taxes and carrier fuel surcharges from the lowest available cash retail ticket price for the identical route and cabin, then divide that net savings by the total reward points required. If a flight costs ₹58,400 in cash and you pay 42,000 pts + ₹8,200 taxes, your net savings of ₹50,200 yields ~1.20 INR (~1.44¢ USD) per point.
+          </p>
+</details>
+<!-- Q3 -->
+<details class="group p-space-lg rounded-xl bg-surface-container shadow-md open:bg-surface-container-high transition-colors">
+<summary class="flex items-center justify-between cursor-pointer list-none font-headline-sm text-headline-sm text-primary font-medium">
+<span>Can I transfer points from Indian credit cards like HDFC, Axis, and Amex India?</span>
+<span class="material-symbols-outlined text-secondary transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<p class="pt-space-md font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            Yes! RedeemTrip specifically models Indian loyalty programs alongside US, UK, and EU accounts. This includes transfer ratios for HDFC SmartBuy / Infinia, Axis Edge Rewards / Atlas, American Express India Membership Rewards, and SBI Card partners.
+          </p>
+</details>
+<!-- Q4 -->
+<details class="group p-space-lg rounded-xl bg-surface-container shadow-md open:bg-surface-container-high transition-colors">
+<summary class="flex items-center justify-between cursor-pointer list-none font-headline-sm text-headline-sm text-primary font-medium">
+<span>What happens if an award seat disappears while I am transferring points?</span>
+<span class="material-symbols-outlined text-secondary transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<p class="pt-space-md font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            Our real-time engine flags instant vs delayed transfer partners. We advise users on partner programs that offer 24-48 hour courtesy award seat holds (such as Flying Blue, Singapore KrisFlyer, and Virgin Atlantic) before initiating the final transfer from your bank.
+          </p>
+</details>
+</div>
+<!-- Bottom Banner / CTA Box -->
+<div class="p-space-xl rounded-xl bg-surface-container flex flex-col md:flex-row items-center justify-between gap-space-lg shadow-xl text-center md:text-left">
+<div class="space-y-space-xs">
+<h3 class="font-headline-md text-headline-md text-primary font-bold">
+            Ready to fly Business Class for the cost of Economy taxes?
+          </h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+            Join over 42,000 smart travelers finding high-yield awards every day.
+          </p>
+</div>
+<a class="px-space-xl py-space-md rounded bg-primary-container text-on-primary-container font-headline-sm text-headline-sm font-bold whitespace-nowrap hover:opacity-95 transition-opacity shadow-[0_0_24px_rgba(198,242,106,0.3)]" href="#flight-search">
+          Launch Search
+        </a>
+</div>
+</div>
+</section>
+</div>
+<script>
+  // Simple tab filter interaction
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('bg-surface-container-high', 'text-primary');
+        b.classList.add('text-on-surface-variant');
+      });
+      btn.classList.add('bg-surface-container-high', 'text-primary');
+      btn.classList.remove('text-on-surface-variant');
+    });
+  });
+</script></main><footer class="w-full bg-surface-container-low py-space-xl"><div class="w-full px-gutter flex flex-col md:flex-row items-center justify-between gap-space-md text-on-surface-variant font-body-sm text-body-sm"><div>© 2025 RedeemTrip Global Aviation &amp; Loyalty Terminal. All rights reserved.</div><div class="flex items-center gap-space-lg"><a class="hover:text-on-surface transition-colors font-label-md text-label-md" href="#">Alliance Index</a><a class="hover:text-on-surface transition-colors font-label-md text-label-md" href="#">Transfer Rules</a><a class="hover:text-on-surface transition-colors font-label-md text-label-md" href="#">API Status</a></div></div></footer></body></html>
