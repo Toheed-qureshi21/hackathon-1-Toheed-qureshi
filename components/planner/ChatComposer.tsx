@@ -1,6 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
+import {
+  plannerComposerInputWrapClassName,
+  plannerComposerShellClassName,
+  plannerQuickChipClassName,
+  plannerSectionLabelClassName,
+  plannerTextareaClassName,
+} from "@/lib/plannerFieldStyles";
+import { COMPOSER_QUICK_PROMPTS } from "@/schemas/plannerChat";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useCallback, useRef, type KeyboardEvent } from "react";
@@ -9,7 +17,9 @@ type ChatComposerProps = {
   value: string;
   onChange: (value: string) => void;
   onSend: () => void;
+  onQuickPrompt?: (prompt: string) => void;
   disabled?: boolean;
+  showQuickPrompts?: boolean;
   className?: string;
 };
 
@@ -17,7 +27,9 @@ export function ChatComposer({
   value,
   onChange,
   onSend,
+  onQuickPrompt,
   disabled = false,
+  showQuickPrompts = false,
   className,
 }: ChatComposerProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -40,39 +52,72 @@ export function ChatComposer({
   }, []);
 
   return (
-    <div
-      className={cn(
-        "flex items-end gap-2.5 rounded-[18px] border border-panel-border bg-[#111827] p-3 shadow-[0_14px_50px_rgb(0_0_0/0.5)]",
-        className,
-      )}
-    >
-      <label htmlFor="planner-composer" className="sr-only">
-        Message the travel assistant
-      </label>
-      <textarea
-        ref={textareaRef}
-        id="planner-composer"
-        rows={1}
-        value={value}
-        disabled={disabled}
-        placeholder="Tell me more about your trip…"
-        onChange={(e) => {
-          onChange(e.target.value);
-          resize();
-        }}
-        onKeyDown={handleKeyDown}
-        className="max-h-40 min-h-[24px] flex-1 resize-none bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground disabled:opacity-50"
-      />
-      <Button
-        type="button"
-        variant="primary"
-        disabled={!canSend}
-        onClick={onSend}
-        className="size-11 shrink-0 px-0"
-        aria-label="Send message"
+    <div className={cn(plannerComposerShellClassName, className)}>
+      {showQuickPrompts && onQuickPrompt ? (
+        <div className="mb-3 flex items-center gap-2 overflow-x-auto pb-0.5">
+          <span
+            className={cn(
+              plannerSectionLabelClassName,
+              "mr-1 flex shrink-0 items-center gap-1 normal-case tracking-normal text-muted-foreground",
+            )}
+          >
+            <Image
+              src="/icons/sparkles.svg"
+              alt=""
+              width={14}
+              height={14}
+              aria-hidden
+            />
+            Quick prompts
+          </span>
+          {COMPOSER_QUICK_PROMPTS.map((prompt) => (
+            <button
+              key={prompt}
+              type="button"
+              disabled={disabled}
+              className={plannerQuickChipClassName}
+              onClick={() => onQuickPrompt(prompt)}
+            >
+              {prompt}
+            </button>
+          ))}
+        </div>
+      ) : null}
+
+      <div
+        className={cn(
+          plannerComposerInputWrapClassName,
+          "focus-within:ring-[3px] focus-within:ring-ring-planner/30",
+        )}
       >
-        <Image src="/icons/send.svg" alt="" width={18} height={18} aria-hidden />
-      </Button>
+        <label htmlFor="planner-composer" className="sr-only">
+          Message the travel assistant
+        </label>
+        <textarea
+          ref={textareaRef}
+          id="planner-composer"
+          rows={1}
+          value={value}
+          disabled={disabled}
+          placeholder="Tell me more about your trip…"
+          onChange={(e) => {
+            onChange(e.target.value);
+            resize();
+          }}
+          onKeyDown={handleKeyDown}
+          className={plannerTextareaClassName}
+        />
+        <Button
+          type="button"
+          variant="primary"
+          disabled={!canSend}
+          onClick={onSend}
+          className="size-10 shrink-0 rounded-planner-md px-0 shadow-[0_0_16px_rgb(199_243_107_/_0.25)]"
+          aria-label="Send message"
+        >
+          <Image src="/icons/send.svg" alt="" width={18} height={18} aria-hidden />
+        </Button>
+      </div>
     </div>
   );
 }

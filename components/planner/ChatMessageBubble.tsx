@@ -1,4 +1,8 @@
 import { Button } from "@/components/ui/Button";
+import {
+  plannerMetricTimeClassName,
+  plannerSectionLabelClassName,
+} from "@/lib/plannerFieldStyles";
 import type { ChatMessage } from "@/schemas/plannerChat";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -22,7 +26,7 @@ export function ChatMessageBubble({ message, onRetry }: ChatMessageBubbleProps) 
   if (isSystem) {
     return (
       <div className="flex justify-center py-2">
-        <p className="max-w-lg rounded-input border border-ai-blue/30 bg-ai-blue/10 px-4 py-2 text-center text-xs text-muted-foreground">
+        <p className="max-w-lg rounded-planner-lg border border-ai-blue/30 bg-ai-blue/10 px-4 py-2 text-center text-xs text-muted-foreground">
           {message.content}
         </p>
       </div>
@@ -31,20 +35,58 @@ export function ChatMessageBubble({ message, onRetry }: ChatMessageBubbleProps) 
 
   return (
     <div
-      className={cn("flex gap-3", isUser ? "justify-end" : "justify-start")}
+      className={cn("flex gap-3", isUser ? "flex-row-reverse" : "flex-row")}
     >
-      {!isUser ? (
-        <div className="grid size-9 shrink-0 place-items-center rounded-full border border-primary/20 bg-primary/10">
-          <Image src="/icons/sparkles.svg" alt="" width={16} height={16} aria-hidden />
-        </div>
-      ) : null}
-      <div className={cn("max-w-[min(75%,36rem)]", isUser && "order-first")}>
+      <div
+        className={cn(
+          "grid size-9 shrink-0 place-items-center rounded-planner-lg shadow-sm",
+          isUser
+            ? "bg-ai-blue/20 text-ai-blue"
+            : "border border-border bg-surface-planner-elevated text-violet",
+        )}
+        aria-hidden
+      >
+        <Image
+          src={isUser ? "/icons/users.svg" : "/icons/sparkles.svg"}
+          alt=""
+          width={16}
+          height={16}
+        />
+      </div>
+
+      <div className={cn("min-w-0 max-w-[min(100%,36rem)] flex-1")}>
         <div
           className={cn(
-            "rounded-[18px] border px-4 py-3 text-sm leading-relaxed",
+            "mb-1.5 flex flex-wrap items-center gap-2",
+            isUser && "justify-end",
+          )}
+        >
+          <span className="font-heading text-xs font-semibold text-foreground">
+            {isUser ? "You" : "RedeemTrip Copilot"}
+          </span>
+          {!isUser ? (
+            <span
+              className={cn(
+                plannerSectionLabelClassName,
+                "rounded-planner-sm bg-surface-planner-elevated px-1.5 py-0.5 normal-case tracking-wide text-muted-foreground",
+              )}
+            >
+              Preview mode
+            </span>
+          ) : null}
+          {message.status === "sent" ? (
+            <span className={plannerMetricTimeClassName}>
+              {formatTime(message.createdAt)}
+            </span>
+          ) : null}
+        </div>
+
+        <div
+          className={cn(
+            "rounded-planner-xl border px-4 py-3 text-sm leading-relaxed shadow-sm",
             isUser
-              ? "border-transparent bg-[#26364d] text-foreground"
-              : "border-border bg-secondary text-foreground",
+              ? "border-ai-blue/25 bg-surface-planner-user-bubble text-foreground"
+              : "border-border bg-surface-planner-panel text-foreground",
             message.status === "failed" && "border-destructive/50",
           )}
         >
@@ -68,16 +110,6 @@ export function ChatMessageBubble({ message, onRetry }: ChatMessageBubbleProps) 
             </div>
           ) : null}
         </div>
-        {message.status === "sent" ? (
-          <p
-            className={cn(
-              "mt-1.5 text-[11px] text-muted-foreground",
-              isUser ? "text-right" : "text-left",
-            )}
-          >
-            {formatTime(message.createdAt)}
-          </p>
-        ) : null}
       </div>
     </div>
   );

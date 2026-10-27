@@ -3,9 +3,15 @@
 import { ChatComposer } from "@/components/planner/ChatComposer";
 import { ChatMessageBubble } from "@/components/planner/ChatMessageBubble";
 import { ChatTypingIndicator } from "@/components/planner/ChatTypingIndicator";
+import { PlannerAmbientBackground } from "@/components/planner/PlannerAmbientBackground";
 import { PlannerEmptyState } from "@/components/planner/PlannerEmptyState";
 import { PlannerSidebar } from "@/components/planner/PlannerSidebar";
+import { PlannerTopBar } from "@/components/planner/PlannerTopBar";
 import { TripSummaryCard } from "@/components/planner/TripSummaryCard";
+import {
+  plannerSectionLabelClassName,
+  plannerWorkspaceTitleClassName,
+} from "@/lib/plannerFieldStyles";
 import {
   ASSISTANT_PREVIEW_REPLY,
   type ChatMessage,
@@ -13,9 +19,9 @@ import {
   conversationTitleFromMessage,
   createConversation,
   inferTripDraftHints,
+  isTripDraftEmpty,
 } from "@/schemas/plannerChat";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import { useCallback, useMemo, useRef, useState } from "react";
 
 const SIMULATE_SEND_FAILURE = "[fail]";
@@ -41,6 +47,7 @@ export function PlannerChat() {
   const [isTyping, setIsTyping] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const mainRegionRef = useRef<HTMLDivElement>(null);
 
   const activeConversation = useMemo(
     () => conversations.find((c) => c.id === activeId) ?? conversations[0],
@@ -162,12 +169,29 @@ export function PlannerChat() {
   );
 
   const handleNewTrip = useCallback(() => {
+    const current = conversations.find((c) => c.id === activeId);
+    if (
+      current &&
+      current.messages.length === 0 &&
+      isTripDraftEmpty(current.tripDraft)
+    ) {
+      setComposer("");
+      setIsTyping(false);
+      setMobileNavOpen(false);
+      scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+      mainRegionRef.current?.focus();
+      return;
+    }
+
     const next = createConversation();
     setConversations((prev) => [next, ...prev]);
     setActiveId(next.id);
     setComposer("");
+    setIsTyping(false);
     setMobileNavOpen(false);
-  }, []);
+    scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    mainRegionRef.current?.focus();
+  }, [activeId, conversations]);
 
   const handleSelectConversation = useCallback((id: string) => {
     setActiveId(id);
@@ -175,12 +199,18 @@ export function PlannerChat() {
   }, []);
 
   const showEmptyState = activeConversation.messages.length === 0 && !isTyping;
+  const hasConversation = activeConversation.messages.length > 0 || isTyping;
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <div className="hidden w-[245px] shrink-0 md:block">
+    <div className="min-h-screen bg-background">
+      <PlannerTopBar
+        mobileNavOpen={mobileNavOpen}
+        onOpenMobileNav={() => setMobileNavOpen((o) => !o)}
+      />
+
+      <div className="hidden md:fixed md:top-16 md:bottom-0 md:left-0 md:z-40 md:block">
         <PlannerSidebar
-          className="sticky top-0 h-screen"
+          className="h-full"
           conversations={conversations}
           activeConversationId={activeId}
           onSelectConversation={handleSelectConversation}
@@ -200,7 +230,7 @@ export function PlannerChat() {
       <div
         id="planner-mobile-nav"
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-[min(100%,280px)] transform transition-transform duration-200 md:hidden",
+          "fixed top-16 bottom-0 left-0 z-50 w-[min(100%,16rem)] transform transition-transform duration-200 md:hidden",
           mobileNavOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
@@ -213,78 +243,89 @@ export function PlannerChat() {
         />
       </div>
 
-      <div className="flex min-h-screen min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between border-b border-border px-4 py-3 md:hidden">
-          <button
-            type="button"
-            className="rounded-button border border-border bg-secondary p-2.5 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/25"
-            aria-expanded={mobileNavOpen}
-            aria-controls="planner-mobile-nav"
-            onClick={() => setMobileNavOpen((o) => !o)}
-          >
-            <Image src="/icons/menu.svg" alt="" width={20} height={20} aria-hidden />
-            <span className="sr-only">Open menu</span>
-          </button>
-          <p className="font-heading text-sm font-semibold text-foreground">
-            Plan your trip
-          </p>
-          <div className="size-10" aria-hidden />
-        </header>
+      <div className="relative flex min-h-screen flex-col pt-16 md:pl-64">
+        <PlannerAmbientBackground />
 
-        <div
-          ref={scrollRef}
-          className="flex-1 overflow-y-auto px-4 pb-36 pt-6 md:px-8 md:pt-9"
-        >
-          <div className="mx-auto w-full max-w-[940px]">
-            {showEmptyState ? (
-              <PlannerEmptyState onSelectPrompt={(prompt) => void sendText(prompt)} />
-            ) : (
-              <>
-                <div className="mb-6 md:mb-8">
-                  <p className="text-xs font-semibold tracking-wide text-primary uppercase">
+        {showEmptyState ? (
+          <div
+            ref={mainRegionRef}
+            tabIndex={-1}
+            id="planner-main"
+            className="relative flex flex-1 flex-col overflow-y-auto px-4 py-10 outline-none md:px-8"
+          >
+            <PlannerEmptyState onSelectPrompt={(prompt) => void sendText(prompt)} />
+          </div>
+        ) : (
+          <div className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 pb-4 md:px-6 lg:px-8">
+            <div className="grid flex-1 grid-cols-1 items-start gap-6 py-6 xl:grid-cols-12 xl:gap-8">
+              <div className="flex min-h-0 flex-col xl:col-span-7">
+                <header className="mb-6 shrink-0">
+                  <p
+                    className={cn(
+                      plannerSectionLabelClassName,
+                      "flex items-center gap-2 text-primary",
+                    )}
+                  >
+                    <span className="inline-block size-2 rounded-full bg-primary shadow-[0_0_8px_#c7f36b]" />
                     Plan your trip
                   </p>
-                  <h1 className="mt-2 font-heading text-3xl tracking-tight text-foreground">
+                  <h1 className={cn("mt-2", plannerWorkspaceTitleClassName)}>
                     {activeConversation.title || "Trip conversation"}
                   </h1>
-                  <p className="mt-2 text-sm text-muted-foreground">
+                  <p className="mt-2 max-w-xl text-sm text-muted-foreground">
                     Chat to shape your trip. Flight search and AI optimization
                     are not connected in this preview.
                   </p>
-                </div>
+                </header>
 
-                <div className="flex flex-col gap-5" role="log" aria-live="polite">
-                  {activeConversation.messages.map((message) => (
-                    <ChatMessageBubble
-                      key={message.id}
-                      message={message}
-                      onRetry={
-                        message.status === "failed" ? handleRetry : undefined
-                      }
+                <div
+                  ref={scrollRef}
+                  className="min-h-[200px] flex-1 overflow-y-auto pr-1"
+                >
+                  <div className="flex flex-col gap-6 pb-4" role="log" aria-live="polite">
+                    {activeConversation.messages.map((message) => (
+                      <ChatMessageBubble
+                        key={message.id}
+                        message={message}
+                        onRetry={
+                          message.status === "failed" ? handleRetry : undefined
+                        }
+                      />
+                    ))}
+                    {isTyping ? <ChatTypingIndicator /> : null}
+                  </div>
+
+                  <div className="xl:hidden">
+                    <TripSummaryCard
+                      draft={activeConversation.tripDraft}
+                      className="mt-2"
                     />
-                  ))}
-                  {isTyping ? <ChatTypingIndicator /> : null}
+                  </div>
                 </div>
 
-                <TripSummaryCard draft={activeConversation.tripDraft} />
-              </>
-            )}
-          </div>
-        </div>
+                <div className="sticky bottom-0 z-20 shrink-0 bg-gradient-to-t from-background from-60% to-transparent pt-4 pb-2">
+                  <ChatComposer
+                    value={composer}
+                    onChange={setComposer}
+                    onSend={() => void sendText(composer)}
+                    onQuickPrompt={(prompt) => void sendText(prompt)}
+                    disabled={isTyping}
+                    showQuickPrompts={hasConversation}
+                  />
+                  <p className="mt-2 text-center text-[11px] text-muted-foreground">
+                    Enter to send · Shift+Enter for a new line
+                  </p>
+                </div>
+              </div>
 
-        <div className="fixed right-0 bottom-5 left-0 z-30 px-4 md:left-[245px] md:px-8">
-          <div className="mx-auto w-full max-w-[760px]">
-            <ChatComposer
-              value={composer}
-              onChange={setComposer}
-              onSend={() => void sendText(composer)}
-              disabled={isTyping}
-            />
-            <p className="mt-2 text-center text-[11px] text-muted-foreground">
-              Enter to send · Shift+Enter for a new line
-            </p>
+              <aside className="hidden xl:col-span-5 xl:block">
+                <div className="sticky top-20">
+                  <TripSummaryCard draft={activeConversation.tripDraft} />
+                </div>
+              </aside>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

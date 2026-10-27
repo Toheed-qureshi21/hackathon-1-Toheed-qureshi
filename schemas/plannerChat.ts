@@ -47,6 +47,12 @@ export const SUGGESTED_PROMPTS = [
   "Find flights for my next vacation.",
 ] as const;
 
+export const COMPOSER_QUICK_PROMPTS = [
+  "Find the best way to fly to London.",
+  "Help me use my credit card points.",
+  "Plan a trip using my airline miles.",
+] as const;
+
 export const ASSISTANT_PREVIEW_REPLY =
   "Thanks for sharing. Preview mode: the AI copilot is not connected yet, so I cannot search flights or calculate redemption value. When integration is live, I will help confirm origin, dates, passengers, cabin, and your rewards balances step by step.";
 
@@ -91,6 +97,10 @@ export function inferTripDraftHints(
     next.pointsOrMiles = "Mentioned in chat (draft)";
   }
   return next;
+}
+
+export function isTripDraftEmpty(draft: TripDraft): boolean {
+  return !Object.values(draft).some((v) => v !== null && v !== "");
 }
 
 export function conversationTitleFromMessage(text: string): string {
