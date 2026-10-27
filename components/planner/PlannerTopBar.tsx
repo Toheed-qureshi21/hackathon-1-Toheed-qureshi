@@ -18,7 +18,7 @@ export function PlannerTopBar({
       containerClassName="md:pl-[calc(16rem+1rem)]"
       showPreviewBadge
       hideMobileMenu
-      leftAddon={
+      rightAddon={
         onOpenMobileNav ? (
           <button
             type="button"

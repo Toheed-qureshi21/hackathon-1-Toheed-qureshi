@@ -150,7 +150,39 @@ Do not mark tasks complete merely because code has been generated. Confirm imple
 
 **Important:** Duffel cash-search access does not establish that award-flight inventory is available through Duffel.
 
-## Phase 7 — Award-Availability Provider Investigation and Integration
+## Phase 7 — Rules-Based Rewards Optimization Engine
+
+Award-flight provider APIs (PointsYeah, Seats.aero, paid award search, scraping) are **out of scope** for this phase. The engine evaluates **Duffel cash offers** plus **user-confirmed balances** and **optional user-supplied redemption assumptions** only.
+
+### Deterministic engine
+
+- [x] Implement server-side rules engine (`lib/rewards/evaluate-rewards.ts`).
+- [x] Accept validated trip, normalized Duffel offers, user balances, optional monthly earning estimate, optional redemption assumptions.
+- [x] Rule A — Cash baseline: rank real Duffel offers by lowest price within each currency; no cross-currency comparison without verified FX.
+- [x] Rule B — Redemption value: `(cashFare − taxesFees) / pointsRequired` when same currency and inputs valid; `pointsRequired > 0`.
+- [x] Rule C — Balance and shortfall: confirmed vs unknown balance; no inference from program names.
+- [x] Rule D — Earning timeline: `ceil(shortfall / monthlyEstimate)` when shortfall and positive monthly estimate exist.
+- [x] Rule E — Ranking with documented criteria; redemption rows marked **not** confirmed award options.
+- [x] Rule F — Responsible-use messaging in API output.
+- [x] Data provenance labels (`lib/rewards/provenance.ts`).
+
+### API and UI
+
+- [x] Authenticated `POST /api/planner/rewards/evaluate` with Zod validation.
+- [x] Planner **Rewards comparison** panel (sidebar): cash rankings, optional assumptions, shortfall, value/pt, timeline, missing-data notes.
+- [x] Auto-run evaluation after successful cash search (empty assumptions); re-run with assumptions via button.
+
+### Tests
+
+- [x] Deterministic unit tests (`npm run test:rewards-evaluation`).
+
+**Required inputs for redemption value:** lowest comparable Duffel cash fare in the **same currency** as taxes/fees; user-supplied or independently verified points required and taxes/fees; points required &gt; 0.
+
+**Limitations:** No live award inventory, no official program rules, no transfer-path verification (Phase 9), no fabricated savings or discount percentages.
+
+**Env:** No new environment variables for Phase 7.
+
+## Phase 7 (deferred) — Award-Availability Provider Investigation and Integration
 
 ### Provider Investigation
 

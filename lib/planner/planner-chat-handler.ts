@@ -61,6 +61,8 @@ export async function handlePlannerChatPost(
     const result = await processPlannerChatTurn(parsed.data, deps.groqClient);
     return jsonOk(result);
   } catch (error) {
+    console.log(error);
+    
     if (error instanceof GroqPlannerError) {
       return jsonError(
         publicGroqErrorMessage(error.code),

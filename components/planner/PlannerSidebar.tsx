@@ -7,6 +7,7 @@ import {
 import type { PlannerConversation } from "@/schemas/plannerChat";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { Plus } from "lucide-react";
 
 type PlannerSidebarProps = {
   conversations: PlannerConversation[];
@@ -73,7 +74,7 @@ export function PlannerSidebar({
         type="button"
         className="h-11 rounded-planner-md py-0 shadow-[0_0_20px_rgb(199_243_107_/_0.2)]"
       >
-        <Image src="/icons/plus.svg" alt="" width={16} height={16} aria-hidden />
+        <Plus  width={16} height={16} aria-hidden />
         Start New
       </Button>
 

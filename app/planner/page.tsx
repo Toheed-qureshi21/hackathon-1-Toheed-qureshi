@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
-  title: "Plan your trip",
+  title: "RedeemTrip",
   description:
     "Chat with the RedeemTrip assistant to plan travel and use your rewards smarter.",
 };

@@ -3,6 +3,10 @@ import type { FlightSearchSuccessResponse } from "@/schemas/flightSearchSchema";
 import type { PlannerPlaceOption } from "@/schemas/plannerLocationSchema";
 import type { PlannerChatRequest } from "@/schemas/plannerChatApiSchema";
 import type { PlannerChatSuccessResponse } from "@/schemas/plannerChatApiSchema";
+import type {
+  RewardsEvaluationRequest,
+  RewardsEvaluationSuccessResponse,
+} from "@/schemas/rewardsEvaluationSchema";
 import type { TripPlannerInput } from "@/schemas/tripPlannerSchema";
 
 type TripInputSuccess = {
@@ -92,5 +96,28 @@ export async function postFlightSearch(
     body: JSON.stringify(payload),
   });
   const data = (await response.json()) as FlightSearchApiResult;
+  return { response, data };
+}
+
+type RewardsEvaluationError = {
+  ok: false;
+  error: string;
+  fieldErrors?: Record<string, string | undefined>;
+};
+
+export type RewardsEvaluationApiResult =
+  | RewardsEvaluationSuccessResponse
+  | RewardsEvaluationError;
+
+export async function postRewardsEvaluation(
+  payload: RewardsEvaluationRequest,
+): Promise<{ response: Response; data: RewardsEvaluationApiResult }> {
+  const response = await fetch("/api/planner/rewards/evaluate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(payload),
+  });
+  const data = (await response.json()) as RewardsEvaluationApiResult;
   return { response, data };
 }

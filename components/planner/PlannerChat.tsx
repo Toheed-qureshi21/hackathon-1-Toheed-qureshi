@@ -7,6 +7,7 @@ import { PlannerEmptyState } from "@/components/planner/PlannerEmptyState";
 import { PlannerSidebar } from "@/components/planner/PlannerSidebar";
 import { PlannerTopBar } from "@/components/planner/PlannerTopBar";
 import { CashFlightResults } from "@/components/planner/CashFlightResults";
+import { RewardsEvaluationPanel } from "@/components/planner/RewardsEvaluationPanel";
 import { TripPlannerForm } from "@/components/planner/TripPlannerForm";
 import { TripSummaryCard } from "@/components/planner/TripSummaryCard";
 import { Button } from "@/components/ui/Button";
@@ -15,6 +16,7 @@ import { fieldErrorsFromZod } from "@/lib/zodFieldErrors";
 import {
   postFlightSearch,
   postPlannerChat,
+  postRewardsEvaluation,
   postTripPlannerInput,
 } from "@/lib/planner/client-api";
 import {
@@ -30,6 +32,10 @@ import {
   isTripFormPristine,
 } from "@/schemas/plannerChat";
 import type { FlightSearchSuccessResponse } from "@/schemas/flightSearchSchema";
+import type {
+  RewardsEvaluationSuccessResponse,
+  UserRedemptionAssumption,
+} from "@/schemas/rewardsEvaluationSchema";
 import { iataCodeSchema } from "@/schemas/plannerLocationSchema";
 import {
   tripPlannerFormSchema,
@@ -72,6 +78,12 @@ export function PlannerChat() {
     useState<FlightSearchSuccessResponse | null>(null);
   const [flightSearchError, setFlightSearchError] = useState<string | null>(null);
   const [isFlightSearching, setIsFlightSearching] = useState(false);
+  const [rewardsEvaluation, setRewardsEvaluation] =
+    useState<RewardsEvaluationSuccessResponse | null>(null);
+  const [rewardsEvaluationError, setRewardsEvaluationError] = useState<
+    string | null
+  >(null);
+  const [isRewardsEvaluating, setIsRewardsEvaluating] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const mainRegionRef = useRef<HTMLDivElement>(null);
 
@@ -124,6 +136,48 @@ export function PlannerChat() {
       );
     },
     [activeId],
+  );
+
+  const runRewardsEvaluation = useCallback(
+    async (
+      trip: TripPlannerInput,
+      form: TripPlannerFormValues,
+      offers: FlightSearchSuccessResponse["offers"],
+      redemptionAssumptions: UserRedemptionAssumption[],
+    ) => {
+      if (isRewardsEvaluating || offers.length === 0) return;
+      const originParsed = iataCodeSchema.safeParse(form.originIataCode);
+      const destinationParsed = iataCodeSchema.safeParse(form.destinationIataCode);
+      if (!originParsed.success || !destinationParsed.success) return;
+
+      setRewardsEvaluationError(null);
+      setIsRewardsEvaluating(true);
+      try {
+        const { response, data } = await postRewardsEvaluation({
+          trip,
+          originIataCode: originParsed.data,
+          destinationIataCode: destinationParsed.data,
+          offers,
+          redemptionAssumptions,
+        });
+        if (!response.ok || !data.ok) {
+          setRewardsEvaluationError(
+            !data.ok && data.error
+              ? data.error
+              : "Unable to evaluate rewards. Please try again.",
+          );
+          return;
+        }
+        setRewardsEvaluation(data);
+      } catch {
+        setRewardsEvaluationError(
+          "Network error during rewards evaluation. Try again.",
+        );
+      } finally {
+        setIsRewardsEvaluating(false);
+      }
+    },
+    [isRewardsEvaluating],
   );
 
   const runFlightSearch = useCallback(
@@ -198,6 +252,16 @@ export function PlannerChat() {
           return false;
         }
         setFlightSearchResult(data);
+        if (data.offers.length > 0) {
+          void runRewardsEvaluation(
+            trip,
+            form,
+            data.offers,
+            [],
+          );
+        } else {
+          setRewardsEvaluation(null);
+        }
         if (postToChat) {
           appendChatMessages([
             {
@@ -236,7 +300,7 @@ export function PlannerChat() {
         setIsFlightSearching(false);
       }
     },
-    [appendChatMessages, isFlightSearching, scrollToBottom],
+    [appendChatMessages, isFlightSearching, runRewardsEvaluation, scrollToBottom],
   );
 
   const sendText = useCallback(
@@ -511,6 +575,8 @@ export function PlannerChat() {
     setSaveSuccess(null);
     setFlightSearchResult(null);
     setFlightSearchError(null);
+    setRewardsEvaluation(null);
+    setRewardsEvaluationError(null);
     setMobileNavOpen(false);
     scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
     mainRegionRef.current?.focus();
@@ -523,6 +589,8 @@ export function PlannerChat() {
     setSaveSuccess(null);
     setFlightSearchResult(null);
     setFlightSearchError(null);
+    setRewardsEvaluation(null);
+    setRewardsEvaluationError(null);
     setMobileNavOpen(false);
   }, []);
 
@@ -704,6 +772,23 @@ export function PlannerChat() {
                   canSearch={canSearchFlights}
                   onSearch={() => void handleFlightSearch()}
                 />
+                <RewardsEvaluationPanel
+                  tripInput={activeConversation.validatedTripInput}
+                  flightSearch={flightSearchResult}
+                  evaluation={rewardsEvaluation}
+                  isEvaluating={isRewardsEvaluating}
+                  error={rewardsEvaluationError}
+                  onEvaluate={(assumptions) => {
+                    const trip = activeConversation.validatedTripInput;
+                    if (!trip || !flightSearchResult?.offers.length) return;
+                    void runRewardsEvaluation(
+                      trip,
+                      activeConversation.tripForm,
+                      flightSearchResult.offers,
+                      assumptions,
+                    );
+                  }}
+                />
               </div>
             </div>
 
@@ -716,6 +801,23 @@ export function PlannerChat() {
                   error={flightSearchError}
                   canSearch={canSearchFlights}
                   onSearch={() => void handleFlightSearch()}
+                />
+                <RewardsEvaluationPanel
+                  tripInput={activeConversation.validatedTripInput}
+                  flightSearch={flightSearchResult}
+                  evaluation={rewardsEvaluation}
+                  isEvaluating={isRewardsEvaluating}
+                  error={rewardsEvaluationError}
+                  onEvaluate={(assumptions) => {
+                    const trip = activeConversation.validatedTripInput;
+                    if (!trip || !flightSearchResult?.offers.length) return;
+                    void runRewardsEvaluation(
+                      trip,
+                      activeConversation.tripForm,
+                      flightSearchResult.offers,
+                      assumptions,
+                    );
+                  }}
                 />
               </div>
             </aside>
