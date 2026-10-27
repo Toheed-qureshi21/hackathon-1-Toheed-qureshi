@@ -16,7 +16,7 @@
 
 - [x] Establish the application layout.
 - [x] Configure fonts and brand tokens.
-- [ ] Implement shared navigation and footer.
+- [x] Implement shared navigation and footer.
 - [x] Implement shared button, input, card, and form components.
 - [x] Ensure responsive behavior.
 - [x] Add loading, empty, and error state patterns.
@@ -24,7 +24,7 @@
 
 ## Phase 2 — Public Pages
 
-- [ ] Implement the landing page using `design-reference/landing.html`.
+- [x] Implement the landing page using `design-reference/landing.html`.
 - [x] Implement login using `design-reference/login.html`.
 - [x] Implement signup using `design-reference/signup.html`.
 - [x] Reuse the supplied logo and icons.
