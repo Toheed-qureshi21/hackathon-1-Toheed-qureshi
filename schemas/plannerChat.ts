@@ -3,7 +3,7 @@ import { emptyTripPlannerFormValues } from "@/schemas/tripPlannerSchema";
 
 export type ChatMessageRole = "user" | "assistant" | "system";
 
-export type ChatMessageStatus = "sending" | "sent" | "failed";
+export type ChatMessageStatus = "sending" | "typing" | "sent" | "failed";
 
 export type ChatMessage = {
   id: string;

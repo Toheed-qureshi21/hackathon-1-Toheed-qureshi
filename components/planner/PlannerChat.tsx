@@ -123,7 +123,7 @@ export function PlannerChat() {
         id: userMessageId,
         role: "user",
         content: displayText,
-        status: "sending",
+        status: "sent",
         createdAt: Date.now(),
       };
 
@@ -198,9 +198,7 @@ export function PlannerChat() {
           updateConversation(prev, activeId, (c) => ({
             ...c,
             messages: [
-              ...c.messages.map((m) =>
-                m.id === userMessageId ? { ...m, status: "sent" as const } : m,
-              ),
+              ...c.messages,
               assistantMessage,
             ],
             tripForm: data.mergedTripForm,
@@ -413,7 +411,7 @@ export function PlannerChat() {
 
                   <div
                     ref={scrollRef}
-                    className="mb-6 max-h-[280px] min-h-[120px] overflow-y-auto pr-1"
+                    className="scrollbar-none mb-6 max-h-[280px] min-h-[120px] overflow-y-auto"
                   >
                     <div
                       className="flex flex-col gap-5"
@@ -434,8 +432,8 @@ export function PlannerChat() {
                           message={{
                             id: "assistant-pending",
                             role: "assistant",
-                            content: "Thinking…",
-                            status: "sending",
+                            content: "",
+                            status: "typing",
                             createdAt: 0,
                           }}
                         />

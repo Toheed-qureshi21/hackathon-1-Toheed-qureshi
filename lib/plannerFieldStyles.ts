@@ -21,4 +21,4 @@ export const plannerQuickChipClassName =
   "shrink-0 rounded-full border border-border bg-surface-planner-elevated px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-ai-blue/40 hover:text-ai-blue focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring-planner/30";
 
 export const plannerTextareaClassName =
-  "max-h-40 min-h-[24px] flex-1 resize-none bg-transparent px-2 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-0 disabled:opacity-50";
+  "scrollbar-none max-h-40 min-h-[24px] flex-1 resize-none overflow-y-auto bg-transparent px-2 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-0 disabled:opacity-50";

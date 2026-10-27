@@ -76,7 +76,7 @@ export function TripPlannerForm({
             value={values.naturalLanguageNote ?? ""}
             onChange={(e) => patch({ naturalLanguageNote: e.target.value })}
             placeholder="e.g. I want to fly from Mumbai to London in December for two adults, preferably business class…"
-            className="w-full rounded-input border border-input bg-input-background px-3.5 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-ring/25"
+            className="scrollbar-thin max-h-40 w-full overflow-y-auto rounded-input border border-input bg-input-background px-3.5 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-ring/25"
           />
           <p className="text-xs text-muted-foreground">
             This note is stored with your trip. Structured fields below are what

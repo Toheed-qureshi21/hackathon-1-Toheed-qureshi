@@ -90,8 +90,20 @@ export function ChatMessageBubble({ message, onRetry }: ChatMessageBubbleProps) 
             message.status === "failed" && "border-destructive/50",
           )}
         >
-          <p className="whitespace-pre-wrap">{message.content}</p>
-          {message.status === "sending" ? (
+          {message.status === "typing" ? (
+            <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+              <span className="sr-only">Assistant is thinking</span>
+              <span className="inline-flex gap-1" aria-hidden>
+                <span className="size-1.5 animate-pulse rounded-full bg-muted-foreground/70 [animation-delay:0ms]" />
+                <span className="size-1.5 animate-pulse rounded-full bg-muted-foreground/70 [animation-delay:150ms]" />
+                <span className="size-1.5 animate-pulse rounded-full bg-muted-foreground/70 [animation-delay:300ms]" />
+              </span>
+              Thinking…
+            </p>
+          ) : (
+            <p className="whitespace-pre-wrap">{message.content}</p>
+          )}
+          {message.status === "sending" && isUser ? (
             <p className="mt-2 text-xs text-muted-foreground">Sending…</p>
           ) : null}
           {message.status === "failed" ? (

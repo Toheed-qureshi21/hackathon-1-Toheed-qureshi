@@ -55,7 +55,7 @@ export function ChatComposer({
   return (
     <div className={cn(plannerComposerShellClassName, className)}>
       {showQuickPrompts && onQuickPrompt ? (
-        <div className="mb-3 flex items-center gap-2 overflow-x-auto pb-0.5">
+        <div className="scrollbar-none mb-3 flex items-center gap-2 overflow-x-auto pb-0.5">
           <span
             className={cn(
               plannerSectionLabelClassName,
