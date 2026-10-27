@@ -3,6 +3,7 @@ import {
   PROVENANCE_LABELS,
 } from "@/lib/rewards/provenance";
 import type {
+  PrimaryComparison,
   RankedCashOffer,
   RedemptionEvaluation,
   RewardsAccountSummary,
@@ -368,9 +369,9 @@ function buildMissingForFullComparison(
     );
   }
 
-  if (assumptions.length === 0 && trip.rewards.length > 0) {
+  if (assumptions.length === 0 && trip.rewards.length > 0 && offers.length > 0) {
     missing.push(
-      "Optional for value-per-point: points required and redemption taxes/fees for a hypothetical redemption (separate from your balance and monthly earning estimate).",
+      "Enter award points required and taxes/fees below to compare your saved balance to the cash fare (not your balance again).",
     );
   }
 
@@ -388,6 +389,195 @@ function buildMissingForFullComparison(
   }
 
   return missing;
+}
+
+function globalLowestCashOffer(
+  offers: NormalizedCashFlightOffer[],
+): NormalizedCashFlightOffer | null {
+  let best: { amount: number; offer: NormalizedCashFlightOffer } | null = null;
+  for (const offer of offers) {
+    const amount = parseMoneyAmount(offer.totalAmount);
+    if (amount === null) continue;
+    if (!best || amount < best.amount) {
+      best = { amount, offer };
+    }
+  }
+  return best?.offer ?? null;
+}
+
+function formatMoneyFixed(value: number): string {
+  return value.toFixed(2);
+}
+
+function buildPrimaryComparison(
+  trip: TripPlannerInput,
+  offers: NormalizedCashFlightOffer[],
+  assumptions: UserRedemptionAssumption[],
+  redemptionEvaluations: RedemptionEvaluation[],
+): PrimaryComparison {
+  const base: Pick<
+    PrimaryComparison,
+    | "isHypothetical"
+    | "programLabel"
+    | "balancePoints"
+    | "pointsUnitLabel"
+    | "lowestCashAmount"
+    | "lowestCashCurrency"
+    | "pointsOutOfPocketAmount"
+    | "pointsOutOfPocketCurrency"
+    | "notionalCashSavingsAmount"
+    | "notionalCashSavingsCurrency"
+    | "pointsCoversScenario"
+  > = {
+    isHypothetical: true,
+    programLabel: null,
+    balancePoints: null,
+    pointsUnitLabel: null,
+    lowestCashAmount: null,
+    lowestCashCurrency: null,
+    pointsOutOfPocketAmount: null,
+    pointsOutOfPocketCurrency: null,
+    notionalCashSavingsAmount: null,
+    notionalCashSavingsCurrency: null,
+    pointsCoversScenario: null,
+  };
+
+  const lowest = globalLowestCashOffer(offers);
+  if (lowest) {
+    base.lowestCashAmount = lowest.totalAmount;
+    base.lowestCashCurrency = lowest.totalCurrency;
+  }
+
+  const primaryReward = trip.rewards[0];
+  if (primaryReward) {
+    const meta = REWARD_PROGRAM_OPTIONS.find((p) => p.id === primaryReward.programId);
+    base.programLabel = meta?.label ?? primaryReward.programId;
+    base.pointsUnitLabel = meta?.pointsLabel ?? "Points";
+    if (primaryReward.balanceStatus === "confirmed") {
+      base.balancePoints = primaryReward.balancePoints;
+    }
+  }
+
+  if (trip.rewards.length === 0) {
+    return {
+      ...base,
+      status: "needs_trip",
+      headline: "Add rewards programs on the trip form",
+      subline:
+        "Your points balance is saved on the trip form — add a program there first.",
+    };
+  }
+
+  if (!lowest) {
+    const balanceText =
+      primaryReward?.balanceStatus === "confirmed" &&
+      primaryReward.balancePoints !== null
+        ? `${primaryReward.balancePoints.toLocaleString()} ${base.pointsUnitLabel ?? "points"} on file`
+        : primaryReward?.balanceStatus === "unknown"
+          ? "Balance not provided on trip form"
+          : "Balance on trip form";
+    return {
+      ...base,
+      status: "needs_cash_search",
+      headline: "Search cash flights to compare fares",
+      subline: `${balanceText}. We need Duffel cash prices before showing cash vs points out-of-pocket.`,
+    };
+  }
+
+  const assumption =
+    assumptions.find((a) => a.programId === primaryReward?.programId) ??
+    assumptions[0];
+  const redemption =
+    redemptionEvaluations.find((r) => r.programId === assumption?.programId) ??
+    redemptionEvaluations[0];
+
+  if (!assumption || !redemption) {
+    const balancePart =
+      primaryReward?.balanceStatus === "confirmed" &&
+      primaryReward.balancePoints !== null
+        ? `${primaryReward.balancePoints.toLocaleString()} ${base.pointsUnitLabel ?? "points"} on file`
+        : primaryReward?.balanceStatus === "unknown"
+          ? "balance not provided"
+          : "no balance on file";
+    return {
+      ...base,
+      status: "needs_redemption_scenario",
+      headline: `${lowest.totalAmount} ${lowest.totalCurrency} cash vs ${balancePart}`,
+      subline:
+        primaryReward?.balanceStatus === "confirmed" &&
+        primaryReward.balancePoints !== null
+          ? `Your ${primaryReward.balancePoints.toLocaleString()} ${base.pointsUnitLabel ?? "points"} are included in this comparison. Enter the award points required and taxes/fees for this trip to see modeled pay-with-points out-of-pocket vs ${lowest.totalAmount} ${lowest.totalCurrency} cash.`
+          : `Enter award points required and taxes/fees below to compare to ${lowest.totalAmount} ${lowest.totalCurrency} cash.`,
+    };
+  }
+
+  const meta = REWARD_PROGRAM_OPTIONS.find((p) => p.id === assumption.programId);
+  base.programLabel = meta?.label ?? assumption.programId;
+  base.pointsUnitLabel = meta?.pointsLabel ?? "Points";
+  base.balancePoints =
+    redemption.balanceStatus === "confirmed" ? redemption.balancePoints : null;
+
+  if (redemption.shortfallStatus === "unknown_balance") {
+    return {
+      ...base,
+      status: "unknown_balance",
+      headline: `Lowest cash: ${lowest.totalAmount} ${lowest.totalCurrency}`,
+      subline: `Assumption: ${assumption.pointsRequired.toLocaleString()} points + ${assumption.taxesAndFeesAmount} ${assumption.taxesAndFeesCurrency} fees. Balance not provided on trip form — shortfall cannot be calculated until you confirm a balance there (unknown is not zero).`,
+      pointsCoversScenario: null,
+    };
+  }
+
+  if (redemption.shortfallStatus === "insufficient") {
+    const timeline =
+      redemption.earningTimelineStatus === "calculated" &&
+      redemption.earningTimelineMonths
+        ? ` About ${redemption.earningTimelineMonths} month(s) at your saved monthly earning estimate.`
+        : "";
+    return {
+      ...base,
+      status: "insufficient_points",
+      headline: `Cash fare ${lowest.totalAmount} ${lowest.totalCurrency} — or ${assumption.taxesAndFeesAmount} ${assumption.taxesAndFeesCurrency} + points if you had enough`,
+      subline: `You have ${redemption.balancePoints?.toLocaleString() ?? "—"} ${base.pointsUnitLabel}; need ${redemption.shortfallPoints?.toLocaleString()} more for this scenario (${assumption.pointsRequired.toLocaleString()} required).${timeline} Hypothetical — not confirmed award.`,
+      pointsCoversScenario: false,
+      pointsOutOfPocketAmount: assumption.taxesAndFeesAmount,
+      pointsOutOfPocketCurrency: assumption.taxesAndFeesCurrency,
+    };
+  }
+
+  if (
+    redemption.shortfallStatus === "sufficient" &&
+    redemption.comparedCashFareAmount &&
+    redemption.comparedCashFareCurrency
+  ) {
+    const cashNum = parseMoneyAmount(redemption.comparedCashFareAmount);
+    const taxNum = parseMoneyAmount(assumption.taxesAndFeesAmount);
+    let savings: string | null = null;
+    if (cashNum !== null && taxNum !== null && cashNum > taxNum) {
+      savings = formatMoneyFixed(cashNum - taxNum);
+    }
+    return {
+      ...base,
+      status: "points_out_of_pocket",
+      headline: `Out-of-pocket with points: ${assumption.taxesAndFeesAmount} ${assumption.taxesAndFeesCurrency} (hypothetical)`,
+      subline: `vs ${redemption.comparedCashFareAmount} ${redemption.comparedCashFareCurrency} lowest cash. You have ${redemption.balancePoints?.toLocaleString()} ${base.pointsUnitLabel} — enough for ${assumption.pointsRequired.toLocaleString()} points in this scenario. Not a confirmed award seat.`,
+      pointsCoversScenario: true,
+      pointsOutOfPocketAmount: assumption.taxesAndFeesAmount,
+      pointsOutOfPocketCurrency: assumption.taxesAndFeesCurrency,
+      lowestCashAmount: redemption.comparedCashFareAmount,
+      lowestCashCurrency: redemption.comparedCashFareCurrency,
+      notionalCashSavingsAmount: savings,
+      notionalCashSavingsCurrency: redemption.comparedCashFareCurrency,
+    };
+  }
+
+  return {
+    ...base,
+    status: "cash_only",
+    headline: `Pay ${lowest.totalAmount} ${lowest.totalCurrency} cash (Duffel)`,
+    subline:
+      "Could not compare points out-of-pocket — check taxes/fees currency matches cash offers or add a valid scenario.",
+    pointsCoversScenario: redemption.shortfallStatus === "sufficient",
+  };
 }
 
 function buildTripContextSummary(
@@ -424,6 +614,12 @@ export function evaluateRewards(
     input.offers,
   );
   const monthlyPointsSummary = buildMonthlyPointsSummary(input.trip);
+  const primaryComparison = buildPrimaryComparison(
+    input.trip,
+    input.offers,
+    input.redemptionAssumptions,
+    redemptionEvaluations,
+  );
 
   return {
     ok: true,
@@ -434,6 +630,7 @@ export function evaluateRewards(
     cashOffersByCurrency,
     rewardsAccounts,
     monthlyPointsSummary,
+    primaryComparison,
     redemptionEvaluations,
     missingForFullComparison: buildMissingForFullComparison(
       input.trip,

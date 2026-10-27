@@ -153,6 +153,33 @@ export const monthlyPointsSummarySchema = z.object({
   label: z.string(),
 });
 
+export const primaryComparisonSchema = z.object({
+  status: z.enum([
+    "needs_trip",
+    "needs_cash_search",
+    "needs_redemption_scenario",
+    "cash_only",
+    "points_out_of_pocket",
+    "insufficient_points",
+    "unknown_balance",
+  ]),
+  programLabel: z.string().nullable(),
+  balancePoints: z.number().int().nonnegative().nullable(),
+  pointsUnitLabel: z.string().nullable(),
+  lowestCashAmount: z.string().nullable(),
+  lowestCashCurrency: z.string().nullable(),
+  pointsOutOfPocketAmount: z.string().nullable(),
+  pointsOutOfPocketCurrency: z.string().nullable(),
+  notionalCashSavingsAmount: z.string().nullable(),
+  notionalCashSavingsCurrency: z.string().nullable(),
+  pointsCoversScenario: z.boolean().nullable(),
+  headline: z.string(),
+  subline: z.string(),
+  isHypothetical: z.literal(true),
+});
+
+export type PrimaryComparison = z.infer<typeof primaryComparisonSchema>;
+
 export const rewardsEvaluationSuccessResponseSchema = z.object({
   ok: z.literal(true),
   awardSearchIntegrated: z.literal(false),
@@ -168,6 +195,7 @@ export const rewardsEvaluationSuccessResponseSchema = z.object({
   ),
   rewardsAccounts: z.array(rewardsAccountSummarySchema),
   monthlyPointsSummary: monthlyPointsSummarySchema,
+  primaryComparison: primaryComparisonSchema,
   redemptionEvaluations: z.array(redemptionEvaluationSchema),
   missingForFullComparison: z.array(z.string()),
   tripContextSummary: z.string(),

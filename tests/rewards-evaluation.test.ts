@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  formatMonthlyEarningDisplay,
+  formatSavedBalanceDisplay,
+} from "../lib/rewards/display-labels.ts";
+import {
   AWARD_AVAILABILITY_NOTE,
   evaluateRewards,
   offersShareCurrency,
@@ -74,6 +78,100 @@ function makeOffer(
     ...partial,
   };
 }
+
+test("formatSavedBalanceDisplay distinguishes unknown and confirmed zero", () => {
+  assert.equal(
+    formatSavedBalanceDisplay(
+      { balanceStatus: "unknown", balancePoints: null },
+      "Avios",
+    ),
+    "Balance not provided",
+  );
+  assert.equal(
+    formatSavedBalanceDisplay(
+      { balanceStatus: "confirmed", balancePoints: 0 },
+      "Avios",
+    ),
+    "0 Avios",
+  );
+  assert.equal(
+    formatSavedBalanceDisplay(
+      { balanceStatus: "confirmed", balancePoints: 12_500 },
+      "Avios",
+    ),
+    "12,500 Avios",
+  );
+});
+
+test("formatMonthlyEarningDisplay returns null when not on trip", () => {
+  assert.equal(formatMonthlyEarningDisplay(null), null);
+  assert.equal(formatMonthlyEarningDisplay(undefined), null);
+  assert.match(formatMonthlyEarningDisplay(5000)!, /5,000/);
+});
+
+test("unknown balance with monthly estimate preserves trip rewards in output", () => {
+  const trip = tripPlannerInputSchema.parse({
+    ...baseTrip,
+    rewards: [
+      {
+        programId: "british_airways",
+        balanceStatus: "unknown",
+        balancePoints: null,
+      },
+    ],
+    monthlyPointsEstimate: 5_000,
+  });
+  const result = evaluateRewards({
+    trip,
+    originIataCode: "BOM",
+    destinationIataCode: "LHR",
+    offers: [makeOffer({ offerId: "1", totalAmount: "400", totalCurrency: "GBP" })],
+    redemptionAssumptions: [
+      {
+        programId: "british_airways",
+        pointsRequired: 50_000,
+        taxesAndFeesAmount: "80",
+        taxesAndFeesCurrency: "GBP",
+        source: "user_supplied",
+      },
+    ],
+  });
+  assert.equal(result.rewardsAccounts[0].balanceStatus, "unknown");
+  assert.equal(result.monthlyPointsSummary.monthlyPointsEarned, 5_000);
+  assert.equal(result.primaryComparison.status, "unknown_balance");
+  assert.equal(result.redemptionEvaluations[0].shortfallStatus, "unknown_balance");
+  assert.equal(result.redemptionEvaluations[0].earningTimelineStatus, "missing_data");
+});
+
+test("confirmed zero balance shortfall uses full points required", () => {
+  const trip = tripPlannerInputSchema.parse({
+    ...baseTrip,
+    rewards: [
+      {
+        programId: "british_airways",
+        balanceStatus: "confirmed",
+        balancePoints: 0,
+      },
+    ],
+  });
+  const result = evaluateRewards({
+    trip,
+    originIataCode: "BOM",
+    destinationIataCode: "LHR",
+    offers: [],
+    redemptionAssumptions: [
+      {
+        programId: "british_airways",
+        pointsRequired: 25_000,
+        taxesAndFeesAmount: "80",
+        taxesAndFeesCurrency: "GBP",
+        source: "user_supplied",
+      },
+    ],
+  });
+  assert.equal(result.rewardsAccounts[0].balancePoints, 0);
+  assert.equal(result.redemptionEvaluations[0].shortfallPoints, 25_000);
+});
 
 test("parseMoneyAmount accepts valid decimals", () => {
   assert.equal(parseMoneyAmount("450.50"), 450.5);
@@ -498,6 +596,47 @@ test("monthlyPointsSummary uses trip form estimate without duplicate input", () 
   });
   assert.equal(result.monthlyPointsSummary.status, "provided");
   assert.equal(result.monthlyPointsSummary.monthlyPointsEarned, 5_000);
+});
+
+test("needs_redemption_scenario headline includes cash and saved balance", () => {
+  const result = evaluateRewards({
+    trip: baseTrip,
+    originIataCode: "BOM",
+    destinationIataCode: "LHR",
+    offers: [
+      makeOffer({ offerId: "cash", totalAmount: "289.97", totalCurrency: "EUR" }),
+    ],
+    redemptionAssumptions: [],
+  });
+  assert.equal(result.primaryComparison.status, "needs_redemption_scenario");
+  assert.match(result.primaryComparison.headline, /289.97 EUR/);
+  assert.match(result.primaryComparison.headline, /40,000/);
+});
+
+test("primaryComparison shows out-of-pocket when balance covers scenario", () => {
+  const offers = [
+    makeOffer({ offerId: "cash", totalAmount: "500.00", totalCurrency: "GBP" }),
+  ];
+  const result = evaluateRewards({
+    trip: baseTrip,
+    originIataCode: "BOM",
+    destinationIataCode: "LHR",
+    offers,
+    redemptionAssumptions: [
+      {
+        programId: "british_airways",
+        pointsRequired: 30_000,
+        taxesAndFeesAmount: "100.00",
+        taxesAndFeesCurrency: "GBP",
+        source: "user_supplied",
+      },
+    ],
+  });
+  assert.equal(result.primaryComparison.status, "points_out_of_pocket");
+  assert.equal(result.primaryComparison.pointsCoversScenario, true);
+  assert.equal(result.primaryComparison.balancePoints, 40_000);
+  assert.equal(result.primaryComparison.pointsOutOfPocketAmount, "100.00");
+  assert.equal(result.primaryComparison.notionalCashSavingsAmount, "400.00");
 });
 
 test("missing list does not ask user to re-enter balance when rewards exist", () => {

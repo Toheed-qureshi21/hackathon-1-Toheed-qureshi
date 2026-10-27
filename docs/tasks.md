@@ -172,6 +172,7 @@ Award-flight provider APIs (PointsYeah, Seats.aero, paid award search, scraping)
 - [x] Planner **Rewards comparison** panel (sidebar): cash rankings, optional assumptions, shortfall, value/pt, timeline, missing-data notes.
 - [x] Auto-run evaluation after successful cash search (empty assumptions); re-run with assumptions via button.
 - [x] Connect trip-form rewards balances and monthly earning to evaluation output (`rewardsAccounts`, `monthlyPointsSummary`) and panel (no duplicate balance/monthly fields).
+- [x] Rewards panel: compact saved-rewards summary, trip-form edit links, separate hypothetical redemption block, cash search test-mode banner in `CashFlightResults`.
 
 ### Tests
 

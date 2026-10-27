@@ -742,7 +742,10 @@ export function PlannerChat() {
                 </>
               )}
 
-              <div className="rounded-planner-xl border border-border bg-surface-planner-panel/90 p-5 md:p-6">
+              <div
+                id="planner-trip-form"
+                className="rounded-planner-xl border border-border bg-surface-planner-panel/90 p-5 md:p-6 scroll-mt-24"
+              >
                 <TripPlannerForm
                   values={activeConversation.tripForm}
                   fieldErrors={fieldErrors}

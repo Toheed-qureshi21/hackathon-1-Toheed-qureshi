@@ -23,6 +23,11 @@ export function CashFlightResults({
   onSearch,
   className,
 }: CashFlightResultsProps) {
+  const showTestModeBanner =
+    result &&
+    (result.liveMode === false ||
+      result.offers.some((offer) => offer.liveMode === false));
+
   return (
     <section
       className={cn(
@@ -36,7 +41,7 @@ export function CashFlightResults({
             Cash flight search
           </h2>
           <p className="mt-1 text-xs text-muted-foreground">
-            Live cash fares from Duffel. Not award availability or points pricing.
+            Cash fares from Duffel only — not award or points pricing.
           </p>
         </div>
         <Button
@@ -50,6 +55,16 @@ export function CashFlightResults({
       </div>
 
       {error ? <FormMessage variant="error">{error}</FormMessage> : null}
+
+      {showTestModeBanner ? (
+        <div
+          className="mt-3 rounded-planner-md border border-amber-500/40 bg-amber-500/10 px-3 py-2.5 text-xs font-medium text-amber-100/95"
+          role="status"
+        >
+          Duffel test mode — these prices are not live market fares. Currency amounts
+          are exactly as returned by Duffel.
+        </div>
+      ) : null}
 
       {!canSearch ? (
         <p className="rounded-planner-lg border border-dashed border-border px-4 py-5 text-sm text-muted-foreground">
