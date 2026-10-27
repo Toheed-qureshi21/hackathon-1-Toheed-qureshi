@@ -124,9 +124,6 @@ export function PlannerSidebar({
             ))
           )}
         </ul>
-        <p className="mt-auto px-2 text-[11px] leading-relaxed text-muted-foreground">
-          Chats are stored in this browser session only.
-        </p>
       </div>
 
       <div className="flex items-center gap-2.5 border-t border-border pt-3">

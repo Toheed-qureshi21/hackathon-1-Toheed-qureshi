@@ -171,6 +171,7 @@ Award-flight provider APIs (PointsYeah, Seats.aero, paid award search, scraping)
 - [x] Authenticated `POST /api/planner/rewards/evaluate` with Zod validation.
 - [x] Planner **Rewards comparison** panel (sidebar): cash rankings, optional assumptions, shortfall, value/pt, timeline, missing-data notes.
 - [x] Auto-run evaluation after successful cash search (empty assumptions); re-run with assumptions via button.
+- [x] Connect trip-form rewards balances and monthly earning to evaluation output (`rewardsAccounts`, `monthlyPointsSummary`) and panel (no duplicate balance/monthly fields).
 
 ### Tests
 

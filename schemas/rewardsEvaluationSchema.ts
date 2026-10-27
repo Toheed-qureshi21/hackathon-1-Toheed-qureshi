@@ -133,6 +133,26 @@ export const redemptionEvaluationSchema = z.object({
   uncertaintyNotes: z.array(z.string()),
 });
 
+export const rewardsAccountSummarySchema = z.object({
+  programId: z.enum(SUPPORTED_REWARD_PROGRAM_IDS),
+  programLabel: z.string(),
+  pointsUnitLabel: z.string(),
+  balanceStatus: z.enum(["confirmed", "unknown"]),
+  balancePoints: z.number().int().nonnegative().nullable(),
+  balanceProvenance: z.string(),
+  hasRedemptionAssumption: z.boolean(),
+  comparisonNote: z.string(),
+});
+
+export type RewardsAccountSummary = z.infer<typeof rewardsAccountSummarySchema>;
+
+export const monthlyPointsSummarySchema = z.object({
+  monthlyPointsEarned: z.number().int().nonnegative().nullable(),
+  status: z.enum(["provided", "not_provided", "zero"]),
+  provenance: z.string(),
+  label: z.string(),
+});
+
 export const rewardsEvaluationSuccessResponseSchema = z.object({
   ok: z.literal(true),
   awardSearchIntegrated: z.literal(false),
@@ -146,6 +166,8 @@ export const rewardsEvaluationSuccessResponseSchema = z.object({
       rankedOffers: z.array(rankedCashOfferSchema),
     }),
   ),
+  rewardsAccounts: z.array(rewardsAccountSummarySchema),
+  monthlyPointsSummary: monthlyPointsSummarySchema,
   redemptionEvaluations: z.array(redemptionEvaluationSchema),
   missingForFullComparison: z.array(z.string()),
   tripContextSummary: z.string(),

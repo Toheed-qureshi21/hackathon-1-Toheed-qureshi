@@ -145,7 +145,7 @@ export function PlannerChat() {
       offers: FlightSearchSuccessResponse["offers"],
       redemptionAssumptions: UserRedemptionAssumption[],
     ) => {
-      if (isRewardsEvaluating || offers.length === 0) return;
+      if (isRewardsEvaluating) return;
       const originParsed = iataCodeSchema.safeParse(form.originIataCode);
       const destinationParsed = iataCodeSchema.safeParse(form.destinationIataCode);
       if (!originParsed.success || !destinationParsed.success) return;
@@ -252,16 +252,7 @@ export function PlannerChat() {
           return false;
         }
         setFlightSearchResult(data);
-        if (data.offers.length > 0) {
-          void runRewardsEvaluation(
-            trip,
-            form,
-            data.offers,
-            [],
-          );
-        } else {
-          setRewardsEvaluation(null);
-        }
+        void runRewardsEvaluation(trip, form, data.offers, []);
         if (postToChat) {
           appendChatMessages([
             {
@@ -527,6 +518,8 @@ export function PlannerChat() {
         })),
       );
       setSaveSuccess("Trip details saved and validated for this session.");
+      const offersForEval = flightSearchResult?.offers ?? [];
+      void runRewardsEvaluation(data.tripInput, savedForm, offersForEval, []);
       appendChatMessages([
         {
           id: crypto.randomUUID(),
@@ -547,7 +540,9 @@ export function PlannerChat() {
     activeConversation.tripForm,
     activeId,
     appendChatMessages,
+    flightSearchResult,
     runFlightSearch,
+    runRewardsEvaluation,
     scrollToBottom,
   ]);
 
@@ -780,11 +775,11 @@ export function PlannerChat() {
                   error={rewardsEvaluationError}
                   onEvaluate={(assumptions) => {
                     const trip = activeConversation.validatedTripInput;
-                    if (!trip || !flightSearchResult?.offers.length) return;
+                    if (!trip) return;
                     void runRewardsEvaluation(
                       trip,
                       activeConversation.tripForm,
-                      flightSearchResult.offers,
+                      flightSearchResult?.offers ?? [],
                       assumptions,
                     );
                   }}
@@ -810,11 +805,11 @@ export function PlannerChat() {
                   error={rewardsEvaluationError}
                   onEvaluate={(assumptions) => {
                     const trip = activeConversation.validatedTripInput;
-                    if (!trip || !flightSearchResult?.offers.length) return;
+                    if (!trip) return;
                     void runRewardsEvaluation(
                       trip,
                       activeConversation.tripForm,
-                      flightSearchResult.offers,
+                      flightSearchResult?.offers ?? [],
                       assumptions,
                     );
                   }}

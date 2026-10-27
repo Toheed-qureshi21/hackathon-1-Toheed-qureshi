@@ -5,6 +5,7 @@ import {
 import type {
   RankedCashOffer,
   RedemptionEvaluation,
+  RewardsAccountSummary,
   RewardsEvaluationEngineInput,
   RewardsEvaluationSuccessResponse,
   UserRedemptionAssumption,
@@ -232,7 +233,7 @@ function evaluateRedemption(
   } else if (monthly === null || monthly === undefined) {
     earningTimelineStatus = "missing_data";
     earningTimelineExplanation =
-      "Add a user-confirmed monthly points estimate on the trip form to estimate months to close the gap.";
+      "Your saved trip has no monthly earning estimate — add one on the trip form to estimate months to close a shortfall.";
   } else if (monthly <= 0) {
     earningTimelineStatus = "invalid_input";
     earningTimelineExplanation =
@@ -277,6 +278,77 @@ function evaluateRedemption(
   };
 }
 
+function buildRewardsAccountSummaries(
+  trip: TripPlannerInput,
+  assumptions: UserRedemptionAssumption[],
+  offers: NormalizedCashFlightOffer[],
+): RewardsAccountSummary[] {
+  const assumptionByProgram = new Map(
+    assumptions.map((a) => [a.programId, a]),
+  );
+
+  return trip.rewards.map((entry) => {
+    const meta = REWARD_PROGRAM_OPTIONS.find((p) => p.id === entry.programId);
+    const hasAssumption = assumptionByProgram.has(entry.programId);
+    let comparisonNote: string;
+
+    if (hasAssumption) {
+      comparisonNote =
+        offers.length > 0
+          ? "Redemption comparison uses your optional points-required and taxes/fees inputs against Duffel cash baselines."
+          : "Redemption assumption saved; run a cash flight search to rank comparable fares for value-per-point.";
+    } else if (offers.length === 0) {
+      comparisonNote =
+        "Balance recorded from your trip form. Search cash flights for fare baselines, then optionally add points required and taxes/fees for a hypothetical redemption—not your balance.";
+    } else {
+      comparisonNote =
+        "Balance recorded from your trip form. To estimate redemption value per point, optionally add points required and taxes/fees for a specific scenario (not your account balance).";
+    }
+
+    return {
+      programId: entry.programId,
+      programLabel: meta?.label ?? entry.programId,
+      pointsUnitLabel: meta?.pointsLabel ?? "Points",
+      balanceStatus: entry.balanceStatus,
+      balancePoints: entry.balancePoints,
+      balanceProvenance:
+        entry.balanceStatus === "confirmed"
+          ? PROVENANCE_LABELS[DATA_PROVENANCE.userConfirmedBalance]
+          : PROVENANCE_LABELS[DATA_PROVENANCE.unknown],
+      hasRedemptionAssumption: hasAssumption,
+      comparisonNote,
+    };
+  });
+}
+
+function buildMonthlyPointsSummary(trip: TripPlannerInput) {
+  const monthly = trip.monthlyPointsEstimate;
+  if (monthly === null || monthly === undefined) {
+    return {
+      monthlyPointsEarned: null,
+      status: "not_provided" as const,
+      provenance: PROVENANCE_LABELS[DATA_PROVENANCE.unknown],
+      label:
+        "No monthly earning estimate on your saved trip — add one on the trip form if you want a shortfall timeline.",
+    };
+  }
+  if (monthly <= 0) {
+    return {
+      monthlyPointsEarned: monthly,
+      status: "zero" as const,
+      provenance: PROVENANCE_LABELS[DATA_PROVENANCE.userEstimate],
+      label:
+        "Monthly earning estimate is zero — a shortfall timeline cannot be calculated until you provide a positive estimate on the trip form.",
+    };
+  }
+  return {
+    monthlyPointsEarned: monthly,
+    status: "provided" as const,
+    provenance: PROVENANCE_LABELS[DATA_PROVENANCE.userEstimate],
+    label: `${monthly.toLocaleString()} points per month (from your saved trip form). Used only when a points shortfall exists.`,
+  };
+}
+
 function buildMissingForFullComparison(
   trip: TripPlannerInput,
   offers: NormalizedCashFlightOffer[],
@@ -284,28 +356,36 @@ function buildMissingForFullComparison(
 ): string[] {
   const missing: string[] = [];
 
+  if (trip.rewards.length === 0) {
+    missing.push(
+      "Add at least one rewards program with balance on the trip form.",
+    );
+  }
+
   if (offers.length === 0) {
-    missing.push("Run a cash flight search to obtain Duffel fare baselines.");
-  }
-
-  if (assumptions.length === 0) {
     missing.push(
-      "Provide optional redemption assumptions (points required and taxes/fees) to compare against cash—award inventory is not searched automatically.",
+      "Cash flight search: needed for Duffel fare baselines before value-per-point can be calculated.",
     );
   }
 
-  if (
-    trip.rewards.length === 0 &&
-    assumptions.some((a) => findRewardBalance(trip, a.programId) === undefined)
-  ) {
+  if (assumptions.length === 0 && trip.rewards.length > 0) {
     missing.push(
-      "Save rewards programs and confirmed balances on the trip form for shortfall calculations.",
+      "Optional for value-per-point: points required and redemption taxes/fees for a hypothetical redemption (separate from your balance and monthly earning estimate).",
     );
   }
 
-  missing.push(
-    "Authorized award-search data is unavailable; RedeemTrip cannot confirm the best points redemption for this itinerary.",
-  );
+  for (const assumption of assumptions) {
+    const entry = findRewardBalance(trip, assumption.programId);
+    if (!entry) {
+      missing.push(
+        `Program ${programLabel(assumption.programId)}: add this program on the trip form so your saved balance can be compared to points required.`,
+      );
+    } else if (entry.balanceStatus === "unknown") {
+      missing.push(
+        `${programLabel(assumption.programId)}: confirm balance or keep as unknown — shortfall cannot be calculated while unknown.`,
+      );
+    }
+  }
 
   return missing;
 }
@@ -338,6 +418,13 @@ export function evaluateRewards(
     evaluateRedemption(input.trip, input.offers, assumption),
   );
 
+  const rewardsAccounts = buildRewardsAccountSummaries(
+    input.trip,
+    input.redemptionAssumptions,
+    input.offers,
+  );
+  const monthlyPointsSummary = buildMonthlyPointsSummary(input.trip);
+
   return {
     ok: true,
     awardSearchIntegrated: false,
@@ -345,6 +432,8 @@ export function evaluateRewards(
     responsibleUseNote: RESPONSIBLE_USE_NOTE,
     cashRankingCriteria: CASH_RANKING_CRITERIA,
     cashOffersByCurrency,
+    rewardsAccounts,
+    monthlyPointsSummary,
     redemptionEvaluations,
     missingForFullComparison: buildMissingForFullComparison(
       input.trip,

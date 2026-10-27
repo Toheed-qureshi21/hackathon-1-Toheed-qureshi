@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { FormMessage } from "@/components/ui/FormMessage";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
+import { plannerSectionLabelClassName } from "@/lib/plannerFieldStyles";
 import {
   REWARD_PROGRAM_OPTIONS,
   type TripPlannerInput,
@@ -56,9 +57,8 @@ export function RewardsEvaluationPanel({
     [],
   );
 
-  const canEvaluate = Boolean(
-    tripInput && flightSearch && flightSearch.offers.length > 0,
-  );
+  const canEvaluate = Boolean(tripInput);
+  const hasCashOffers = Boolean(flightSearch && flightSearch.offers.length > 0);
 
   const programOptions = useMemo(
     () =>
@@ -67,6 +67,11 @@ export function RewardsEvaluationPanel({
       ),
     [tripInput],
   );
+
+  const defaultTaxCurrency = useMemo(() => {
+    const first = flightSearch?.offers[0]?.totalCurrency;
+    return first?.toUpperCase() ?? "GBP";
+  }, [flightSearch]);
 
   const addAssumption = useCallback(() => {
     if (!draft.programId || !draft.pointsRequired.trim()) return;
@@ -90,6 +95,27 @@ export function RewardsEvaluationPanel({
     setAssumptions((prev) => prev.filter((a) => a.programId !== programId));
   };
 
+  const accounts =
+    evaluation?.rewardsAccounts ??
+    tripInput?.rewards.map((entry) => {
+      const meta = REWARD_PROGRAM_OPTIONS.find((p) => p.id === entry.programId);
+      return {
+        programId: entry.programId,
+        programLabel: meta?.label ?? entry.programId,
+        pointsUnitLabel: meta?.pointsLabel ?? "Points",
+        balanceStatus: entry.balanceStatus,
+        balancePoints: entry.balancePoints,
+        balanceProvenance: "User-confirmed balance",
+        hasRedemptionAssumption: false,
+        comparisonNote:
+          "Save and run comparison to refresh analysis with the latest trip data.",
+      };
+    }) ??
+    [];
+
+  const monthlyDisplay = evaluation?.monthlyPointsSummary ?? null;
+  const monthlyFromTrip = tripInput?.monthlyPointsEstimate;
+
   return (
     <section
       className={cn(
@@ -103,8 +129,8 @@ export function RewardsEvaluationPanel({
             Rewards comparison
           </h2>
           <p className="mt-1 text-xs text-muted-foreground">
-            Deterministic rules engine — not award search. Cash from Duffel;
-            redemption numbers are yours unless marked verified elsewhere.
+            Uses balances and monthly earning from your saved trip. Cash fares from
+            Duffel. No live award search.
           </p>
         </div>
         <Button
@@ -113,7 +139,7 @@ export function RewardsEvaluationPanel({
           disabled={!canEvaluate || isEvaluating}
           onClick={() => onEvaluate(assumptions)}
         >
-          {isEvaluating ? "Evaluating…" : "Run comparison"}
+          {isEvaluating ? "Updating…" : "Refresh analysis"}
         </Button>
       </div>
 
@@ -121,20 +147,96 @@ export function RewardsEvaluationPanel({
 
       {!tripInput ? (
         <p className="text-sm text-muted-foreground">
-          Save the trip form before running a rewards comparison.
+          Save the trip form to connect your rewards programs and balances here.
         </p>
       ) : null}
 
-      {tripInput && (!flightSearch || flightSearch.offers.length === 0) ? (
+      {tripInput && accounts.length === 0 ? (
         <p className="text-sm text-muted-foreground">
-          Search cash flights first so the engine can rank real Duffel fares.
+          Add rewards programs on the trip form — we will show confirmed balances or
+          unknown status here (not points required for a flight).
+        </p>
+      ) : null}
+
+      {tripInput && accounts.length > 0 ? (
+        <div className="space-y-4">
+          <div>
+            <p className={cn(plannerSectionLabelClassName, "text-muted-foreground")}>
+              Your saved rewards (from trip form)
+            </p>
+            <ul className="mt-2 space-y-2">
+              {accounts.map((account) => (
+                <li
+                  key={account.programId}
+                  className="rounded-planner-md border border-border bg-surface-planner-elevated px-3 py-2.5 text-sm"
+                >
+                  <p className="font-heading font-semibold text-foreground">
+                    {account.programLabel}
+                  </p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    <span className="text-foreground">Points balance: </span>
+                    {account.balanceStatus === "confirmed" &&
+                    account.balancePoints !== null
+                      ? `${account.balancePoints.toLocaleString()} ${account.pointsUnitLabel} · ${account.balanceProvenance}`
+                      : account.balanceStatus === "unknown"
+                        ? "Unknown · not treated as zero"
+                        : "—"}
+                  </p>
+                  {"comparisonNote" in account ? (
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {account.comparisonNote}
+                    </p>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="rounded-planner-md border border-border bg-surface-planner-input px-3 py-2.5 text-sm">
+            <p className={cn(plannerSectionLabelClassName, "text-muted-foreground")}>
+              Monthly points earned (from trip form)
+            </p>
+            <p className="mt-1 text-foreground">
+              {monthlyDisplay ? (
+                monthlyDisplay.label
+              ) : monthlyFromTrip !== null && monthlyFromTrip !== undefined ? (
+                `${monthlyFromTrip.toLocaleString()} points/month (saved on trip form — refresh analysis to use in timelines)`
+              ) : (
+                "Not provided — add on the trip form if you want an estimated timeline after a shortfall."
+              )}
+            </p>
+          </div>
+        </div>
+      ) : null}
+
+      {evaluation ? (
+        <FormMessage variant="info" className="mt-4">
+          {evaluation.awardAvailabilityNote}
+        </FormMessage>
+      ) : tripInput ? (
+        <p className="mt-4 text-xs text-muted-foreground">
+          Live award availability and official redemption prices are not available.
+          Refresh analysis after saving trip changes or cash search.
+        </p>
+      ) : null}
+
+      {!hasCashOffers && tripInput ? (
+        <p className="mt-3 text-sm text-muted-foreground">
+          Search cash flights to rank Duffel fares by currency. Balances above already
+          come from your saved trip.
         </p>
       ) : null}
 
       {tripInput && programOptions.length > 0 ? (
         <div className="mt-4 rounded-planner-lg border border-dashed border-border p-4">
           <p className="text-xs font-medium text-foreground">
-            Optional redemption assumption (not verified award inventory)
+            Optional: hypothetical redemption scenario
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Enter <strong className="font-normal text-foreground">points required</strong>{" "}
+            and <strong className="font-normal text-foreground">taxes/fees</strong> for a
+            specific redemption you want to model — not your account balance or monthly
+            earning (those are already on the trip form).
           </p>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             <div>
@@ -147,6 +249,8 @@ export function RewardsEvaluationPanel({
                   setDraft((d) => ({
                     ...d,
                     programId: e.target.value as AssumptionDraft["programId"],
+                    taxesAndFeesCurrency:
+                      d.taxesAndFeesCurrency || defaultTaxCurrency,
                   }))
                 }
               >
@@ -159,7 +263,7 @@ export function RewardsEvaluationPanel({
               </select>
             </div>
             <div>
-              <Label htmlFor="re-assumption-points">Points required</Label>
+              <Label htmlFor="re-assumption-points">Points required for redemption</Label>
               <Input
                 id="re-assumption-points"
                 inputMode="numeric"
@@ -174,7 +278,7 @@ export function RewardsEvaluationPanel({
               />
             </div>
             <div>
-              <Label htmlFor="re-assumption-taxes">Taxes &amp; fees</Label>
+              <Label htmlFor="re-assumption-taxes">Redemption taxes &amp; fees (cash)</Label>
               <Input
                 id="re-assumption-taxes"
                 value={draft.taxesAndFeesAmount}
@@ -188,11 +292,11 @@ export function RewardsEvaluationPanel({
               />
             </div>
             <div>
-              <Label htmlFor="re-assumption-currency">Currency</Label>
+              <Label htmlFor="re-assumption-currency">Taxes/fees currency</Label>
               <Input
                 id="re-assumption-currency"
                 maxLength={3}
-                value={draft.taxesAndFeesCurrency}
+                value={draft.taxesAndFeesCurrency || defaultTaxCurrency}
                 onChange={(e) =>
                   setDraft((d) => ({
                     ...d,
@@ -213,7 +317,7 @@ export function RewardsEvaluationPanel({
                   setDraft((d) => ({ ...d, source: "user_supplied" }))
                 }
               />
-              User-supplied (unverified)
+              My estimate (unverified)
             </label>
             <label className="flex items-center gap-2 text-xs text-muted-foreground">
               <input
@@ -229,7 +333,7 @@ export function RewardsEvaluationPanel({
               Verified elsewhere by me
             </label>
             <Button type="button" variant="secondary" onClick={addAssumption}>
-              Add assumption
+              Add scenario
             </Button>
           </div>
           {assumptions.length > 0 ? (
@@ -241,8 +345,8 @@ export function RewardsEvaluationPanel({
                 >
                   <span>
                     {REWARD_PROGRAM_OPTIONS.find((p) => p.id === a.programId)?.label}:{" "}
-                    {a.pointsRequired.toLocaleString()} pts · {a.taxesAndFeesAmount}{" "}
-                    {a.taxesAndFeesCurrency} · {a.source.replace("_", " ")}
+                    {a.pointsRequired.toLocaleString()} pts required · {a.taxesAndFeesAmount}{" "}
+                    {a.taxesAndFeesCurrency} taxes/fees
                   </span>
                   <button
                     type="button"
@@ -260,45 +364,43 @@ export function RewardsEvaluationPanel({
 
       {evaluation ? (
         <div className="mt-6 space-y-4">
-          <FormMessage variant="info">{evaluation.awardAvailabilityNote}</FormMessage>
           <p className="text-xs text-muted-foreground">
             {evaluation.tripContextSummary}
           </p>
-          <p className="text-xs text-muted-foreground">
-            {evaluation.responsibleUseNote}
-          </p>
 
-          {evaluation.cashOffersByCurrency.map((group) => (
-            <div key={group.currency}>
-              <h3 className="font-heading text-sm font-semibold text-foreground">
-                Cash ranking ({group.currency})
-              </h3>
-              <p className="text-xs text-muted-foreground">
-                {evaluation.cashRankingCriteria}
-              </p>
-              <ol className="mt-2 space-y-2">
-                {group.rankedOffers.slice(0, 5).map((offer) => (
-                  <li
-                    key={offer.offerId}
-                    className="rounded-planner-md border border-border bg-surface-planner-elevated px-3 py-2 text-sm"
-                  >
-                    <span className="font-medium text-primary">#{offer.rank}</span>{" "}
-                    {offer.totalAmount} {offer.totalCurrency} · {offer.sliceSummary}
-                    {!offer.liveMode ? (
-                      <span className="ml-2 text-xs text-muted-foreground">
-                        (test mode)
-                      </span>
-                    ) : null}
-                  </li>
-                ))}
-              </ol>
-            </div>
-          ))}
+          {evaluation.cashOffersByCurrency.length > 0 ? (
+            evaluation.cashOffersByCurrency.map((group) => (
+              <div key={group.currency}>
+                <h3 className="font-heading text-sm font-semibold text-foreground">
+                  Cash fares ({group.currency})
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  Lowest Duffel total price first — not award tickets.
+                </p>
+                <ol className="mt-2 space-y-2">
+                  {group.rankedOffers.slice(0, 5).map((offer) => (
+                    <li
+                      key={offer.offerId}
+                      className="rounded-planner-md border border-border bg-surface-planner-elevated px-3 py-2 text-sm"
+                    >
+                      <span className="font-medium text-primary">#{offer.rank}</span>{" "}
+                      {offer.totalAmount} {offer.totalCurrency} · {offer.sliceSummary}
+                      {!offer.liveMode ? (
+                        <span className="ml-2 rounded bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-200/90">
+                          Duffel test data
+                        </span>
+                      ) : null}
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            ))
+          ) : null}
 
           {evaluation.redemptionEvaluations.length > 0 ? (
             <div className="space-y-3">
               <h3 className="font-heading text-sm font-semibold text-foreground">
-                Redemption comparisons (not confirmed awards)
+                Hypothetical redemption vs cash (not a confirmed award)
               </h3>
               {evaluation.redemptionEvaluations.map((row) => (
                 <div
@@ -307,25 +409,27 @@ export function RewardsEvaluationPanel({
                 >
                   <p className="font-heading font-semibold">{row.programLabel}</p>
                   <p className="mt-1 text-xs text-muted-foreground">
+                    {row.pointsRequired.toLocaleString()} points required ·{" "}
+                    {row.taxesAndFeesAmount} {row.taxesAndFeesCurrency} taxes/fees ·{" "}
                     {row.requirementProvenanceLabel}
                   </p>
                   <dl className="mt-3 grid gap-2 text-xs sm:grid-cols-2">
                     <div>
-                      <dt className="text-muted-foreground">Balance</dt>
+                      <dt className="text-muted-foreground">Your balance (saved trip)</dt>
                       <dd>
                         {row.balanceStatus === "confirmed" && row.balancePoints !== null
-                          ? `${row.balancePoints.toLocaleString()} (${row.balanceProvenance})`
+                          ? `${row.balancePoints.toLocaleString()}`
                           : row.balanceStatus === "unknown"
                             ? "Unknown"
-                            : "Not listed"}
+                            : "Not on trip form"}
                       </dd>
                     </div>
                     <div>
-                      <dt className="text-muted-foreground">Shortfall</dt>
+                      <dt className="text-muted-foreground">Shortfall vs points required</dt>
                       <dd>{row.shortfallExplanation}</dd>
                     </div>
                     <div className="sm:col-span-2">
-                      <dt className="text-muted-foreground">Value per point</dt>
+                      <dt className="text-muted-foreground">Potential value per point</dt>
                       <dd>
                         {row.valuePerPointStatus === "calculated" && row.valuePerPoint
                           ? `${row.valuePerPoint} ${row.valuePerPointCurrency} per point — ${row.valuePerPointExplanation}`
@@ -333,7 +437,9 @@ export function RewardsEvaluationPanel({
                       </dd>
                     </div>
                     <div className="sm:col-span-2">
-                      <dt className="text-muted-foreground">Earning timeline</dt>
+                      <dt className="text-muted-foreground">
+                        Timeline (uses monthly earning from trip form)
+                      </dt>
                       <dd>
                         {row.earningTimelineStatus === "calculated" &&
                         row.earningTimelineMonths
@@ -357,7 +463,7 @@ export function RewardsEvaluationPanel({
           {evaluation.missingForFullComparison.length > 0 ? (
             <div>
               <h3 className="font-heading text-sm font-semibold text-foreground">
-                Missing for a fuller comparison
+                What is still needed
               </h3>
               <ul className="mt-2 list-disc pl-4 text-xs text-muted-foreground">
                 {evaluation.missingForFullComparison.map((item) => (
@@ -366,6 +472,10 @@ export function RewardsEvaluationPanel({
               </ul>
             </div>
           ) : null}
+
+          <p className="text-[11px] text-muted-foreground/90">
+            {evaluation.responsibleUseNote}
+          </p>
         </div>
       ) : null}
     </section>

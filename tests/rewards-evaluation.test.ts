@@ -460,6 +460,59 @@ test("handler validates body and returns evaluation", async () => {
   assert.equal(json.awardSearchIntegrated, false);
 });
 
+test("rewardsAccounts reflect all saved trip reward entries", () => {
+  const trip = tripPlannerInputSchema.parse({
+    ...baseTrip,
+    rewards: [
+      {
+        programId: "british_airways",
+        balanceStatus: "confirmed",
+        balancePoints: 40_000,
+      },
+      {
+        programId: "iberia",
+        balanceStatus: "unknown",
+        balancePoints: null,
+      },
+    ],
+  });
+  const result = evaluateRewards({
+    trip,
+    originIataCode: "BOM",
+    destinationIataCode: "LHR",
+    offers: [],
+    redemptionAssumptions: [],
+  });
+  assert.equal(result.rewardsAccounts.length, 2);
+  assert.equal(result.rewardsAccounts[0].balancePoints, 40_000);
+  assert.equal(result.rewardsAccounts[1].balanceStatus, "unknown");
+});
+
+test("monthlyPointsSummary uses trip form estimate without duplicate input", () => {
+  const result = evaluateRewards({
+    trip: baseTrip,
+    originIataCode: "BOM",
+    destinationIataCode: "LHR",
+    offers: [],
+    redemptionAssumptions: [],
+  });
+  assert.equal(result.monthlyPointsSummary.status, "provided");
+  assert.equal(result.monthlyPointsSummary.monthlyPointsEarned, 5_000);
+});
+
+test("missing list does not ask user to re-enter balance when rewards exist", () => {
+  const result = evaluateRewards({
+    trip: baseTrip,
+    originIataCode: "BOM",
+    destinationIataCode: "LHR",
+    offers: [makeOffer({ offerId: "1", totalAmount: "400", totalCurrency: "GBP" })],
+    redemptionAssumptions: [],
+  });
+  const joined = result.missingForFullComparison.join(" ");
+  assert.ok(!joined.toLowerCase().includes("confirmed balances on the trip form"));
+  assert.ok(joined.includes("points required"));
+});
+
 test("no fabricated discount in engine output", () => {
   const result = evaluateRewards({
     trip: baseTrip,
