@@ -35,9 +35,6 @@ export const COMPOSER_QUICK_PROMPTS = [
   "Plan a trip using my airline miles.",
 ] as const;
 
-export const NL_NOTE_SYSTEM_MESSAGE =
-  "Your message was saved to this conversation. Complete and save the structured trip form when you are ready — AI interpretation and flight search are not connected yet.";
-
 export function createConversation(title = "New trip"): PlannerConversation {
   const now = Date.now();
   return {

@@ -12,6 +12,7 @@ import { COMPOSER_QUICK_PROMPTS } from "@/schemas/plannerChat";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useCallback, useRef, type KeyboardEvent } from "react";
+import { ArrowUpIcon } from "lucide-react";
 
 type ChatComposerProps = {
   value: string;
@@ -112,10 +113,10 @@ export function ChatComposer({
           variant="primary"
           disabled={!canSend}
           onClick={onSend}
-          className="size-10 shrink-0 rounded-planner-md px-0 shadow-[0_0_16px_rgb(199_243_107_/_0.25)]"
+       
           aria-label="Send message"
         >
-          <Image src="/icons/send.svg" alt="" width={18} height={18} aria-hidden />
+        <ArrowUpIcon className="size-4" />
         </Button>
       </div>
     </div>

@@ -10,13 +10,13 @@ import { TripPlannerForm } from "@/components/planner/TripPlannerForm";
 import { TripSummaryCard } from "@/components/planner/TripSummaryCard";
 import { FormMessage } from "@/components/ui/FormMessage";
 import { fieldErrorsFromZod } from "@/lib/zodFieldErrors";
-import { postTripPlannerInput } from "@/lib/planner/client-api";
+import { postPlannerChat, postTripPlannerInput } from "@/lib/planner/client-api";
 import {
   plannerSectionLabelClassName,
   plannerWorkspaceTitleClassName,
 } from "@/lib/plannerFieldStyles";
+import { MAX_PLANNER_CHAT_RECENT_MESSAGES } from "@/schemas/plannerChatApiSchema";
 import {
-  NL_NOTE_SYSTEM_MESSAGE,
   type ChatMessage,
   type PlannerConversation,
   conversationTitleFromMessage,
@@ -57,6 +57,8 @@ export function PlannerChat() {
   const [formError, setFormError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isChatLoading, setIsChatLoading] = useState(false);
+  const [chatError, setChatError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const mainRegionRef = useRef<HTMLDivElement>(null);
 
@@ -88,51 +90,10 @@ export function PlannerChat() {
     [activeId],
   );
 
-  const appendNoteMessages = useCallback(
-    (displayText: string) => {
-      const userMessage: ChatMessage = {
-        id: crypto.randomUUID(),
-        role: "user",
-        content: displayText,
-        status: "sent",
-        createdAt: Date.now(),
-      };
-      const systemMessage: ChatMessage = {
-        id: crypto.randomUUID(),
-        role: "system",
-        content: NL_NOTE_SYSTEM_MESSAGE,
-        status: "sent",
-        createdAt: Date.now(),
-      };
-
-      setConversations((prev) =>
-        updateConversation(prev, activeId, (c) => {
-          const isFirst = c.messages.length === 0;
-          return {
-            ...c,
-            title: isFirst ? conversationTitleFromMessage(displayText) : c.title,
-            messages: [...c.messages, userMessage, systemMessage],
-            tripForm: {
-              ...c.tripForm,
-              naturalLanguageNote: [
-                c.tripForm.naturalLanguageNote,
-                displayText,
-              ]
-                .filter(Boolean)
-                .join("\n\n"),
-            },
-            updatedAt: Date.now(),
-          };
-        }),
-      );
-    },
-    [activeId],
-  );
-
   const sendText = useCallback(
-    (rawText: string) => {
+    async (rawText: string) => {
       const text = rawText.trim();
-      if (!text || !activeId) return;
+      if (!text || !activeId || isChatLoading) return;
 
       const shouldFail = text.toLowerCase().includes(SIMULATE_SEND_FAILURE);
       const displayText = shouldFail
@@ -157,11 +118,114 @@ export function PlannerChat() {
         return;
       }
 
-      appendNoteMessages(displayText);
+      const userMessageId = crypto.randomUUID();
+      const userMessage: ChatMessage = {
+        id: userMessageId,
+        role: "user",
+        content: displayText,
+        status: "sending",
+        createdAt: Date.now(),
+      };
+
+      const conversationSnapshot = activeConversation;
+      setChatError(null);
       setComposer("");
+      setIsChatLoading(true);
+
+      setConversations((prev) =>
+        updateConversation(prev, activeId, (c) => {
+          const isFirst = c.messages.length === 0;
+          return {
+            ...c,
+            title: isFirst ? conversationTitleFromMessage(displayText) : c.title,
+            messages: [...c.messages, userMessage],
+            updatedAt: Date.now(),
+          };
+        }),
+      );
       scrollToBottom();
+
+      const recentMessages = [
+        ...conversationSnapshot.messages,
+        { ...userMessage, status: "sent" as const },
+      ]
+        .filter(
+          (m) =>
+            m.status === "sent" &&
+            (m.role === "user" || m.role === "assistant"),
+        )
+        .slice(-MAX_PLANNER_CHAT_RECENT_MESSAGES)
+        .map((m) => ({
+          role: m.role as "user" | "assistant",
+          content: m.content,
+        }));
+
+      try {
+        const { response, data } = await postPlannerChat({
+          message: displayText,
+          recentMessages,
+          tripForm: conversationSnapshot.tripForm,
+          validatedTripInput: conversationSnapshot.validatedTripInput,
+        });
+
+        if (!response.ok || !data.ok) {
+          const errorMessage =
+            !data.ok && data.error
+              ? data.error
+              : "Unable to reach the assistant. Please try again.";
+          setChatError(errorMessage);
+          setConversations((prev) =>
+            updateConversation(prev, activeId, (c) => ({
+              ...c,
+              messages: c.messages.map((m) =>
+                m.id === userMessageId ? { ...m, status: "failed" } : m,
+              ),
+            })),
+          );
+          scrollToBottom();
+          return;
+        }
+
+        const assistantMessage: ChatMessage = {
+          id: crypto.randomUUID(),
+          role: "assistant",
+          content: data.assistantMessage,
+          status: "sent",
+          createdAt: Date.now(),
+        };
+
+        setConversations((prev) =>
+          updateConversation(prev, activeId, (c) => ({
+            ...c,
+            messages: [
+              ...c.messages.map((m) =>
+                m.id === userMessageId ? { ...m, status: "sent" as const } : m,
+              ),
+              assistantMessage,
+            ],
+            tripForm: data.mergedTripForm,
+            validatedTripInput: data.validatedTripInput,
+            updatedAt: Date.now(),
+          })),
+        );
+        setSaveSuccess(null);
+        setFieldErrors({});
+      } catch {
+        setChatError("Network error. Check your connection and try again.");
+        setConversations((prev) =>
+          updateConversation(prev, activeId, (c) => ({
+            ...c,
+            messages: c.messages.map((m) =>
+              m.id === userMessageId ? { ...m, status: "failed" } : m,
+            ),
+          })),
+        );
+      } finally {
+        setIsChatLoading(false);
+        scrollToBottom();
+      }
     },
-    [activeId, appendNoteMessages, scrollToBottom],
+    [activeConversation, activeId, isChatLoading, scrollToBottom],
   );
 
   const handleRetry = useCallback(
@@ -175,7 +239,7 @@ export function PlannerChat() {
           messages: c.messages.filter((m) => m.id !== messageId),
         })),
       );
-      sendText(message.content);
+      void sendText(message.content);
     },
     [activeConversation.messages, activeId, sendText],
   );
@@ -321,11 +385,7 @@ export function PlannerChat() {
                 <div className="mb-8">
                   <PlannerEmptyState
                     onSelectPrompt={(prompt) => {
-                      updateActiveTripForm({
-                        ...activeConversation.tripForm,
-                        naturalLanguageNote: prompt,
-                      });
-                      sendText(prompt);
+                      void sendText(prompt);
                     }}
                   />
                 </div>
@@ -345,8 +405,9 @@ export function PlannerChat() {
                       {activeConversation.title || "Trip conversation"}
                     </h1>
                     <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-                      Messages are saved locally. Use the trip form below for
-                      validated requirements — AI chat arrives in Phase 5.
+                      Messages stay in this browser session. The assistant
+                      updates the trip form when it can extract details — save
+                      the form to lock validated requirements.
                     </p>
                   </header>
 
@@ -368,6 +429,17 @@ export function PlannerChat() {
                           }
                         />
                       ))}
+                      {isChatLoading ? (
+                        <ChatMessageBubble
+                          message={{
+                            id: "assistant-pending",
+                            role: "assistant",
+                            content: "Thinking…",
+                            status: "sending",
+                            createdAt: 0,
+                          }}
+                        />
+                      ) : null}
                     </div>
                   </div>
 
@@ -375,13 +447,18 @@ export function PlannerChat() {
                     <ChatComposer
                       value={composer}
                       onChange={setComposer}
-                      onSend={() => sendText(composer)}
-                      onQuickPrompt={(prompt) => sendText(prompt)}
-                      disabled={isSaving}
+                      onSend={() => void sendText(composer)}
+                      onQuickPrompt={(prompt) => void sendText(prompt)}
+                      disabled={isSaving || isChatLoading}
                       showQuickPrompts={hasConversation}
                     />
+                    {chatError ? (
+                      <FormMessage variant="error" className="mt-3">
+                        {chatError}
+                      </FormMessage>
+                    ) : null}
                     <p className="mt-2 text-center text-[11px] text-muted-foreground">
-                      Enter to send a note · Shift+Enter for a new line
+                      Enter to send · Shift+Enter for a new line
                     </p>
                   </div>
                 </>

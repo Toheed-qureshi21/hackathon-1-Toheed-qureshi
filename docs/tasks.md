@@ -107,22 +107,24 @@ Do not mark tasks complete merely because code has been generated. Confirm imple
 
 ## Phase 5 — AI Chat and Conversation Orchestration
 
-- [ ] Create a dedicated Route Handler for trip-planning chat requests.
-- [ ] Validate incoming chat requests with Zod.
-- [ ] Integrate Groq through a server-side service.
-- [ ] Extract structured trip intent from natural-language messages.
-- [ ] Identify missing trip requirements and ask relevant follow-up questions.
-- [ ] Maintain structured conversation and trip-planning state.
-- [ ] Allow users to correct or replace previously provided values.
-- [ ] Validate AI-generated structured output before using it.
-- [ ] Keep backend-owned trip state authoritative.
-- [ ] Define the transition from collecting trip information to searching for flights.
-- [ ] Ensure the AI does not claim that a search has completed before provider results exist.
-- [ ] Ensure the AI does not invent flight prices, award availability, program rules, balances, or calculations.
-- [ ] Add responsible-use constraints to AI instructions.
-- [ ] Prevent advice that encourages unnecessary spending, borrowing, debt, or paying interest to earn rewards.
-- [ ] Test incomplete requests, ambiguous dates, invalid structured output, and provider errors.
-- [ ] Test graceful behavior when the Groq service is unavailable.
+- [x] Create a dedicated Route Handler for trip-planning chat requests.
+- [x] Validate incoming chat requests with Zod.
+- [x] Integrate Groq through a server-side service.
+- [x] Extract structured trip intent from natural-language messages.
+- [x] Identify missing trip requirements and ask relevant follow-up questions.
+- [x] Maintain structured conversation and trip-planning state.
+- [x] Allow users to correct or replace previously provided values.
+- [x] Validate AI-generated structured output before using it.
+- [x] Keep backend-owned trip state authoritative.
+- [x] Define the transition from collecting trip information to searching for flights.
+- [x] Ensure the AI does not claim that a search has completed before provider results exist.
+- [x] Ensure the AI does not invent flight prices, award availability, program rules, balances, or calculations.
+- [x] Add responsible-use constraints to AI instructions.
+- [x] Prevent advice that encourages unnecessary spending, borrowing, debt, or paying interest to earn rewards.
+- [x] Test incomplete requests, ambiguous dates, invalid structured output, and provider errors.
+- [x] Test graceful behavior when the Groq service is unavailable.
+
+**Phase 5 env:** set `GROQ_API_KEY` (server-only). Optional `GROQ_MODEL` (defaults to `openai/gpt-oss-20b` via `lib/groq/config.ts`). Run chat tests with `npm run test:planner-chat` (uses mocked Groq; no API credits required).
 
 ## Phase 6 — Duffel Cash-Flight Search
 
