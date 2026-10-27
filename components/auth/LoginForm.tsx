@@ -188,31 +188,7 @@ export function LoginForm() {
         </Button>
       </form>
 
-      <DividerWithText>or continue with</DividerWithText>
 
-      <Button
-        type="button"
-        fullWidth
-        disabled={isLoading}
-        className={`gap-3 ${authSecondaryButtonClassName}`}
-        onClick={() =>
-          handleUnavailableAction(
-            "Google sign-in is not connected yet. It will be available when authentication is enabled.",
-          )
-        }
-      >
-        <Image
-          src="/icons/google-g.svg"
-          alt=""
-          width={18}
-          height={18}
-          aria-hidden
-        />
-        Continue with Google
-      </Button>
-      <p className="mt-1 text-center text-xs text-muted-foreground">
-        Social sign-in is not available in this preview.
-      </p>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{" "}

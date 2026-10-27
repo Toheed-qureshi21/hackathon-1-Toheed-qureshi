@@ -18,7 +18,7 @@ export default function HomePage() {
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground antialiased selection:bg-primary selection:text-primary-foreground">
       {/* Shared Site Navigation */}
-      <SiteNavbar />
+      <SiteNavbar containerClassName="mx-auto " />
 
       {/* Main Landing Page Content */}
       <main className="w-full flex-1 pt-16">
