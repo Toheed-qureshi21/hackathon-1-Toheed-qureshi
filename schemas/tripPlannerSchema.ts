@@ -1,3 +1,8 @@
+import {
+  parseDisplayDateToIso,
+  formatIsoDateToDisplay,
+} from "@/lib/planner/dateDisplay";
+import { iataCodeSchema } from "@/schemas/plannerLocationSchema";
 import { z } from "zod";
 
 export const SUPPORTED_REWARD_PROGRAM_IDS = [
@@ -49,7 +54,7 @@ export const rewardBalanceStatusSchema = z.enum(["confirmed", "unknown"]);
 
 export const isoDateStringSchema = z
   .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, "Use a valid date (YYYY-MM-DD)");
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "Use a valid date (DD-MM-YYYY)");
 
 export function normalizeLocation(value: string): string {
   return value.trim().replace(/\s+/g, " ").toLowerCase();
@@ -222,6 +227,8 @@ export const tripPlannerFormSchema = z
     naturalLanguageNote: z.string().max(2000).optional(),
     origin: z.string(),
     destination: z.string(),
+    originIataCode: z.string().max(3),
+    destinationIataCode: z.string().max(3),
     journeyType: journeyTypeSchema,
     departureDate: z.string(),
     returnDate: z.string().optional(),
@@ -237,6 +244,72 @@ export const tripPlannerFormSchema = z
       }),
     ),
     monthlyPointsEstimate: z.string().optional(),
+  })
+  .superRefine((raw, ctx) => {
+    const departureIso = parseDisplayDateToIso(raw.departureDate);
+    if (!raw.departureDate.trim()) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Departure date is required",
+        path: ["departureDate"],
+      });
+    } else if (!departureIso) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Use a valid date (DD-MM-YYYY)",
+        path: ["departureDate"],
+      });
+    }
+
+    if (raw.journeyType === "return") {
+      const returnRaw = raw.returnDate?.trim() ?? "";
+      if (!returnRaw) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Return date is required for a return journey",
+          path: ["returnDate"],
+        });
+      } else {
+        const returnIso = parseDisplayDateToIso(returnRaw);
+        if (!returnIso) {
+          ctx.addIssue({
+            code: "custom",
+            message: "Use a valid date (DD-MM-YYYY)",
+            path: ["returnDate"],
+          });
+        } else if (departureIso && returnIso < departureIso) {
+          ctx.addIssue({
+            code: "custom",
+            message: "Return date cannot be before departure",
+            path: ["returnDate"],
+          });
+        }
+      }
+    } else if (raw.returnDate?.trim()) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Return date applies only to return journeys",
+        path: ["returnDate"],
+      });
+    }
+
+    if (raw.origin.trim() && !iataCodeSchema.safeParse(raw.originIataCode).success) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Select an airport from the suggestions list",
+        path: ["originIataCode"],
+      });
+    }
+    if (
+      raw.destination.trim() &&
+      !iataCodeSchema.safeParse(raw.destinationIataCode).success
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Select an airport from the suggestions list",
+        path: ["destinationIataCode"],
+      });
+    }
   })
   .transform((raw): TripPlannerInput => {
     const passengerCount = Number.parseInt(raw.passengerCount, 10);
@@ -262,14 +335,20 @@ export const tripPlannerFormSchema = z
       };
     });
 
+    const departureDate = parseDisplayDateToIso(raw.departureDate.trim())!;
+    const returnDateRaw = raw.returnDate?.trim() ?? "";
+    const returnDate =
+      raw.journeyType === "return"
+        ? parseDisplayDateToIso(returnDateRaw)
+        : null;
+
     return {
       naturalLanguageNote: raw.naturalLanguageNote?.trim() || null,
       origin: raw.origin,
       destination: raw.destination,
       journeyType: raw.journeyType,
-      departureDate: raw.departureDate,
-      returnDate:
-        raw.journeyType === "return" ? (raw.returnDate?.trim() || null) : null,
+      departureDate,
+      returnDate,
       passengerCount,
       cabinClass: raw.cabinClass,
       dateFlexibility: raw.dateFlexibility,
@@ -288,6 +367,8 @@ export function emptyTripPlannerFormValues(
     naturalLanguageNote: note ?? "",
     origin: "",
     destination: "",
+    originIataCode: "",
+    destinationIataCode: "",
     journeyType: "return",
     departureDate: "",
     returnDate: "",
@@ -306,9 +387,13 @@ export function tripPlannerInputToFormValues(
     naturalLanguageNote: input.naturalLanguageNote ?? "",
     origin: input.origin,
     destination: input.destination,
+    originIataCode: "",
+    destinationIataCode: "",
     journeyType: input.journeyType,
-    departureDate: input.departureDate,
-    returnDate: input.returnDate ?? "",
+    departureDate: formatIsoDateToDisplay(input.departureDate) ?? input.departureDate,
+    returnDate: input.returnDate
+      ? (formatIsoDateToDisplay(input.returnDate) ?? input.returnDate)
+      : "",
     passengerCount: String(input.passengerCount),
     cabinClass: input.cabinClass,
     dateFlexibility: input.dateFlexibility,

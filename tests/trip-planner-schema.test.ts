@@ -138,8 +138,10 @@ test("tripPlannerFormSchema accepts missing monthly estimate", () => {
   const result = tripPlannerFormSchema.safeParse({
     origin: "Mumbai",
     destination: "London",
+    originIataCode: "BOM",
+    destinationIataCode: "LHR",
     journeyType: "one_way",
-    departureDate: "2026-12-10",
+    departureDate: "10-12-2026",
     returnDate: "",
     passengerCount: "2",
     cabinClass: "economy",
@@ -157,12 +159,32 @@ test("tripPlannerFormSchema accepts missing monthly estimate", () => {
   assert.equal(result.success, true);
 });
 
+test("tripPlannerFormSchema rejects missing airport IATA selection", () => {
+  const result = tripPlannerFormSchema.safeParse({
+    origin: "Mumbai",
+    destination: "London",
+    originIataCode: "",
+    destinationIataCode: "",
+    journeyType: "one_way",
+    departureDate: "10-12-2026",
+    returnDate: "",
+    passengerCount: "2",
+    cabinClass: "economy",
+    dateFlexibility: "exact",
+    rewards: [],
+    monthlyPointsEstimate: "",
+  });
+  assert.equal(result.success, false);
+});
+
 test("tripPlannerFormSchema rejects invalid monthly estimate", () => {
   const result = tripPlannerFormSchema.safeParse({
     origin: "Mumbai",
     destination: "London",
+    originIataCode: "BOM",
+    destinationIataCode: "LHR",
     journeyType: "one_way",
-    departureDate: "2026-12-10",
+    departureDate: "10-12-2026",
     returnDate: "",
     passengerCount: "2",
     cabinClass: "economy",

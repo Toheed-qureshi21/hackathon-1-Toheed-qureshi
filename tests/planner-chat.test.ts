@@ -152,7 +152,7 @@ test("mergePlannerChatState applies patch and preserves unrelated fields on corr
       ...baseForm,
       origin: "Mumbai",
       destination: "London",
-      departureDate: "2026-12-10",
+      departureDate: "10-12-2026",
       passengerCount: "2",
       cabinClass: "business",
       journeyType: "one_way",

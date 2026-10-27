@@ -15,7 +15,7 @@ export function ChatTypingIndicator() {
       <div className="min-w-0 flex-1">
         <div className="mb-1.5 flex items-center gap-2">
           <span className="font-heading text-xs font-semibold text-foreground">
-            RedeemTrip Copilot
+            RedeemTrip AI
           </span>
           <span
             className={cn(

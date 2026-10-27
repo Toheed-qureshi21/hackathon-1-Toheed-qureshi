@@ -1,3 +1,4 @@
+import { formatIsoDateToDisplay } from "@/lib/planner/dateDisplay";
 import { plannerSectionLabelClassName } from "@/lib/plannerFieldStyles";
 import {
   CABIN_CLASS_LABELS,
@@ -62,7 +63,7 @@ export function TripSummaryCard({ tripInput, className }: TripSummaryCardProps) 
             </h2>
             <p className="mt-1 text-xs text-muted-foreground">
               {tripInput
-                ? "Validated trip details — not searched or booked"
+                ? "Validated trip details — use cash search when ready"
                 : "Save the form to confirm your trip details"}
             </p>
           </div>
@@ -91,10 +92,21 @@ export function TripSummaryCard({ tripInput, className }: TripSummaryCardProps) 
               label="Journey"
               value={JOURNEY_TYPE_LABELS[tripInput.journeyType]}
             />
-            <SummaryCell label="Departure" value={tripInput.departureDate} />
+            <SummaryCell
+              label="Departure"
+              value={
+                formatIsoDateToDisplay(tripInput.departureDate) ??
+                tripInput.departureDate
+              }
+            />
             <SummaryCell
               label="Return"
-              value={tripInput.returnDate ?? "—"}
+              value={
+                tripInput.returnDate
+                  ? (formatIsoDateToDisplay(tripInput.returnDate) ??
+                    tripInput.returnDate)
+                  : "—"
+              }
             />
             <SummaryCell
               label="Passengers"

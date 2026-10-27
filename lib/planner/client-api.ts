@@ -1,3 +1,6 @@
+import type { FlightSearchRequest } from "@/schemas/flightSearchSchema";
+import type { FlightSearchSuccessResponse } from "@/schemas/flightSearchSchema";
+import type { PlannerPlaceOption } from "@/schemas/plannerLocationSchema";
 import type { PlannerChatRequest } from "@/schemas/plannerChatApiSchema";
 import type { PlannerChatSuccessResponse } from "@/schemas/plannerChatApiSchema";
 import type { TripPlannerInput } from "@/schemas/tripPlannerSchema";
@@ -51,5 +54,43 @@ export async function postPlannerChat(
   });
 
   const data = (await response.json()) as PlannerChatApiResult;
+  return { response, data };
+}
+
+type PlacesSuccess = { ok: true; places: PlannerPlaceOption[] };
+type PlacesError = { ok: false; error: string };
+export type PlacesApiResult = PlacesSuccess | PlacesError;
+
+export async function fetchPlannerPlaces(
+  query: string,
+): Promise<{ response: Response; data: PlacesApiResult }> {
+  const response = await fetch(
+    `/api/planner/flights/places?query=${encodeURIComponent(query)}`,
+    { credentials: "include" },
+  );
+  const data = (await response.json()) as PlacesApiResult;
+  return { response, data };
+}
+
+type FlightSearchError = {
+  ok: false;
+  error: string;
+  fieldErrors?: Record<string, string | undefined>;
+};
+
+export type FlightSearchApiResult =
+  | FlightSearchSuccessResponse
+  | FlightSearchError;
+
+export async function postFlightSearch(
+  payload: FlightSearchRequest,
+): Promise<{ response: Response; data: FlightSearchApiResult }> {
+  const response = await fetch("/api/planner/flights/search", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(payload),
+  });
+  const data = (await response.json()) as FlightSearchApiResult;
   return { response, data };
 }

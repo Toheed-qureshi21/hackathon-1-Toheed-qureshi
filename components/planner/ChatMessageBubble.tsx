@@ -1,3 +1,4 @@
+import { ChatFlightSearchBubble } from "@/components/planner/ChatFlightSearchBubble";
 import { Button } from "@/components/ui/Button";
 import {
   plannerMetricTimeClassName,
@@ -62,7 +63,7 @@ export function ChatMessageBubble({ message, onRetry }: ChatMessageBubbleProps) 
           )}
         >
           <span className="font-heading text-xs font-semibold text-foreground">
-            {isUser ? "You" : "RedeemTrip Copilot"}
+            {isUser ? "You" : "RedeemTrip AI"}
           </span>
           {!isUser ? (
             <span
@@ -100,6 +101,8 @@ export function ChatMessageBubble({ message, onRetry }: ChatMessageBubbleProps) 
               </span>
               Thinking…
             </p>
+          ) : message.kind === "flight_search" && message.flightSearch ? (
+            <ChatFlightSearchBubble result={message.flightSearch} />
           ) : (
             <p className="whitespace-pre-wrap">{message.content}</p>
           )}

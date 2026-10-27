@@ -8,9 +8,10 @@
     "start": "next start",
     "lint": "eslint",
     "test:auth-schema": "node --experimental-strip-types --test tests/auth-api-schema.test.ts",
-    "test:trip-planner-schema": "node --experimental-strip-types --test tests/trip-planner-schema.test.ts",
+    "test:trip-planner-schema": "tsx --test tests/trip-planner-schema.test.ts",
     "test:planner-chat": "tsx --test tests/planner-chat.test.ts",
-    "test": "npm run test:auth-schema && npm run test:trip-planner-schema && npm run test:planner-chat"
+    "test:flight-search": "tsx --test tests/flight-search.test.ts",
+    "test": "npm run test:auth-schema && npm run test:trip-planner-schema && npm run test:planner-chat && npm run test:flight-search"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.1",

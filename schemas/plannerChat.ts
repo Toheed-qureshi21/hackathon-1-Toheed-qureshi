@@ -1,3 +1,4 @@
+import type { FlightSearchSuccessResponse } from "@/schemas/flightSearchSchema";
 import type { TripPlannerFormValues, TripPlannerInput } from "@/schemas/tripPlannerSchema";
 import { emptyTripPlannerFormValues } from "@/schemas/tripPlannerSchema";
 
@@ -5,12 +6,16 @@ export type ChatMessageRole = "user" | "assistant" | "system";
 
 export type ChatMessageStatus = "sending" | "typing" | "sent" | "failed";
 
+export type ChatMessageKind = "text" | "flight_search";
+
 export type ChatMessage = {
   id: string;
   role: ChatMessageRole;
   content: string;
   status: ChatMessageStatus;
   createdAt: number;
+  kind?: ChatMessageKind;
+  flightSearch?: FlightSearchSuccessResponse;
 };
 
 export type PlannerConversation = {

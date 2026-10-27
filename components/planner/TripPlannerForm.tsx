@@ -3,9 +3,11 @@
 import { RewardsEntriesEditor } from "@/components/planner/RewardsEntriesEditor";
 import { Button } from "@/components/ui/Button";
 import { FormMessage } from "@/components/ui/FormMessage";
+import { LocationCombobox } from "@/components/planner/LocationCombobox";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Select } from "@/components/ui/Select";
+import { DISPLAY_DATE_HINT } from "@/lib/planner/dateDisplay";
 import { plannerSectionLabelClassName } from "@/lib/plannerFieldStyles";
 import {
   CABIN_CLASS_LABELS,
@@ -63,7 +65,7 @@ export function TripPlannerForm({
           </h2>
           <p className="mt-1 text-xs text-muted-foreground">
             Required fields are marked with an asterisk (*). Natural-language
-            notes are optional and are not interpreted by AI in this phase.
+            notes are optional. Chat may help fill fields; cash search uses Duffel.
           </p>
         </div>
 
@@ -80,47 +82,43 @@ export function TripPlannerForm({
           />
           <p className="text-xs text-muted-foreground">
             This note is stored with your trip. Structured fields below are what
-            we validate today; AI interpretation arrives in a later phase.
+            we validate for search. Pick airports from suggestions for Duffel.
           </p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="grid gap-1.5">
-            <Label htmlFor="trip-origin">
-              Origin (city or airport) <span className="text-primary">*</span>
-            </Label>
-            <Input
-              id="trip-origin"
-              disabled={isSubmitting}
-              hasError={Boolean(fieldErrors.origin)}
-              value={values.origin}
-              onChange={(e) => patch({ origin: e.target.value })}
-              placeholder="Mumbai (BOM)"
-              aria-describedby={fieldErrors.origin ? "trip-origin-error" : undefined}
-            />
-            <FieldError id="trip-origin-error" message={fieldErrors.origin} />
-          </div>
-          <div className="grid gap-1.5">
-            <Label htmlFor="trip-destination">
-              Destination (city or airport){" "}
-              <span className="text-primary">*</span>
-            </Label>
-            <Input
-              id="trip-destination"
-              disabled={isSubmitting}
-              hasError={Boolean(fieldErrors.destination)}
-              value={values.destination}
-              onChange={(e) => patch({ destination: e.target.value })}
-              placeholder="London (LHR)"
-              aria-describedby={
-                fieldErrors.destination ? "trip-destination-error" : undefined
-              }
-            />
-            <FieldError
-              id="trip-destination-error"
-              message={fieldErrors.destination}
-            />
-          </div>
+          <LocationCombobox
+            id="trip-origin"
+            label={
+              <>
+                Origin airport <span className="text-primary">*</span>
+              </>
+            }
+            disabled={isSubmitting}
+            value={values.origin}
+            iataCode={values.originIataCode}
+            error={fieldErrors.origin ?? fieldErrors.originIataCode}
+            placeholder="Search Mumbai, BOM, Heathrow…"
+            onChange={({ label, iataCode }) =>
+              patch({ origin: label, originIataCode: iataCode })
+            }
+          />
+          <LocationCombobox
+            id="trip-destination"
+            label={
+              <>
+                Destination airport <span className="text-primary">*</span>
+              </>
+            }
+            disabled={isSubmitting}
+            value={values.destination}
+            iataCode={values.destinationIataCode}
+            error={fieldErrors.destination ?? fieldErrors.destinationIataCode}
+            placeholder="Search London, LHR, JFK…"
+            onChange={({ label, iataCode }) =>
+              patch({ destination: label, destinationIataCode: iataCode })
+            }
+          />
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
@@ -178,10 +176,12 @@ export function TripPlannerForm({
             </Label>
             <Input
               id="trip-departure"
-              type="date"
+              type="text"
+              inputMode="numeric"
               disabled={isSubmitting}
               hasError={Boolean(fieldErrors.departureDate)}
               value={values.departureDate}
+              placeholder={DISPLAY_DATE_HINT}
               onChange={(e) => patch({ departureDate: e.target.value })}
               aria-describedby={
                 fieldErrors.departureDate ? "trip-departure-error" : undefined
@@ -199,10 +199,12 @@ export function TripPlannerForm({
               </Label>
               <Input
                 id="trip-return"
-                type="date"
+                type="text"
+                inputMode="numeric"
                 disabled={isSubmitting}
                 hasError={Boolean(fieldErrors.returnDate)}
                 value={values.returnDate ?? ""}
+                placeholder={DISPLAY_DATE_HINT}
                 onChange={(e) => patch({ returnDate: e.target.value })}
                 aria-describedby={
                   fieldErrors.returnDate ? "trip-return-error" : undefined

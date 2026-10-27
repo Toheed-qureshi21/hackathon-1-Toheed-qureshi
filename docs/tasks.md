@@ -128,21 +128,25 @@ Do not mark tasks complete merely because code has been generated. Confirm imple
 
 ## Phase 6 — Duffel Cash-Flight Search
 
-- [ ] Verify Duffel API access, credentials, terms, and relevant flight-search capabilities.
-- [ ] Document the required environment variables without exposing their values.
-- [ ] Implement a server-side Duffel client or provider adapter.
-- [ ] Define application-owned schemas for cash-flight search requests.
-- [ ] Validate outbound search inputs.
-- [ ] Normalize Duffel responses into an application-owned cash-offer format.
-- [ ] Capture itinerary details and total prices where available.
-- [ ] Preserve currency and relevant fare conditions.
-- [ ] Validate provider responses before returning them to the client.
-- [ ] Implement provider timeouts and safe error handling.
-- [ ] Handle rate limits, malformed responses, and empty search results.
-- [ ] Ensure the UI clearly identifies cash-priced flight offers.
-- [ ] Ensure provider failures do not generate fake offers.
-- [ ] Add tests for normalization, validation, errors, and empty results.
-- [ ] Verify the integration using authorized test or live data as appropriate.
+- [x] Verify Duffel API access, credentials, terms, and relevant flight-search capabilities.
+- [x] Document the required environment variables without exposing their values.
+- [x] Implement a server-side Duffel client or provider adapter.
+- [x] Define application-owned schemas for cash-flight search requests.
+- [x] Validate outbound search inputs.
+- [x] Normalize Duffel responses into an application-owned cash-offer format.
+- [x] Capture itinerary details and total prices where available.
+- [x] Preserve currency and relevant fare conditions.
+- [x] Validate provider responses before returning them to the client.
+- [x] Implement provider timeouts and safe error handling.
+- [x] Handle rate limits, malformed responses, and empty search results.
+- [x] Ensure the UI clearly identifies cash-priced flight offers.
+- [x] Ensure provider failures do not generate fake offers.
+- [x] Add tests for normalization, validation, errors, and empty results.
+- [x] Verify the integration using authorized test or live data as appropriate.
+
+**Phase 6 env:** set `DUFFEL_ACCESS_TOKEN` (server-only). Optional `DUFFEL_API_BASE_URL` (defaults to `https://api.duffel.com`). Uses Duffel API `Duffel-Version: v2`. Location autocomplete: `GET /places/suggestions`. Cash search: `POST /air/offer_requests?return_offers=true`. Run tests with `npm run test:flight-search` (mocked Duffel; no live calls).
+
+**Limitations:** Date flexibility is stored on the trip but search uses exact departure/return dates only. Airport codes must be chosen from Duffel suggestions — free text is not converted to IATA. Test-mode offers are labeled in the UI and are not guaranteed real-world prices.
 
 **Important:** Duffel cash-search access does not establish that award-flight inventory is available through Duffel.
 

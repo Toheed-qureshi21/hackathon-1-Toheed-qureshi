@@ -1,3 +1,4 @@
+import { formatIsoDateToDisplay } from "@/lib/planner/dateDisplay";
 import type {
   GroqPlannerModelOutput,
   PlannerChatRequest,
@@ -19,10 +20,13 @@ export function mergeTripFormFromPatch(
   if (tripPatch.destination !== undefined) next.destination = tripPatch.destination;
   if (tripPatch.journeyType !== undefined) next.journeyType = tripPatch.journeyType;
   if (tripPatch.departureDate !== undefined) {
-    next.departureDate = tripPatch.departureDate;
+    next.departureDate =
+      formatIsoDateToDisplay(tripPatch.departureDate) ?? tripPatch.departureDate;
   }
   if (tripPatch.returnDate !== undefined) {
-    next.returnDate = tripPatch.returnDate ?? "";
+    next.returnDate = tripPatch.returnDate
+      ? (formatIsoDateToDisplay(tripPatch.returnDate) ?? tripPatch.returnDate)
+      : "";
   }
   if (tripPatch.passengerCount !== undefined) {
     next.passengerCount = String(tripPatch.passengerCount);

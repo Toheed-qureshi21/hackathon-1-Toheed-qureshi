@@ -24,6 +24,8 @@ export const plannerChatTripFormPayloadSchema = z.object({
   naturalLanguageNote: z.string().max(2000).optional(),
   origin: z.string().max(200),
   destination: z.string().max(200),
+  originIataCode: z.string().max(3),
+  destinationIataCode: z.string().max(3),
   journeyType: journeyTypeSchema,
   departureDate: z.string().max(32),
   returnDate: z.string().max(32).optional(),

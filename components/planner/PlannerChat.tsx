@@ -6,11 +6,17 @@ import { PlannerAmbientBackground } from "@/components/planner/PlannerAmbientBac
 import { PlannerEmptyState } from "@/components/planner/PlannerEmptyState";
 import { PlannerSidebar } from "@/components/planner/PlannerSidebar";
 import { PlannerTopBar } from "@/components/planner/PlannerTopBar";
+import { CashFlightResults } from "@/components/planner/CashFlightResults";
 import { TripPlannerForm } from "@/components/planner/TripPlannerForm";
 import { TripSummaryCard } from "@/components/planner/TripSummaryCard";
+import { Button } from "@/components/ui/Button";
 import { FormMessage } from "@/components/ui/FormMessage";
 import { fieldErrorsFromZod } from "@/lib/zodFieldErrors";
-import { postPlannerChat, postTripPlannerInput } from "@/lib/planner/client-api";
+import {
+  postFlightSearch,
+  postPlannerChat,
+  postTripPlannerInput,
+} from "@/lib/planner/client-api";
 import {
   plannerSectionLabelClassName,
   plannerWorkspaceTitleClassName,
@@ -23,9 +29,12 @@ import {
   createConversation,
   isTripFormPristine,
 } from "@/schemas/plannerChat";
+import type { FlightSearchSuccessResponse } from "@/schemas/flightSearchSchema";
+import { iataCodeSchema } from "@/schemas/plannerLocationSchema";
 import {
   tripPlannerFormSchema,
   type TripPlannerFormValues,
+  type TripPlannerInput,
 } from "@/schemas/tripPlannerSchema";
 import { cn } from "@/lib/utils";
 import { useCallback, useMemo, useRef, useState } from "react";
@@ -59,6 +68,10 @@ export function PlannerChat() {
   const [isSaving, setIsSaving] = useState(false);
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [chatError, setChatError] = useState<string | null>(null);
+  const [flightSearchResult, setFlightSearchResult] =
+    useState<FlightSearchSuccessResponse | null>(null);
+  const [flightSearchError, setFlightSearchError] = useState<string | null>(null);
+  const [isFlightSearching, setIsFlightSearching] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const mainRegionRef = useRef<HTMLDivElement>(null);
 
@@ -66,6 +79,16 @@ export function PlannerChat() {
     () => conversations.find((c) => c.id === activeId) ?? conversations[0],
     [activeId, conversations],
   );
+
+  const canSearchFlights = useMemo(() => {
+    const trip = activeConversation.validatedTripInput;
+    const form = activeConversation.tripForm;
+    if (!trip) return false;
+    return (
+      iataCodeSchema.safeParse(form.originIataCode).success &&
+      iataCodeSchema.safeParse(form.destinationIataCode).success
+    );
+  }, [activeConversation.tripForm, activeConversation.validatedTripInput]);
 
   const scrollToBottom = useCallback(() => {
     requestAnimationFrame(() => {
@@ -88,6 +111,132 @@ export function PlannerChat() {
       setSaveSuccess(null);
     },
     [activeId],
+  );
+
+  const appendChatMessages = useCallback(
+    (messages: ChatMessage[]) => {
+      setConversations((prev) =>
+        updateConversation(prev, activeId, (c) => ({
+          ...c,
+          messages: [...c.messages, ...messages],
+          updatedAt: Date.now(),
+        })),
+      );
+    },
+    [activeId],
+  );
+
+  const runFlightSearch = useCallback(
+    async (
+      trip: TripPlannerInput,
+      form: TripPlannerFormValues,
+      options?: { postToChat?: boolean },
+    ) => {
+      if (isFlightSearching) return false;
+      const postToChat = options?.postToChat ?? true;
+
+      setFlightSearchError(null);
+      const originParsed = iataCodeSchema.safeParse(form.originIataCode);
+      const destinationParsed = iataCodeSchema.safeParse(form.destinationIataCode);
+      if (!originParsed.success || !destinationParsed.success) {
+        const errorText =
+          "Select origin and destination airports from the suggestions before searching.";
+        setFlightSearchError(errorText);
+        if (postToChat) {
+          appendChatMessages([
+            {
+              id: crypto.randomUUID(),
+              role: "assistant",
+              content: errorText,
+              status: "sent",
+              createdAt: Date.now(),
+            },
+          ]);
+          scrollToBottom();
+        }
+        return false;
+      }
+
+      if (postToChat) {
+        appendChatMessages([
+          {
+            id: crypto.randomUUID(),
+            role: "assistant",
+            content: "Searching cash flights on Duffel…",
+            status: "sent",
+            createdAt: Date.now(),
+          },
+        ]);
+        scrollToBottom();
+      }
+
+      setIsFlightSearching(true);
+      try {
+        const { response, data } = await postFlightSearch({
+          trip,
+          originIataCode: originParsed.data,
+          destinationIataCode: destinationParsed.data,
+        });
+        if (!response.ok || !data.ok) {
+          const errorText =
+            !data.ok && data.error
+              ? data.error
+              : "Unable to search for cash flights. Please try again.";
+          setFlightSearchError(errorText);
+          if (postToChat) {
+            appendChatMessages([
+              {
+                id: crypto.randomUUID(),
+                role: "assistant",
+                content: errorText,
+                status: "sent",
+                createdAt: Date.now(),
+              },
+            ]);
+            scrollToBottom();
+          }
+          return false;
+        }
+        setFlightSearchResult(data);
+        if (postToChat) {
+          appendChatMessages([
+            {
+              id: crypto.randomUUID(),
+              role: "assistant",
+              content:
+                data.status === "no_offers"
+                  ? "No cash offers were returned for this trip."
+                  : `Cash flight search complete (${data.offers.length} offer${data.offers.length === 1 ? "" : "s"}).`,
+              status: "sent",
+              createdAt: Date.now(),
+              kind: "flight_search",
+              flightSearch: data,
+            },
+          ]);
+          scrollToBottom();
+        }
+        return true;
+      } catch {
+        const errorText = "Network error. Check your connection and try again.";
+        setFlightSearchError(errorText);
+        if (postToChat) {
+          appendChatMessages([
+            {
+              id: crypto.randomUUID(),
+              role: "assistant",
+              content: errorText,
+              status: "sent",
+              createdAt: Date.now(),
+            },
+          ]);
+          scrollToBottom();
+        }
+        return false;
+      } finally {
+        setIsFlightSearching(false);
+      }
+    },
+    [appendChatMessages, isFlightSearching, scrollToBottom],
   );
 
   const sendText = useCallback(
@@ -208,6 +357,25 @@ export function PlannerChat() {
         );
         setSaveSuccess(null);
         setFieldErrors({});
+
+        if (data.searchHandoffReady && data.validatedTripInput) {
+          void runFlightSearch(data.validatedTripInput, data.mergedTripForm);
+        } else if (data.conversationStatus === "ready_for_search_handoff") {
+          if (!data.validatedTripInput) {
+            setFlightSearchError(
+              "Trip details still need valid dates and required fields — check the form below, then save or search manually.",
+            );
+          } else if (
+            !iataCodeSchema.safeParse(data.mergedTripForm.originIataCode)
+              .success ||
+            !iataCodeSchema.safeParse(data.mergedTripForm.destinationIataCode)
+              .success
+          ) {
+            setFlightSearchError(
+              "Pick origin and destination from the airport suggestions (IATA codes). Cash search cannot run on city names alone.",
+            );
+          }
+        }
       } catch {
         setChatError("Network error. Check your connection and try again.");
         setConversations((prev) =>
@@ -223,7 +391,7 @@ export function PlannerChat() {
         scrollToBottom();
       }
     },
-    [activeConversation, activeId, isChatLoading, scrollToBottom],
+    [activeConversation, activeId, isChatLoading, runFlightSearch, scrollToBottom],
   );
 
   const handleRetry = useCallback(
@@ -241,6 +409,18 @@ export function PlannerChat() {
     },
     [activeConversation.messages, activeId, sendText],
   );
+
+  const handleFlightSearch = useCallback(async () => {
+    const trip = activeConversation.validatedTripInput;
+    const form = activeConversation.tripForm;
+    if (!trip) {
+      setFlightSearchError(
+        "Save and validate the trip form first, then search for cash flights.",
+      );
+      return;
+    }
+    await runFlightSearch(trip, form);
+  }, [activeConversation.tripForm, activeConversation.validatedTripInput, runFlightSearch]);
 
   const handleSaveTrip = useCallback(async () => {
     setFormError(null);
@@ -269,24 +449,43 @@ export function PlannerChat() {
         return;
       }
 
+      const savedForm: TripPlannerFormValues = {
+        ...activeConversation.tripForm,
+        naturalLanguageNote: parsed.data.naturalLanguageNote ?? "",
+      };
+
       setConversations((prev) =>
         updateConversation(prev, activeId, (c) => ({
           ...c,
           validatedTripInput: data.tripInput,
-          tripForm: {
-            ...c.tripForm,
-            naturalLanguageNote: parsed.data.naturalLanguageNote ?? "",
-          },
+          tripForm: savedForm,
           updatedAt: Date.now(),
         })),
       );
       setSaveSuccess("Trip details saved and validated for this session.");
+      appendChatMessages([
+        {
+          id: crypto.randomUUID(),
+          role: "assistant",
+          content: "Trip details saved. Starting cash flight search…",
+          status: "sent",
+          createdAt: Date.now(),
+        },
+      ]);
+      scrollToBottom();
+      void runFlightSearch(data.tripInput, savedForm);
     } catch {
       setFormError("Network error. Check your connection and try again.");
     } finally {
       setIsSaving(false);
     }
-  }, [activeConversation.tripForm, activeId]);
+  }, [
+    activeConversation.tripForm,
+    activeId,
+    appendChatMessages,
+    runFlightSearch,
+    scrollToBottom,
+  ]);
 
   const handleNewTrip = useCallback(() => {
     const current = conversations.find((c) => c.id === activeId);
@@ -310,6 +509,8 @@ export function PlannerChat() {
     setFieldErrors({});
     setFormError(null);
     setSaveSuccess(null);
+    setFlightSearchResult(null);
+    setFlightSearchError(null);
     setMobileNavOpen(false);
     scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
     mainRegionRef.current?.focus();
@@ -320,6 +521,8 @@ export function PlannerChat() {
     setFieldErrors({});
     setFormError(null);
     setSaveSuccess(null);
+    setFlightSearchResult(null);
+    setFlightSearchError(null);
     setMobileNavOpen(false);
   }, []);
 
@@ -411,7 +614,7 @@ export function PlannerChat() {
 
                   <div
                     ref={scrollRef}
-                    className="scrollbar-none mb-6 max-h-[280px] min-h-[120px] overflow-y-auto"
+                    className="scrollbar-none mb-6 max-h-[min(520px,55vh)] min-h-[120px] overflow-y-auto"
                   >
                     <div
                       className="flex flex-col gap-5"
@@ -455,6 +658,20 @@ export function PlannerChat() {
                         {chatError}
                       </FormMessage>
                     ) : null}
+                    {canSearchFlights ? (
+                      <div className="mt-3 flex justify-center">
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          disabled={isFlightSearching || isChatLoading || isSaving}
+                          onClick={() => void handleFlightSearch()}
+                        >
+                          {isFlightSearching
+                            ? "Searching cash flights…"
+                            : "Search cash flights in chat"}
+                        </Button>
+                      </div>
+                    ) : null}
                     <p className="mt-2 text-center text-[11px] text-muted-foreground">
                       Enter to send · Shift+Enter for a new line
                     </p>
@@ -478,17 +695,28 @@ export function PlannerChat() {
                 ) : null}
               </div>
 
-              <div className="xl:hidden">
-                <TripSummaryCard
-                  tripInput={activeConversation.validatedTripInput}
-                  className="mt-6"
+              <div className="xl:hidden space-y-6 mt-6">
+                <TripSummaryCard tripInput={activeConversation.validatedTripInput} />
+                <CashFlightResults
+                  result={flightSearchResult}
+                  isSearching={isFlightSearching}
+                  error={flightSearchError}
+                  canSearch={canSearchFlights}
+                  onSearch={() => void handleFlightSearch()}
                 />
               </div>
             </div>
 
             <aside className="hidden xl:col-span-5 xl:block">
-              <div className="sticky top-20">
+              <div className="sticky top-20 space-y-6">
                 <TripSummaryCard tripInput={activeConversation.validatedTripInput} />
+                <CashFlightResults
+                  result={flightSearchResult}
+                  isSearching={isFlightSearching}
+                  error={flightSearchError}
+                  canSearch={canSearchFlights}
+                  onSearch={() => void handleFlightSearch()}
+                />
               </div>
             </aside>
           </div>
